@@ -1,0 +1,16 @@
+<section class="faq">
+  <div class="section-header">
+    <h2>Frequently Asked Questions</h2>
+    <p>Find answers to the most common questions</p>
+  </div>
+  <div class="accordion" *ngFor="let faq of faqs; let i = index">
+    <div class="accordion-item">
+      <h3 class="accordion-header" (click)="toggleAccordion(i)">
+        {{ faq.question }}
+      </h3>
+      <div class="accordion-body" [class.active]="activeIndex === i">
+        <p>{{ faq.answer }}</p>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,16 @@
+<section class="blog">
+  <div class="section-header">
+    <h2>Latest Blog Posts</h2>
+    <p>Stay updated with our latest news and articles</p>
+  </div>
+  <div class="blog-posts">
+    <div class="blog-post" *ngFor="let post of blogPosts">
+      <img [src]="post.imageUrl" alt="{{ post.title }}" />
+      <div class="post-content">
+        <h3>{{ post.title }}</h3>
+        <p>{{ post.excerpt }}</p>
+        <a [routerLink]="['/blog', post.id]">Read More</a>
+      </div>
+    </div>
+  </div>
+</section>
