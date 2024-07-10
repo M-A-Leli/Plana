@@ -1,0 +1,22 @@
+<app-header></app-header>
+<section class="events">
+  <h1 class="section-title">Upcoming Events</h1>
+  <div class="events-filters">
+    <!-- Add filters for category, date, etc. -->
+    <input type="text" placeholder="Search events..." [(ngModel)]="searchQuery" />
+    <select [(ngModel)]="selectedCategory">
+      <option value="">All Categories</option>
+      <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+    </select>
+  </div>
+  <div class="events-list">
+    <div *ngFor="let event of filteredEvents()" class="event-card">
+      <img [src]="event.imageUrl" alt="{{ event.title }}" />
+      <h3>{{ event.title }}</h3>
+      <p>{{ event.date | date }}</p>
+      <p>{{ event.location }}</p>
+      <button (click)="viewEventDetails(event)">View Details</button>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

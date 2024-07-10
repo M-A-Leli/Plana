@@ -1,0 +1,116 @@
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  transition: top 0.3s;
+  z-index: 1000;
+}
+
+.header.scrolled {
+  top: -100px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.company-name {
+  font-size: 24px;
+  color: #ffffff;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.auth-buttons button {
+  background-color: #ff007f;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  margin-left: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.auth-buttons button:hover {
+  background-color: #ff3399;
+}
+
+.menu-icon {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.menu-icon span {
+  width: 25px;
+  height: 3px;
+  background: #ffffff;
+  transition: all 0.3s;
+}
+
+.menu-icon span.active:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.menu-icon span.active:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-icon span.active:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+@media (max-width: 768px) {
+  .nav-links,
+  .auth-buttons {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 20px;
+    text-align: center;
+  }
+
+  .nav-links.active,
+  .auth-buttons.active {
+    display: flex;
+  }
+
+  .menu-icon {
+    display: flex;
+  }
+}

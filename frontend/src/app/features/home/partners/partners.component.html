@@ -1,0 +1,11 @@
+<section class="partners">
+  <div class="section-header">
+    <h2>Our Partners</h2>
+    <p>We collaborate with the best in the industry</p>
+  </div>
+  <div class="partner-logos">
+    <div class="partner-logo" *ngFor="let partner of partners">
+      <img [src]="partner.logoUrl" [alt]="partner.name" />
+    </div>
+  </div>
+</section>

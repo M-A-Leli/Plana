@@ -1,0 +1,41 @@
+.partners {
+  padding: 60px 20px;
+  background-color: rgba(0, 0, 0, 0.9);
+  color: #ffffff;
+  text-align: center;
+}
+
+.section-header h2 {
+  font-size: 36px;
+  color: #ff007f;
+  margin-bottom: 10px;
+}
+
+.section-header p {
+  font-size: 18px;
+  color: #ffffff;
+  margin-bottom: 40px;
+}
+
+.partner-logos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.partner-logo {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.partner-logo img {
+  max-width: 150px;
+  height: auto;
+}
+
+.partner-logo:hover {
+  transform: translateY(-10px);
+}
