@@ -1,0 +1,34 @@
+<!-- <div class="edit-event">
+  <h2>Edit Event</h2>
+  <form [formGroup]="editEventForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input id="title" formControlName="title" type="text" />
+    </div>
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" formControlName="description"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="date">Date</label>
+      <input id="date" formControlName="date" type="date" />
+    </div>
+    <div class="form-group">
+      <label for="time">Time</label>
+      <input id="time" formControlName="time" type="time" />
+    </div>
+    <div class="form-group">
+      <label for="venue">Venue</label>
+      <input id="venue" formControlName="venue" type="text" />
+    </div>
+    <div formArrayName="images">
+      <div *ngFor="let image of editEventForm.get('images').controls; let i = index" class="form-group">
+        <label for="image-{{ i }}">Image URL {{ i + 1 }}</label>
+        <input [id]="'image-' + i" [formControlName]="i" type="text" />
+        <button type="button" (click)="removeImageField(i)">Remove</button>
+      </div>
+      <button type="button" (click)="addImageField()">Add Image</button>
+    </div>
+    <button type="submit" [disabled]="editEventForm.invalid">Update Event</button>
+  </form>
+</div> -->

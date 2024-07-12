@@ -20,6 +20,13 @@ import { OrganizerDashboardComponent } from './features/organizer/organizer-dash
 import { OrganizerProfileComponent } from './features/organizer/organizer-profile/organizer-profile.component';
 import { OrganizerLogoutComponent } from './features/organizer/organizer-logout/organizer-logout.component';
 import { PageNotFoundComponent } from './features/page-not-found/page-not-found.component';
+import { OrganizerEventsComponent } from './features/organizer/organizer-events/organizer-events.component';
+import { AdminOrganizersComponent } from './features/admin/admin-organizers/admin-organizers.component';
+import { AdminAttendeesComponent } from './features/admin/admin-attendees/admin-attendees.component';
+import { AdminEventsComponent } from './features/admin/admin-events/admin-events.component';
+import { AdminNotificationsComponent } from './features/admin/admin-notifications/admin-notifications.component';
+import { AdminSettingsComponent } from './features/admin/admin-settings/admin-settings.component';
+import { AdminAdminsComponent } from './features/admin/admin-admins/admin-admins.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -45,6 +52,7 @@ export const routes: Routes = [
     path: 'organizer', component: OrganizerComponent, children: [
       { path: 'dashboard', component: OrganizerDashboardComponent },
       { path: 'profile', component: OrganizerProfileComponent },
+      { path: 'events', component: OrganizerEventsComponent },
       { path: 'logout', component: OrganizerLogoutComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ]
@@ -52,6 +60,12 @@ export const routes: Routes = [
   {
     path: 'admin', component: AdminComponent, children: [
       { path: 'dashboard', component: AdminDashboardComponent },
+      { path: 'admins', component: AdminAdminsComponent },
+      { path: 'organizers', component: AdminOrganizersComponent },
+      { path: 'attendees', component: AdminAttendeesComponent },
+      { path: 'events', component: AdminEventsComponent },
+      { path: 'notifications', component: AdminNotificationsComponent },
+      { path: 'settings', component: AdminSettingsComponent },
       { path: 'profile', component: AdminProfileComponent },
       { path: 'logout', component: AdminLogoutComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },

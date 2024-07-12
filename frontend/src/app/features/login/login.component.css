@@ -1,0 +1,92 @@
+.login-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: url('../../../../public/login.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+.login-content {
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-form {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.login-form h2 {
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-bottom: 1px solid #ffffff;
+  background: transparent;
+  color: #ffffff;
+  font-size: 1rem;
+  outline: none;
+  transition: border-bottom-color 0.3s;
+}
+
+.form-group input:focus {
+  border-bottom-color: #00c2ff;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  background: #00c2ff;
+  color: #ffffff;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button[type="submit"]:disabled {
+  background: #7b818c;
+  cursor: not-allowed;
+}
+
+.login-links {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.login-links a {
+  color: #00c2ff;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.login-links a:hover {
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .login-form {
+    padding: 1.5rem;
+  }
+
+  .login-form h2 {
+    font-size: 1.5rem;
+  }
+}

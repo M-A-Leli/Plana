@@ -1,1 +1,9 @@
-<p>organizer works!</p>
+<div class="organizer-layout">
+  <app-organizer-sidebar></app-organizer-sidebar>
+  <div class="main" [class.collapsed]="isSidebarCollapsed">
+    <app-organizer-topbar></app-organizer-topbar>
+    <div class="content-section">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,51 @@
+<div class="admin-entity-layout">
+  <div class="left-display">
+    <button class="create-btn" (click)="onCreate()">Create Event</button>
+    <table>
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Title</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Venue</th>
+          <th>Organizer</th>
+          <th>Average Rating</th>
+          <th>Total Reviews</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let event of events">
+          <td><img [src]="event.images?.[0]?.url" alt="Event Image"></td>
+          <td>{{ event.title }}</td>
+          <td>{{ event.date }}</td>
+          <td>{{ event.time }}</td>
+          <td>{{ event.venue }}</td>
+          <td>{{ event.organizer?.company }}</td>
+          <td>{{ event.average_rating }}</td>
+          <td>{{ event.number_of_reviews }}</td>
+          <td>
+            <button (click)="onView(event.id || '')">View</button>
+            <button (click)="onEdit(event.id || '')">Edit</button>
+            <button (click)="onDelete(event.id || '')">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="pagination">
+      <button class="pagination-buttons" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button class="pagination-buttons" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+    </div>
+  </div>
+  <div class="right-display">
+    <ng-container [ngSwitch]="currentView">
+      <div *ngSwitchCase="'default'">Default View Content</div>
+      <app-create-event *ngSwitchCase="'create'"></app-create-event>
+      <!-- <app-edit-event *ngSwitchCase="'edit'" [eventId]="selectedEventId"></app-edit-event> -->
+      <!-- <app-single-event *ngSwitchCase="'view'" [eventId]="selectedEventId"></app-single-event> -->
+      <!-- <app-delete-event *ngSwitchCase="'delete'" [eventId]="selectedEventId"></app-delete-event> -->
+    </ng-container>
+  </div>
+</div>

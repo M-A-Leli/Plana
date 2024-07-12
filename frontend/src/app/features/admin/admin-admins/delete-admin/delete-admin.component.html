@@ -1,0 +1,10 @@
+<div class="delete-admin">
+  <div *ngIf="message" class="message" [ngClass]="{'error': isError, 'success': !isError}">
+    {{ message }}
+  </div>
+  <p>Are you sure you want to delete this admin?</p>
+  <div class="buttons">
+    <button (click)="onDelete()">Delete</button>
+    <button (click)="onCancel()">Cancel</button>
+  </div>
+</div>

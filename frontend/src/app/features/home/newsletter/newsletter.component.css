@@ -1,46 +1,68 @@
 .newsletter {
-  padding: 60px 20px;
-  background: rgba(255, 0, 127, 0.1);
-  border-radius: 10px;
+  background-color: #0b1739;
+  color: #ffffff;
+  padding: 40px 20px;
   text-align: center;
-  margin: 40px 0;
 }
 
-.newsletter-content h2 {
-  font-size: 36px;
-  color: #ff007f;
+.newsletter-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.newsletter h2 {
+  color: #cb3cff;
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.newsletter p {
+  color: #aeb9e1;
+  font-size: 1.2em;
   margin-bottom: 20px;
 }
 
-.newsletter-content p {
-  font-size: 18px;
-  color: #ffffff;
-  margin-bottom: 30px;
-}
-
-.newsletter-content form {
+.newsletter form {
   display: flex;
-  justify-content: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: center;
 }
 
-.newsletter-content input[type="email"] {
-  padding: 10px 20px;
-  border: 2px solid #ff007f;
-  border-radius: 5px;
-  font-size: 16px;
+.newsletter input[type="email"] {
+  outline: none;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  width: 80%;
+  max-width: 400px;
 }
 
-.newsletter-content button {
-  padding: 10px 20px;
-  background-color: #ff007f;
+.newsletter button {
+  background-color: #00c2ff;
   color: #ffffff;
   border: none;
-  border-radius: 5px;
+  padding: 10px 20px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 1em;
 }
 
-.newsletter-content button:hover {
-  background-color: #ff4081;
+.newsletter button:hover {
+  background-color: #cb3cff;
+}
+
+@media (max-width: 768px) {
+  .newsletter form {
+    flex-direction: column;
+  }
+
+  .newsletter input[type="email"] {
+    margin-bottom: 15px;
+  }
+
+  .newsletter button {
+    width: 80%;
+    max-width: 400px;
+  }
 }

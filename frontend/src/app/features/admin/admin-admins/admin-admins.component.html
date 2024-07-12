@@ -1,0 +1,49 @@
+<div class="admin-entity-layout">
+  <div class="left-display">
+    <button class="create-btn" (click)="onCreate()">Create Admin</button>
+    <table>
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Phone Number</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let admin of admins">
+          <td><img [src]="admin.user?.profile_img" alt="Admin Image"></td>
+          <td>{{ admin.user?.username }}</td>
+          <td>{{ admin.user?.email }}</td>
+          <td>{{ admin.user?.phone_number }}</td>
+          <td>
+            <button (click)="onView(admin.id || '')">View</button>
+            <button (click)="onEdit(admin.id || '')">Edit</button>
+            <button (click)="onDelete(admin.id || '')">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="pagination">
+      <button class="pagination-buttons" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button class="pagination-buttons" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+    </div>
+  </div>
+  <div class="right-display">
+    <ng-container [ngSwitch]="currentView">
+      <div *ngSwitchCase="'default'">Default View Content</div>
+      <app-create-admin *ngSwitchCase="'create'"></app-create-admin>
+      <app-edit-admin *ngSwitchCase="'edit'" [adminId]="selectedAdminId"></app-edit-admin>
+      <app-single-admin *ngSwitchCase="'view'" [adminId]="selectedAdminId"></app-single-admin>
+      <app-delete-admin *ngSwitchCase="'delete'" [adminId]="selectedAdminId"></app-delete-admin>
+    </ng-container>
+  </div>
+</div>
+
+
+<!-- <div *ngIf="!showCreateAdmin && !showSingleAdmin && !showEditAdmin && !showDeleteAdmin" class="default-display">
+  <img src="/logo.png" alt="Logo">
+  <h1>Plana</h1>
+</div> -->

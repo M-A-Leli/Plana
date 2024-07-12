@@ -1,0 +1,115 @@
+.create-event-form {
+  max-width: 600px;
+  margin: auto;
+  background-color: #1b1e1f;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #ffffff;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #7b818c;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.5rem;
+  border: none;
+  border-bottom: 2px solid #7b818c;
+  background-color: transparent;
+  color: #ffffff;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-bottom: 2px solid #8b5afe;
+  background-color: rgba(139, 90, 254, 0.1);
+}
+
+.form-control:hover {
+  border-bottom: 2px solid #00c2ff;
+}
+
+textarea.form-control {
+  resize: vertical;
+  height: 100px;
+}
+
+.submit-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #3179e7;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+  background-color: #1d4ebf;
+}
+
+.submit-btn:disabled {
+  background-color: #7b818c;
+  cursor: not-allowed;
+}
+
+
+
+/* Additional styling for forms and tables */
+/* app-creation-form,
+app-update-form,
+app-deletion-confirmation {
+  background-color: #061027;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #aeb9e1;
+  margin-bottom: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #081028;
+  color: #aeb9e1;
+}
+
+table th,
+table td {
+  padding: 0.5rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #061027;
+}
+
+table th {
+  background-color: #cb3cff;
+  color: #ffffff;
+}
+
+table tr:hover {
+  background-color: #0b1739;
+}
+
+button {
+  background-color: #0e43fb;
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #00c2ff;
+} */

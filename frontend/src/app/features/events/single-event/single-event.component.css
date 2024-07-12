@@ -1,82 +1,74 @@
-.event-details {
-  padding: 60px 20px;
-  background-color: rgba(0, 0, 0, 0.9);
-  color: #ffffff;
-}
-
-.back-button {
-  display: inline-block;
-  margin-bottom: 20px;
-  padding: 10px 20px;
-  background-color: #ff007f;
-  color: #ffffff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.back-button:hover {
-  background-color: #ff4081;
-}
-
-.event-header {
+.single-event {
   display: flex;
-  gap: 20px;
-  margin-bottom: 40px;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+  color: #aeb9e1;
 }
 
-.event-header img {
-  max-width: 400px;
+.event-details {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.event-images {
+  position: relative;
+  text-align: center;
+}
+
+.current-image {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
   border-radius: 10px;
 }
 
-.event-info {
-  flex: 1;
+.image-controls {
+  margin-top: 10px;
 }
 
-.event-info h1 {
-  font-size: 36px;
-  color: #ff007f;
-  margin-bottom: 10px;
-}
-
-.event-info p {
-  margin: 5px 0;
-  font-size: 18px;
-}
-
-.event-description {
-  margin-bottom: 40px;
-}
-
-.event-description h2 {
-  font-size: 28px;
-  color: #ff007f;
-  margin-bottom: 20px;
-}
-
-.event-description p {
-  font-size: 18px;
-}
-
-.ticket-booking h2 {
-  font-size: 28px;
-  color: #ff007f;
-  margin-bottom: 20px;
-}
-
-.ticket-booking button {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #ff007f;
-  color: #ffffff;
+.image-controls button {
+  background-color: #0e43fb;
   border: none;
-  border-radius: 5px;
+  padding: 10px 20px;
+  color: #fff;
+  margin: 0 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  border-radius: 5px;
 }
 
-.ticket-booking button:hover {
-  background-color: #ff4081;
+.related-events {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.related-event-cards {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.related-event-card {
+  background-color: #061027;
+  padding: 15px;
+  border-radius: 10px;
+  width: 300px;
+  color: #aeb9e1;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.related-event-card:hover {
+  transform: scale(1.05);
+}
+
+.related-event-image {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.related-event-details {
+  margin-top: 10px;
 }

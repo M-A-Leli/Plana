@@ -1,0 +1,39 @@
+<div class="events-list">
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Venue</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let event of events">
+        <td>{{ event.title }}</td>
+        <td>{{ event.date | date: 'longDate'}}</td>
+        <td>{{ event.time | date: 'shortTime' }}</td>
+        <td>{{ event.venue }}</td>
+        <td>
+          <button class="view-btn" (click)="onView(event.id || '')">View</button>
+          <button class="edit-btn" (click)="onEdit(event.id || '')">Edit</button>
+          <button class="delete-btn" (click)="onDelete(event.id || '')">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <!-- <div class="pagination">
+    <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
+    <button *ngFor="let page of [].constructor(Math.ceil(totalItems / itemsPerPage)); let i = index"
+            (click)="changePage(i + 1)"
+            [class.active]="i + 1 === currentPage">{{ i + 1 }}</button>
+    <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === Math.ceil(totalItems / itemsPerPage)">Next</button>
+  </div> -->
+
+  <div class="pagination">
+    <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+  </div>
+</div>
