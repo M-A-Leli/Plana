@@ -36,7 +36,11 @@ export class NotificationService {
     return this.http.get<Notification[]>(`${this.baseUrl}/user/unread`);
   }
 
-  // markNotificationAsRead(id: string): Observable<void> {
-  //   return this.http.patch<void>(`${this.baseUrl}/mark-as-read/${id}`);
-  // }
+  markNotificationAsRead(id: string): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/mark-as-read/${id}`, null);
+  }
+
+  getNotificationAnalytics(): Observable<Object> {
+    return this.http.get<Object>(`${this.baseUrl}/analytics`);
+  }
 }

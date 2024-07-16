@@ -20,7 +20,7 @@ export class AttendeeService {
     return this.http.get<Attendee>(`${this.baseUrl}/${id}`);
   }
 
-  createAttendee(attendee: Attendee): Observable<Attendee> {
+  createAttendee(attendee: Object): Observable<Attendee> {
     return this.http.post<Attendee>(this.baseUrl, attendee);
   }
 
@@ -38,5 +38,9 @@ export class AttendeeService {
 
   updateAttendeeProfile(attendee: Attendee): Observable<Attendee> {
     return this.http.put<Attendee>(`${this.baseUrl}/profile`, attendee);
+  }
+
+  getAttendeeAnalytics(): Observable<Object> {
+    return this.http.get<Object>(`${this.baseUrl}/analytics`);
   }
 }

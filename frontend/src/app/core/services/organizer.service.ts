@@ -24,6 +24,10 @@ export class OrganizerService {
     return this.http.post<Organizer>(this.baseUrl, organizer);
   }
 
+  approveOrganizer(id: string): Observable<Organizer> {
+    return this.http.put<Organizer>(`${this.baseUrl}/approve/${id}`, null);
+  }
+
   updateOrganizer(id: string, organizer: Organizer): Observable<Organizer> {
     return this.http.put<Organizer>(`${this.baseUrl}/${id}`, organizer);
   }
@@ -38,5 +42,9 @@ export class OrganizerService {
 
   updateOrganizerProfile(organizer: Organizer): Observable<Organizer> {
     return this.http.put<Organizer>(`${this.baseUrl}/profile`, organizer);
+  }
+
+  getOrganizerAnalytics(): Observable<Object> {
+    return this.http.get<Object>(`${this.baseUrl}/analytics`);
   }
 }

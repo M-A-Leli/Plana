@@ -169,6 +169,35 @@
 
 //         return payments;
 //     }
+    // async function refundAttendees(eventId: string): Promise<void> {
+    //     const tickets = await prisma.ticket.findMany({
+    //         where: {
+    //             event_id: eventId,
+    //             is_deleted: false
+    //         },
+    //         include: {
+    //             Payment: true
+    //         }
+    //     });
+
+    //     for (const ticket of tickets) {
+    //         if (ticket.Payment && ticket.Payment.status === 'COMPLETED') {
+    //             // Logic to process refund
+    //             // This can include calling a payment gateway API to refund the amount
+    //         }
+    //     }
+
+    //     // Mark all tickets as deleted
+    //     await prisma.ticket.updateMany({
+    //         where: {
+    //             event_id: eventId
+    //         },
+    //         data: {
+    //             is_deleted: true
+    //         }
+    //     });
+    // }
+
 // }
 
 // export default PaymentService;

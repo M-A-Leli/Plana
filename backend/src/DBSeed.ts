@@ -26,11 +26,10 @@ async function main() {
                         password: hashedPassword,
                         salt: "random_salt", //!
                         username: `user${i + 1}`,
-                        phone_number: `070000000${i}`,
                         profile_img: `http://localhost:3000/images/profile${i}.png`,
-                        attendees: i >= 4 ? { create: { id: uuidv4(), first_name: `Attendee${i + 1}`, last_name: `Last${i + 1}`, bio: `Bio for Attendee${i + 1}` } } : undefined,
+                        attendees: i >= 4 ? { create: { id: uuidv4(), bio: `Bio for Attendee${i + 1}` } } : undefined,
                         organizers: i >= 1 && i <= 3 ? { create: { id: uuidv4(), company: `Organizer Company${i}`, bio: `Bio for Organizer${i}` } } : undefined,
-                        admin: i === 0 ? { create: { id: uuidv4() } } : undefined,
+                        //! admin: i === 0 ? { create: { id: uuidv4() } } : undefined,
                     },
                 })
             )
@@ -118,7 +117,8 @@ async function main() {
                             attendee_id: attendee.id,
                             event_id: event.id,
                             rating: Math.floor(Math.random() * 5) + 1,
-                            comment: `Review for event ${j + 1} by ${attendee.first_name}`,
+                            //! comment: `Review for event ${j + 1} by ${attendee.first_name}`,
+                            comment: `Review for event ${j + 1} by ${attendee.id}`, //!
                             is_deleted: false,
                             created_at: new Date(),
                         },

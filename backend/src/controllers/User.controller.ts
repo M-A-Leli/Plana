@@ -94,6 +94,26 @@ class UserController {
   }
 
   updateUserProfile = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user_id = req.user?.id as string;
+      const updatedProfile = await this.userService.updateUserProfile(user_id, req.body);
+      res.status(201).json(updatedProfile);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getUserProfileImage = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user_id = req.user?.id as string;
+      const userProfileImage = await this.userService.getUserProfileImage(user_id);
+      res.json(userProfileImage);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  updateUserProfileImage = async (req: Request, res: Response, next: NextFunction) => {
     uploadSingle(req, res, async (err) => {
       if (err instanceof multer.MulterError) {
         return next(createError(400, err.message));
@@ -108,8 +128,8 @@ class UserController {
       try {
         const user_id = req.user?.id as string;
         const imagePath = req.file.path;
-        const updatedProfile = await this.userService.updateUserProfile(user_id, req.body, imagePath);
-        res.status(201).json(updatedProfile);
+        const updatedProfileImage = await this.userService.updateUserProfileImage(user_id, imagePath);
+        res.status(201).json(updatedProfileImage);
       } catch (error: any) {
         next(error);
       }
@@ -120,6 +140,42 @@ class UserController {
     try {
       await this.userService.suspendUser(req.params.id);
       res.status(204).send();
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getActiveUsers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const users = await this.userService.getActiveUsers();
+      res.status(200).json(users);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getSuspendedUsers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const users = await this.userService.getSuspendedUsers();
+      res.status(200).json(users);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getDeletedUsers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const users = await this.userService.getDeletedUsers();
+      res.status(200).json(users);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getUserAnalytics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const analytics = await this.userService.getUserAnalytics();
+      res.status(200).json(analytics);
     } catch (error: any) {
       next(error);
     }

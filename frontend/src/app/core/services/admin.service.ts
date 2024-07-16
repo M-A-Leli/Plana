@@ -39,4 +39,8 @@ export class AdminService {
   updateAdminProfile(admin: Admin): Observable<Admin> {
     return this.http.put<Admin>(`${this.baseUrl}/profile`, admin);
   }
+
+  getAdminAnalytics(): Observable<Object> {
+    return this.http.get<Object>(`${this.baseUrl}/analytics`);
+  }
 }

@@ -36,7 +36,7 @@ class PasswordResetService {
       to: user.email,
       subject: 'Password Reset Request',
       template: 'PasswordReset',
-      context: { name: user.username, resetCode }
+      context: { username: user.username, resetCode }
     });
   }
 

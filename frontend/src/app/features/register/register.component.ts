@@ -1,80 +1,109 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../../shared/components/header/header.component';
-import { UsersService } from '../../core/services/users.service';
+import { AttendeeService } from '../../core/services/attendee.service';
+import Attendee from '../../shared/models/Attendee';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HeaderComponent],
+  imports: [CommonModule, FormsModule, HeaderComponent],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
 export class RegisterComponent {
-  registerForm: FormGroup;
+  username: string = '';
+  email: string = '';
+  password: string = '';
+  confirmPassword: string = '';
   errorMessage: string | null = null;
   successMessage: string | null = null;
 
-  constructor(
-    private fb: FormBuilder,
-    private userService: UsersService,
-    private router: Router
-  ) {
-    this.registerForm = this.fb.group({
-      username: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phone_number: ['', [Validators.pattern(/^[0-9]{10,15}$/)]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', Validators.required]
+  constructor(private attendeeService: AttendeeService, private router: Router) { }
+
+  onSubmit() {
+    this.clearErrors();
+
+    if (!this.username || !this.email || !this.password || !this.confirmPassword) {
+      this.errorMessage = 'Please fill all required fields.';
+      this.clearErrors();
+      return;
+    }
+
+    if (!this.validateUsername(this.username)) {
+      this.errorMessage = 'Invalid username. It must start with a letter and can contain letters, numbers, hyphens, or underscores.';
+      this.clearErrors();
+      return;
+    }
+
+    if (!this.validateEmail(this.email)) {
+      this.errorMessage = 'Invalid email address.';
+      this.clearErrors();
+      return;
+    }
+
+    if (!this.validatePassword(this.password)) {
+      this.errorMessage = 'Invalid password. It must contain at least one uppercase letter, one lowercase letter, one number, one special character, and be between 8 and 16 characters.';
+      this.clearErrors();
+      return;
+    }
+
+    if (this.password !== this.confirmPassword) {
+      this.errorMessage = 'Passwords do not match.';
+      this.clearErrors();
+      return;
+    }
+
+    const newAttendee = {
+        username: this.username,
+        email: this.email,
+        password: this.password
+    }
+
+    this.attendeeService.createAttendee(newAttendee).subscribe({
+      next: data => {
+        this.successMessage = 'Registration successfull!';
+        setTimeout(() => {
+          this.successMessage = '';
+          this.router.navigate(['/login']);
+        }, 3000);
+      },
+      error: err => {
+        if (err.status === 409 || err.status === 400) {
+          this.errorMessage = err.error.error.message;
+          this.clearErrors();
+        } else {
+          this.errorMessage = 'An unexpected error occurred. Please try again.';
+          this.clearErrors();
+        }
+      }
     });
   }
 
-  ngOnInit(): void {}
-
-  validateForm(): boolean {
-    if (this.registerForm.invalid) {
-      this.errorMessage = 'Please fill in all required fields correctly.';
-      this.clearMessages();
-      return false;
-    }
-
-    if (this.registerForm.value.password !== this.registerForm.value.confirmPassword) {
-      this.errorMessage = 'Passwords must match.';
-      this.clearMessages();
-      return false;
-    }
-
-    return true;
-  }
-
-  onSubmit(): void {
-    if (this.validateForm()) {
-      // !
-      this.userService.createUser(this.registerForm.value).subscribe(
-        success => {
-          if (success) {
-            this.successMessage = 'Registration successful!';
-            this.clearMessages();
-            setTimeout(() => {
-              this.router.navigate(['/login']);
-            }, 3000);
-          }
-        },
-        error => {
-          this.errorMessage = 'Registration failed. Please try again.';
-          this.clearMessages();
-          console.error('Registration failed', error);
-        }
-      );
-    }
-  }
-
-  clearMessages(): void {
+  clearErrors() {
     setTimeout(() => {
-      this.errorMessage = null;
-      this.successMessage = null;
+      this.errorMessage = '';
     }, 3000);
+  }
+
+  validateUsername(username: string): boolean {
+    const usernameRegex = /^[a-zA-Z][a-zA-Z0-9-_]*$/;
+    return usernameRegex.test(username);
+  }
+
+  validateEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  validatePassword(password: string): boolean {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,16}$/;
+    return passwordRegex.test(password);
+  }
+
+  navigateToLogin(): void {
+    this.router.navigate(['/login']);
   }
 }

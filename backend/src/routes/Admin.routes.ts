@@ -13,9 +13,9 @@ const router = Router();
 // router.put('/:id', AuthMiddleware.authorizeAdmin, AdminController.updateAdmin); // Update admin
 // router.delete('/:id', AuthMiddleware.authorizeAdmin, AdminController.deleteAdmin); // Delete admin
 
+router.get('/analytics', AdminController.getAdminAnalytics); // Get admin analytics
 router.get('/profile', AdminController.getAdminProfile); // Get admin profile
 router.put('/profile', AdminController.updateAdminProfile); // Update admin 
-
 router.get('/', AdminController.getAllAdmins); // Get all admins
 router.post('/', AdminController.createAdmin); // Create admin
 router.get('/:id', AdminController.getAdminById); // Get admin by id

@@ -36,11 +36,47 @@ export class EventService {
     return this.http.get<Event[]>(`${this.baseUrl}/featured-events`);
   }
 
-  getEventsByOrganizerId(): Observable<Event[]> {
+  featureEvent(id: string): Observable<Event> {
+    return this.http.put<Event>(`${this.baseUrl}/feature/${id}`, null);
+  }
+
+  removeFeaturedEvent(id: string): Observable<Event> {
+    return this.http.put<Event>(`${this.baseUrl}/feature/${id}/exclude`, null);
+  }
+
+  getOrganizersEvents(): Observable<Event[]> {
     return this.http.get<Event[]>(`${this.baseUrl}/organizer`);
+  }
+
+  getEventsByOrganizerId(id: string): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.baseUrl}/organizer/${id}`);
+  }
+
+  getUpcomingEventsByOrganizerId(id: string): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.baseUrl}/organizer/${id}/upcoming`);
+  }
+
+  getPastEventsByOrganizerId(id: string): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.baseUrl}/organizer/${id}/past`);
   }
 
   getRelatedEvents(id: string): Observable<Event[]> {
     return this.http.get<Event[]>(`${this.baseUrl}/related-events/${id}`);
+  }
+
+  getUpcomingEvents(): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.baseUrl}/upcoming`);
+  }
+
+  getPastEvents(): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.baseUrl}/past`);
+  }
+
+  getDeletedEvents(): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.baseUrl}/deleted`);
+  }
+
+  getEventAnalytics(): Observable<Object> {
+    return this.http.get<Object>(`${this.baseUrl}/analytics`);
   }
 }

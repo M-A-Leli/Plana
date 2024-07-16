@@ -38,14 +38,14 @@ class EventController {
         return next(createError(400, err.message));
       }
 
-      // Check if req.files is defined and contains files
       if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
         return next(createError(400, 'No files uploaded'));
       }
 
       try {
+        const user_id = req.user?.id as string;
         const imagePaths = (req.files as Express.Multer.File[]).map(file => file.path);
-        const newEvent = await this.eventService.createEvent(req.body, imagePaths);
+        const newEvent = await this.eventService.createEvent(user_id, req.body, imagePaths);
         res.status(201).json(newEvent);
       } catch (error: any) {
         next(error);
@@ -62,7 +62,7 @@ class EventController {
       }
 
       try {
-        const imagePaths = (req.files as Express.Multer.File[]).map(file => file.path);
+        const imagePaths = req.files ? (req.files as Express.Multer.File[]).map(file => file.path) : [];
         const updatedEvent = await this.eventService.updateEvent(req.params.id, req.body, imagePaths);
         res.json(updatedEvent);
       } catch (error: any) {
@@ -70,6 +70,7 @@ class EventController {
       }
     });
   }
+
 
   deleteEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -100,9 +101,93 @@ class EventController {
     }
   }
 
+  getUpcomingEventsByOrganizerId = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const organizerId = req.params.id;
+      const events = await this.eventService.getUpcomingEventsByOrganizerId(organizerId);
+      res.status(200).json(events);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getPastEventsByOrganizerId = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const organizerId = req.params.id;
+      const events = await this.eventService.getPastEventsByOrganizerId(organizerId);
+      res.status(200).json(events);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getOrganizersEvents = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user_id = req.user?.id as string;
+      const events = await this.eventService.getOrganizersEvents(user_id);
+      res.status(200).json(events);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
   getFeaturedEvents = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const events = await this.eventService.getFeaturedEvents();
+      res.status(200).json(events);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  featureEvent = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const event = await this.eventService.featureEvent(req.params.id);
+      res.status(200).json(event);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  removeFeaturedEvent = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const event = await this.eventService.removeFeaturedEvent(req.params.id);
+      res.status(200).json(event);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getEventAnalytics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const analytics = await this.eventService.getEventAnalytics();
+      res.status(200).json(analytics);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getUpcomingEvents = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const events = await this.eventService.getUpcomingEvents();
+      res.status(200).json(events);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getPastEvents = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const events = await this.eventService.getPastEvents();
+      res.status(200).json(events);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getDeletedEvents = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const events = await this.eventService.getDeletedEvents();
       res.status(200).json(events);
     } catch (error: any) {
       next(error);

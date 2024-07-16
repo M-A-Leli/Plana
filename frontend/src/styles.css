@@ -3,3 +3,16 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+body {
+  font-family: sans-serif;
+  width: 100vw;
+  height: auto;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}

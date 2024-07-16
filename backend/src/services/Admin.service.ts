@@ -1,11 +1,34 @@
 import createError from 'http-errors';
 import bcrypt from 'bcrypt';
-import { Admin, Prisma, User } from '@prisma/client';
+import { Admin } from '@prisma/client';
 import prisma from '../config/Prisma.config';
+import sendEmail from '../utils/Email.util';
 
 const BASE_URL = `http://localhost:${process.env.PORT}`;
 
 class AdminService {
+  static generatePassword(length: number = 12): string {
+    const upperCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lowerCase = 'abcdefghijklmnopqrstuvwxyz';
+    const numbers = '0123456789';
+    const specialChars = '!@#$%^&*()-_=+[]{}|;:,.<>?';
+
+    const allChars = upperCase + lowerCase + numbers + specialChars;
+    const getRandomChar = (chars: string) => chars[Math.floor(Math.random() * chars.length)];
+
+    let password = '';
+    password += getRandomChar(upperCase);
+    password += getRandomChar(lowerCase);
+    password += getRandomChar(numbers);
+    password += getRandomChar(specialChars);
+
+    for (let i = 4; i < length; i++) {
+      password += getRandomChar(allChars);
+    }
+
+    return password.split('').sort(() => Math.random() - 0.5).join('');
+  }
+
   async hashPassword(password: string): Promise<{ hash: string, salt: string }> {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
@@ -15,16 +38,19 @@ class AdminService {
   async getAllAdmins(): Promise<Partial<Admin>[]> {
     const admins = await prisma.admin.findMany({
       where: {
-        is_deleted: false
+        is_deleted: false,
+        user: {
+          is_suspended: false
+        }
       },
       select: {
         id: true,
+        level: true,
         user: {
           select: {
             id: true,
             username: true,
             email: true,
-            phone_number: true,
             profile_img: true
           },
         },
@@ -40,15 +66,15 @@ class AdminService {
 
   async getAdminById(id: string): Promise<Partial<Admin> | null> {
     const admin = await prisma.admin.findFirst({
-      where: { id, is_deleted: false },
+      where: { id, is_deleted: false, user: { is_suspended: false } },
       select: {
         id: true,
+        level: true,
         user: {
           select: {
             id: true,
             username: true,
             email: true,
-            phone_number: true,
             profile_img: true
           },
         },
@@ -62,178 +88,195 @@ class AdminService {
     return admin;
   }
 
-  async createAdmin(data: any, imagePath: string) {
-    const {
-      username,
-      email,
-      password,
-      phone_number,
-      ...adminData
-    } = data;
+  async createAdmin(id: string, data: { email: string; username: string }): Promise<Partial<Admin> | null> {
+    const { email, username } = data;
 
     const emailExists = await prisma.user.findUnique({
-      where: { email: data.email }
+      where: { email }
     });
 
     if (emailExists) {
       throw createError(409, 'Email already exists');
     }
 
-    const usernameExits = await prisma.user.findUnique({
-      where: { username: data.username }
+    const usernameExists = await prisma.user.findUnique({
+      where: { username }
     });
 
-    if (usernameExits) {
+    if (usernameExists) {
       throw createError(409, 'Username already exists');
     }
 
-    const phoneNumberExists = await prisma.user.findUnique({
-      where: { phone_number: data.phone_number }
+    const currentAdmin = await prisma.admin.findUnique({
+      where: { user_id: id }
     });
 
-    if (phoneNumberExists) {
-      throw createError(409, 'Phone number already exists');
+    if (!currentAdmin || currentAdmin.is_deleted) {
+      throw createError(404, 'Current admin not found');
     }
 
-    const { hash, salt } = await this.hashPassword(password);
+    const generatedPassword = AdminService.generatePassword();
+
+    const { hash, salt } = await this.hashPassword(generatedPassword);
 
     const user = await prisma.user.create({
       data: {
-        username,
         email,
+        username,
         password: hash,
-        salt: salt,
-        phone_number,
-        profile_img: `${BASE_URL}/images/${imagePath.split('/').pop()}`,
+        salt,
+        profile_img: `${BASE_URL}/images/default_profile_image.png`,
       },
       select: {
         id: true
       }
     });
 
+    const newLevel = currentAdmin.level + 1;
+
     const admin = await prisma.admin.create({
       data: {
         user_id: user.id,
-        ...adminData,
+        level: newLevel
       },
       select: {
         id: true,
+        level: true,
         user: {
           select: {
             id: true,
             username: true,
             email: true,
-            phone_number: true,
-            profile_img: true,
-          }
-        }
+            profile_img: true
+          },
+        },
+      }
+    });
+
+    await sendEmail({
+      to: email,
+      subject: 'Welcome to the Admin Team',
+      template: 'WelcomeAdmin',
+      context: {
+        username,
+        email,
+        password: generatedPassword,
+        loginUrl: `http://localhost:4200/login`
       }
     });
 
     return admin;
   }
 
-  async updateAdmin(id: string, data: any, imagePath: string) {
-    const {
-      username,
-      email,
-      phone_number,
-      ...adminData
-    } = data;
+  async updateAdmin(currentAdminId: string, targetAdminId: string, data: { email: string; username: string }): Promise<Partial<Admin> | null> {
+    const { email, username } = data;
 
-    const admin = await prisma.admin.findUnique({ where: { id } });
-
-    if (!admin || admin.is_deleted) {
-      throw createError(404, 'Admin not found');
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: admin.user_id },
-    });
-
-    if (!user || user.is_deleted) {
-      throw createError(404, 'User not found');
-    }
-
-    if (data.email) {
-      const existingUserWithEmail = await prisma.user.findFirst({
-        where: {
-          email: data.email,
-          id: { not: user.id },
-        },
-      });
-
-      if (existingUserWithEmail) {
-        throw createError(409, 'Email already exists');
-      }
-    }
-
-    if (data.username) {
-      const existingUserWithUsername = await prisma.user.findFirst({
-        where: {
-          username: data.username,
-          id: { not: user.id },
-        },
-      });
-
-      if (existingUserWithUsername) {
-        throw createError(409, 'Username already exists');
-      }
-    }
-
-    if (data.phone_number) {
-      const existingUserWithPhoneNumber = await prisma.user.findFirst({
-        where: {
-          phone_number: data.phone_number,
-          id: { not: user.id },
-        },
-      });
-
-      if (existingUserWithPhoneNumber) {
-        throw createError(409, 'Phone number already exists');
-      }
-    }
-
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        username,
-        email,
-        phone_number,
-        profile_img: imagePath
-      }
-    });
-
-    const updatedAdmin = await prisma.admin.update({
-      where: { id },
-      data: adminData,
-      select: {
-        id: true,
+    const currentAdmin = await prisma.admin.findFirst({
+      where: { 
+        user_id: currentAdminId,
+        is_deleted: false,
         user: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-            phone_number: true,
-            profile_img: true
-          }
+          is_suspended: false
         }
       }
     });
 
+    if (!currentAdmin) {
+      throw createError(404, 'Current admin not found');
+    }
+
+    const targetAdmin = await prisma.admin.findFirst({
+      where: { 
+        id: targetAdminId,
+        is_deleted: false,
+        user: {
+          is_suspended: false
+        }
+      }
+    });
+
+    if (!targetAdmin) {
+      throw createError(404, 'Target admin not found');
+    }
+
+    if (currentAdmin.level <= targetAdmin.level) {
+      throw createError(403, 'Permission Denied: Insufficient privileges');
+    }
+
+    if (email) {
+      const emailExists = await prisma.user.findUnique({
+        where: { email }
+      });
+
+      if (emailExists && emailExists.id !== targetAdmin.user_id) {
+        throw createError(409, 'Email already exists');
+      }
+    }
+
+    if (username) {
+      const usernameExists = await prisma.user.findUnique({
+        where: { username }
+      });
+
+      if (usernameExists && usernameExists.id !== targetAdmin.user_id) {
+        throw createError(409, 'Username already exists');
+      }
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: targetAdmin.user_id },
+      data: {
+        email: email,
+        username: username,
+        updated_at: new Date(),
+      },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        profile_img: true,
+      }
+    });
+
+    const updatedAdmin = {
+      id: targetAdmin.id,
+      level: targetAdmin.level,
+      user: updatedUser
+    };
+
     return updatedAdmin;
   }
 
-  async deleteAdmin(id: string) {
-    const admin = await prisma.admin.findUnique({ where: { id } });
+  async deleteAdmin(currentAdminId: string, targetAdminId: string) {
+    const currentAdmin = await prisma.admin.findFirst({
+      where: {
+        user_id: currentAdminId,
+        is_deleted: false,
+        user: {
+          is_suspended: false
+        }
+      }
+    });
 
-    if (!admin || admin.is_deleted) {
-      throw createError(404, 'Admin not found');
+    if (!currentAdmin) {
+      throw createError(404, 'Current admin not found');
     }
 
-    const user = await prisma.user.findUnique({ where: { id: admin.user_id } });
+    const targetAdmin = await prisma.admin.findUnique({
+      where: { id: targetAdminId }
+    });
 
-    if (!user || user.is_deleted) {
+    if (!targetAdmin || targetAdmin.is_deleted) {
+      throw createError(404, 'Target admin not found');
+    }
+
+    if (currentAdmin.level <= targetAdmin.level) {
+      throw createError(403, 'Permission Denied: Insufficient privileges');
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: targetAdmin.user_id } });
+
+    if (!user || user.is_deleted || user.is_suspended) {
       throw createError(404, 'User not found');
     }
 
@@ -244,7 +287,7 @@ class AdminService {
       });
 
       await tx.admin.update({
-        where: { id },
+        where: { id: targetAdminId },
         data: { is_deleted: true }
       });
     }).catch((error) => {
@@ -252,119 +295,111 @@ class AdminService {
     });
   }
 
-  async getAdminProfile(id: string): Promise<Partial<User> | null> {
-    const user = await prisma.user.findFirst({
-      where: { id, is_deleted: false },
+  async getAdminProfile(adminId: string): Promise<Partial<Admin> | null> {
+    const admin = await prisma.admin.findFirst({
+      where: { id: adminId, is_deleted: false, user: { is_suspended: false } },
       select: {
         id: true,
-        username: true,
-        email: true,
-        phone_number: true,
-        profile_img: true,
-        admin: {
-          select: {
-            id: true
-          }
-        }
-      }
-    });
-
-    if (!user) {
-      throw createError(404, 'User not found');
-    }
-
-    return user;
-  }
-
-  async updateAdminProfile(id: string, data: Partial<User>, imagePath: string): Promise<Partial<User> | null> {
-    const {
-      username,
-      email,
-      phone_number,
-      ...adminData
-    } = data;
-
-    const admin = await prisma.admin.findUnique({ where: { id } });
-
-    if (!admin || admin.is_deleted) {
-      throw createError(404, 'Admin not found');
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: admin.user_id },
-    });
-
-    if (!user || user.is_deleted) {
-      throw createError(404, 'User not found');
-    }
-
-    if (data.email) {
-      const existingUserWithEmail = await prisma.user.findFirst({
-        where: {
-          email: data.email,
-          id: { not: user.id },
-        },
-      });
-
-      if (existingUserWithEmail) {
-        throw createError(409, 'Email already exists');
-      }
-    }
-
-    if (data.username) {
-      const existingUserWithUsername = await prisma.user.findFirst({
-        where: {
-          username: data.username,
-          id: { not: user.id },
-        },
-      });
-
-      if (existingUserWithUsername) {
-        throw createError(409, 'Username already exists');
-      }
-    }
-
-    if (data.phone_number) {
-      const existingUserWithPhoneNumber = await prisma.user.findFirst({
-        where: {
-          phone_number: data.phone_number,
-          id: { not: user.id },
-        },
-      });
-
-      if (existingUserWithPhoneNumber) {
-        throw createError(409, 'Phone number already exists');
-      }
-    }
-
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        username,
-        email,
-        phone_number,
-        profile_img: imagePath
-      }
-    });
-
-    const updatedprofile = await prisma.admin.update({
-      where: { id },
-      data: adminData,
-      select: {
-        id: true,
+        level: true,
         user: {
           select: {
             id: true,
-            username: true,
             email: true,
-            phone_number: true,
+            username: true,
             profile_img: true
           }
         }
       }
     });
 
-    return updatedprofile;
+    if (!admin) {
+      throw createError(404, 'Admin not found');
+    }
+
+    return admin;
+  }
+
+  async updateAdminProfile(adminId: string, data: { email: string; username: string }): Promise<Partial<Admin> | null> {
+    const { email, username } = data;
+
+    const admin = await prisma.admin.findFirst({
+      where: {
+        user_id: adminId,
+        is_deleted: false,
+        user: {
+          is_suspended: false
+        }
+      }
+    });
+
+    if (!admin) {
+      throw createError(404, 'Admin not found');
+    }
+
+    if (email) {
+      const emailExists = await prisma.user.findUnique({
+        where: { email }
+      });
+
+      if (emailExists && emailExists.id !== admin.user_id) {
+        throw createError(409, 'Email already exists');
+      }
+    }
+
+    if (username) {
+      const usernameExists = await prisma.user.findUnique({
+        where: { username }
+      });
+
+      if (usernameExists && usernameExists.id !== admin.user_id) {
+        throw createError(409, 'Username already exists');
+      }
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: admin.user_id },
+      data: {
+        email: email,
+        username: username,
+        updated_at: new Date()
+      },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        profile_img: true,
+      }
+    });
+
+    const updatedAdmin = {
+      id: admin.id,
+      level: admin.level,
+      user: updatedUser
+    };
+
+    return updatedAdmin;
+  }
+
+  async getAdminAnalytics(): Promise<Object> {
+    const all_admins = await prisma.admin.count();
+
+    const active_admins = await prisma.admin.count({
+      where: {
+        is_deleted: false
+      },
+    });
+
+    const deleted_admins = await prisma.admin.count({
+      where: { is_deleted: true },
+    });
+
+    // ! More analytics
+
+    return {
+      all_admins,
+      active_admins,
+      deleted_admins
+    };
   }
 }
 

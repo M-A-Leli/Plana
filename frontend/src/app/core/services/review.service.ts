@@ -39,4 +39,8 @@ export class ReviewService {
   getReviewsByEventId(id: string): Observable<Review[]> {
     return this.http.get<Review[]>(`${this.baseUrl}/event/${id}`);
   }
+
+  getReviewAnalytics(): Observable<Object> {
+    return this.http.get<Object>(`${this.baseUrl}/analytics`);
+  }
 }

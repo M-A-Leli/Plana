@@ -39,4 +39,32 @@ export class UsersService {
   updateUserProfile(user: User): Observable<User> {
     return this.http.put<User>(`${this.baseUrl}/profile`, user);
   }
+
+  getUserProfileImage(): Observable<User> {
+    return this.http.get<User>(`${this.baseUrl}/profile-image`);
+  }
+
+  updateUserProfileImage(user: User): Observable<User> {
+    return this.http.put<User>(`${this.baseUrl}/profile-image`, user);
+  }
+
+  getActiveUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.baseUrl}/active`);
+  }
+
+  getSuspendedUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.baseUrl}/suspended`);
+  }
+
+  getDeletedUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.baseUrl}/deleted`);
+  }
+
+  suspendUser(id: string): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/suspend/${id}`, null);
+  }
+
+  getUserAnalytics(): Observable<Object> {
+    return this.http.get<Object>(`${this.baseUrl}/analytics`);
+  }
 }
