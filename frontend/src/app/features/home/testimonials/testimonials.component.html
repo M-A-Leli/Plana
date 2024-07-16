@@ -2,35 +2,17 @@
   <h2 class="section-title">What Our Users Say</h2>
   <div class="carousel">
     <div class="carousel-inner">
-      <div class="carousel-item active">
+      <div
+        class="carousel-item"
+        *ngFor="let testimonial of testimonials; let i = index"
+        [class.active]="i === currentIndex"
+      >
         <div class="testimonial">
-          <img src="assets/images/user1.jpg" alt="User 1" class="testimonial-image" />
+          <img [src]="testimonial.image" [alt]="testimonial.name" class="testimonial-image" />
           <blockquote class="testimonial-quote">
-            <p>"Plana made organizing our annual conference a breeze. The user interface is intuitive and the features are exactly what we needed."</p>
+            <p>{{ testimonial.quote }}</p>
             <footer>
-              <cite class="testimonial-name">Jane Doe</cite> - Event Organizer
-            </footer>
-          </blockquote>
-        </div>
-      </div>
-      <div class="carousel-item">
-        <div class="testimonial">
-          <img src="assets/images/user2.jpg" alt="User 2" class="testimonial-image" />
-          <blockquote class="testimonial-quote">
-            <p>"I found the perfect events to attend through Plana. Booking tickets was seamless, and I loved the reminders I received."</p>
-            <footer>
-              <cite class="testimonial-name">John Smith</cite> - Event Attendee
-            </footer>
-          </blockquote>
-        </div>
-      </div>
-      <div class="carousel-item">
-        <div class="testimonial">
-          <img src="assets/images/user3.jpg" alt="User 3" class="testimonial-image" />
-          <blockquote class="testimonial-quote">
-            <p>"The analytics and reporting features in Plana helped us track our event's success in real-time. Highly recommend it!"</p>
-            <footer>
-              <cite class="testimonial-name">Sarah Lee</cite> - Event Manager
+              <cite class="testimonial-name">{{ testimonial.name }}</cite> - {{ testimonial.role }}
             </footer>
           </blockquote>
         </div>

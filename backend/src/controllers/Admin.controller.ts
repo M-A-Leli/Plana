@@ -1,8 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import createError from 'http-errors';
-import multer from 'multer';
 import AdminService from '../services/Admin.service';
-import { uploadSingle } from '../utils/ImageUpload.util';
 
 class AdminController {
 
@@ -31,52 +28,29 @@ class AdminController {
   }
 
   createAdmin = async (req: Request, res: Response, next: NextFunction) => {
-    uploadSingle(req, res, async (err) => {
-      if (err instanceof multer.MulterError) {
-        return next(createError(400, err.message));
-      } else if (err) {
-        return next(createError(400, err.message));
-      }
-
-      if (!req.file) {
-        return next(createError(400, 'No file uploaded'));
-      }
-
-      try {
-        const imagePath = req.file.path;
-        const admin = await this.adminService.createAdmin(req.body, imagePath);
-        res.status(201).json(admin);
-      } catch (error: any) {
-        next(error);
-      }
-    });
+    try {
+      const user_id = req.user?.id as string;
+      const admin = await this.adminService.createAdmin(user_id, req.body);
+      res.status(201).json(admin);
+    } catch (error: any) {
+      next(error);
+    }
   }
 
   updateAdmin = async (req: Request, res: Response, next: NextFunction) => {
-    uploadSingle(req, res, async (err) => {
-      if (err instanceof multer.MulterError) {
-        return next(createError(400, err.message));
-      } else if (err) {
-        return next(createError(400, err.message));
-      }
-
-      if (!req.file) {
-        return next(createError(400, 'No file uploaded'));
-      }
-
-      try {
-        const imagePath = req.file.path;
-        const admin = await this.adminService.updateAdmin(req.params.id, req.body, imagePath);
-        res.status(201).json(admin);
-      } catch (error: any) {
-        next(error);
-      }
-    });
+    try {
+      const user_id = req.user?.id as string;
+      const admin = await this.adminService.updateAdmin(user_id, req.params.id, req.body);
+      res.status(201).json(admin);
+    } catch (error: any) {
+      next(error);
+    }
   }
 
   deleteAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.adminService.deleteAdmin(req.params.id);
+      const user_id = req.user?.id as string;
+      await this.adminService.deleteAdmin(user_id, req.params.id);
       res.status(204).send();
     } catch (error: any) {
       next(error);
@@ -94,26 +68,22 @@ class AdminController {
   }
 
   updateAdminProfile = async (req: Request, res: Response, next: NextFunction) => {
-    uploadSingle(req, res, async (err) => {
-      if (err instanceof multer.MulterError) {
-        return next(createError(400, err.message));
-      } else if (err) {
-        return next(createError(400, err.message));
-      }
+    try {
+      const user_id = req.user?.id as string;
+      const updatedProfile = await this.adminService.updateAdminProfile(user_id, req.body);
+      res.status(201).json(updatedProfile);
+    } catch (error: any) {
+      next(error);
+    }
+  }
 
-      if (!req.file) {
-        return next(createError(400, 'No file uploaded'));
-      }
-
-      try {
-        const user_id = req.user?.id as string;
-        const imagePath = req.file.path;
-        const updatedProfile = await this.adminService.updateAdminProfile(user_id, req.body, imagePath);
-        res.status(201).json(updatedProfile);
-      } catch (error: any) {
-        next(error);
-      }
-    });
+  getAdminAnalytics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const analytics = await this.adminService.getAdminAnalytics();
+      res.status(200).json(analytics);
+    } catch (error: any) {
+      next(error);
+    }
   }
 }
 

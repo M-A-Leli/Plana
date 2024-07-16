@@ -1,0 +1,43 @@
+.delete-attendee {
+  width: 100%;
+  padding: 1rem;
+  text-align: center;
+  color: #ffffff;
+}
+
+.message {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-radius: 5px;
+}
+
+.error {
+  background-color: #ffcccc;
+  color: #cc0000;
+}
+
+.success {
+  background-color: #ccffcc;
+  color: #006600;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #cb3cff;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+button:hover {
+  background-color: #a800d8;
+  box-shadow: 0 4px 6px -1px rgba(203, 60, 255, 0.5);
+}

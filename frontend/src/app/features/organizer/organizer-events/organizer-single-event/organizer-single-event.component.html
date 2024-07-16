@@ -1,0 +1,16 @@
+<div class="event-details" *ngIf="event">
+  <div class="image-display">
+    <img [src]="event.images?.[currentImageIndex]?.url" alt="Event Image">
+    <div class="image-navigation">
+      <button (click)="previousImage()" [disabled]="currentImageIndex === 0">Previous</button>
+      <button (click)="nextImage()" [disabled]="event.images && currentImageIndex === event.images.length - 1">Next</button>
+    </div>
+  </div>
+  <div class="details">
+    <h2>{{ event.title }}</h2>
+    <p>{{ event.description }}</p>
+    <p><strong>Date:</strong> {{ event.date | date: 'longDate' }}</p>
+    <p><strong>Time:</strong> {{ event.time | date: 'shortTime' }}</p>
+    <p><strong>Venue:</strong> {{ event.venue }}</p>
+  </div>
+</div>

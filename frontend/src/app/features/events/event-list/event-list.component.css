@@ -1,75 +1,98 @@
-.events {
-  padding: 60px 20px;
-  background-color: rgba(0, 0, 0, 0.9);
+.event-list {
+  padding: 20px;
+  padding-top: 70px;
   color: #ffffff;
-  text-align: center;
+  background-color: #081028;
 }
 
 .section-title {
-  font-size: 32px;
-  margin-bottom: 40px;
-  color: #ff007f;
+  font-size: 2em;
+  margin-bottom: 20px;
+  color: #cb3cff;
 }
 
 .events-filters {
   display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 40px;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .events-filters input,
 .events-filters select {
   padding: 10px;
-  border: none;
   border-radius: 5px;
-  font-size: 16px;
+  border: 1px solid #aeb9e1;
+  background-color: #061027;
+  color: #ffffff;
 }
 
-.events-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+.events-container {
+  display: flex;
+  flex-wrap: wrap;
   gap: 20px;
 }
 
 .event-card {
-  background: rgba(255, 255, 255, 0.1);
+  flex: 1 1 calc(33.333% - 20px);
+  background-color: #0b1739;
   padding: 20px;
-  border-radius: 15px;
-  text-align: left;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  transition: transform 0.3s ease;
 }
 
-.event-card img {
+.event-card:hover {
+  transform: translateY(-10px);
+}
+
+.event-image {
   width: 100%;
   height: auto;
   border-radius: 10px;
+  object-fit: cover;
 }
 
-.event-card h3 {
-  font-size: 24px;
-  margin: 15px 0;
-  color: #ff007f;
+.event-details {
+  margin-top: 10px;
 }
 
-.event-card p {
-  margin: 10px 0;
+.event-title {
+  font-size: 1.5em;
+  color: #00c2ff;
+}
+
+.event-date,
+.event-venue,
+.event-description {
+  margin: 5px 0;
+  color: #aeb9e1;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination-controls .ngx-pagination {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.pagination-controls .ngx-pagination .current {
+  background-color: #cb3cff;
   color: #ffffff;
-}
-
-.event-card button {
-  display: block;
-  padding: 10px 20px;
-  background-color: #ff007f;
-  color: #ffffff;
-  text-transform: uppercase;
-  font-weight: bold;
-  border: none;
   border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  padding: 5px 10px;
 }
 
-.event-card button:hover {
-  background-color: #ff4081;
+@media (max-width: 768px) {
+  .events-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .event-card {
+    width: 90%;
+  }
 }

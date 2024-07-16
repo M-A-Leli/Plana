@@ -1,1 +1,22 @@
-<p>admin-topbar works!</p>
+<!-- top-bar.component.html -->
+<div class="top-bar">
+  <div class="search-section">
+    <form (submit)="onSearch(searchTerm.value)">
+      <input type="text" #searchTerm placeholder="Search...">
+      <button type="submit">Search</button>
+    </form>
+  </div>
+  <div class="nav-icons">
+    <img src="/icons/calendar.png" alt="calendar" (click)="navigate('/admin/calendar')">
+    <img src="/icons/notification.png" alt="notifications" (click)="navigate('/admin/notifications')">
+    <img src="/icons/settings.png" alt="settings" (click)="navigate('/admin/settings')">
+  </div>
+  <div class="profile-section" (click)="toggleDropdown()">
+    <!-- ! -->
+    <img src="/icons/profile.png" alt="profile" class="profile-pic">
+    <div class="dropdown-menu" [class.show]="dropdownVisible">
+      <a (click)="navigate('/admin/profile')">Profile</a>
+      <a (click)="navigate('/admin/logout')">Logout</a>
+    </div>
+  </div>
+</div>

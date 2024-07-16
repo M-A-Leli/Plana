@@ -1,1 +1,9 @@
-<p>admin works!</p>
+<div class="admin-layout">
+  <app-admin-sidebar></app-admin-sidebar>
+  <div class="main" [class.collapsed]="isSidebarCollapsed">
+    <app-admin-topbar></app-admin-topbar>
+    <div class="content-section">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

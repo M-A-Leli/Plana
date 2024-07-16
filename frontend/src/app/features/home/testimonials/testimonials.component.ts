@@ -1,34 +1,46 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-testimonials',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './testimonials.component.html',
   styleUrl: './testimonials.component.css'
 })
 export class TestimonialsComponent {
-  currentSlide: number = 0;
-  totalSlides: number;
+  testimonials = [
+    {
+      // image: '/user1.jpg',
+      image: '/profile3.png',
+      quote: 'Plana made organizing our annual conference a breeze. The user interface is intuitive and the features are exactly what we needed.',
+      name: 'Jane Doe',
+      role: 'Event Organizer'
+    },
+    {
+      // image: '/user2.jpg',
+      image: '/profile3.png',
+      quote: 'I found the perfect events to attend through Plana. Booking tickets was seamless, and I loved the reminders I received.',
+      name: 'John Smith',
+      role: 'Event Attendee'
+    },
+    {
+      // image: '/user3.jpg',
+      image: '/profile3.png',
+      quote: 'The analytics and reporting features in Plana helped us track our event\'s success in real-time. Highly recommend it!',
+      name: 'Sarah Lee',
+      role: 'Event Manager'
+    }
+  ];
 
-  constructor() {
-    this.totalSlides = 3; // Adjust this according to the number of testimonials
+  currentIndex = 0;
+
+  prevSlide() {
+    this.currentIndex = (this.currentIndex > 0) ? this.currentIndex - 1 : this.testimonials.length - 1;
   }
 
-  ngOnInit(): void {}
-
-  nextSlide(): void {
-    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
-    this.updateCarousel();
+  nextSlide() {
+    this.currentIndex = (this.currentIndex < this.testimonials.length - 1) ? this.currentIndex + 1 : 0;
   }
 
-  prevSlide(): void {
-    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
-    this.updateCarousel();
-  }
-
-  updateCarousel(): void {
-    const carouselInner = document.querySelector('.carousel-inner') as HTMLElement;
-    carouselInner.style.transform = `translateX(-${this.currentSlide * 100}%)`;
-  }
 }

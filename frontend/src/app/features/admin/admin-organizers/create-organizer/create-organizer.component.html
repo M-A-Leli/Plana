@@ -1,0 +1,35 @@
+<div class="create-organizer">
+  <div *ngIf="errorMessage" class="message error">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="message success">{{ successMessage }}</div>
+  <h2>Create Organizer</h2>
+  <form [formGroup]="createOrganizerForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="company">Company</label>
+      <input id="company" formControlName="company" type="text" autocomplete="off" />
+    </div>
+    <div class="form-group">
+      <label for="bio">Bio</label>
+      <textarea id="bio" formControlName="bio"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input id="username" formControlName="username" type="text" autocomplete="off" />
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input id="email" formControlName="email" type="email" autocomplete="off" />
+    </div>
+    <div class="form-group">
+      <label for="phone_number">Phone Number</label>
+      <input id="phone_number" formControlName="phone_number" type="text" autocomplete="off" />
+    </div>
+    <div class="form-group">
+      <label for="profile_img">Profile Image</label>
+      <input id="profile_img" formControlName="profile_img" type="text" autocomplete="off" />
+    </div>
+    <div class="form-actions">
+      <button type="submit" [disabled]="createOrganizerForm.invalid">Create</button>
+      <button type="button" (click)="onCancel()">Cancel</button>
+    </div>
+  </form>
+</div>

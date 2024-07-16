@@ -53,15 +53,11 @@ class NotificationService {
         return notification;
     }
 
-    async createNotification(data: Omit<Notification, 'id'>): Promise<Partial<Notification>> {
-        const user = await prisma.user.findUnique({
-            where: {
-                id: data.user_id
-            }
-        });
+    async createNotification(id: string, data: Omit<Notification, 'id'>): Promise<Partial<Notification>> {
+        const user = await prisma.user.findUnique({ where: { id } });
 
-        if (!user || user.is_deleted) {
-            throw createError(404, 'user not found');
+        if (!user || user.is_deleted || user.is_suspended) {
+            throw createError(404, 'User not found');
         }
 
         const newNotification = await prisma.notification.create({
@@ -102,7 +98,7 @@ class NotificationService {
     async getNotificationsByUserId(id: string): Promise<Partial<Notification>[]> {
         const user = await prisma.user.findUnique({ where: { id } });
 
-        if (!user || user.is_deleted) {
+        if (!user || user.is_deleted || user.is_suspended) {
             throw createError(404, 'User not found');
         }
 
@@ -133,7 +129,7 @@ class NotificationService {
     async getUnreadNotificationsByUserId(id: string): Promise<Partial<Notification>[]> {
         const user = await prisma.user.findUnique({ where: { id } });
 
-        if (!user || user.is_deleted) {
+        if (!user || user.is_deleted || user.is_suspended) {
             throw createError(404, 'User not found');
         }
 
@@ -175,6 +171,42 @@ class NotificationService {
             data: { read: true },
         });
     }
+
+    async getNotificationAnalytics(): Promise<Object> {
+        const all_notifications = await prisma.notification.count();
+    
+        const active_notifications = await prisma.notification.count({
+          where: {
+            is_deleted: false
+          },
+        });
+
+        const read_notifications = await prisma.notification.count({
+          where: {
+            read: true
+          },
+        });
+
+        const unread_notifications = await prisma.notification.count({
+          where: {
+            read: false
+          },
+        });
+    
+        const deleted_notifications = await prisma.notification.count({
+          where: { is_deleted: true },
+        });
+    
+        // ! More analytics
+    
+        return {
+          all_notifications,
+          active_notifications,
+          read_notifications,
+          unread_notifications,
+          deleted_notifications
+        };
+      }
 }
 
 export default NotificationService;

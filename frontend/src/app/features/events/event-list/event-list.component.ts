@@ -3,14 +3,8 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
-
-interface Event {
-  title: string;
-  date: string;
-  location: string;
-  imageUrl: string;
-  category: string;
-}
+import { EventService } from '../../../core/services/event.service';
+import Event from '../../../shared/models/Event';
 
 @Component({
   selector: 'app-event-list',
@@ -20,42 +14,34 @@ interface Event {
   styleUrl: './event-list.component.css'
 })
 export class EventListComponent {
-  events: Event[] = [
-    {
-      title: 'Event 1',
-      date: '2024-08-01',
-      location: 'City Hall',
-      imageUrl: 'assets/event1.jpg',
-      category: 'Music'
-    },
-    {
-      title: 'Event 2',
-      date: '2024-08-15',
-      location: 'Convention Center',
-      imageUrl: 'assets/event2.jpg',
-      category: 'Tech'
-    },
-    // Add more events here
-  ];
+  events: Event[] = [];
+  filteredEvents: Event[] = [];
   searchQuery: string = '';
   selectedCategory: string = '';
-  categories: string[] = ['Music', 'Tech', 'Sports', 'Arts'];
+  categories: string[] = ['Music', 'Sports', 'Conference', 'Workshop']; // Add relevant categories
+  page: number = 1;
 
-  constructor() {}
+  constructor(private eventService: EventService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.fetchEvents();
+  }
 
-  filteredEvents(): Event[] {
-    return this.events.filter(event => {
-      return (
-        event.title.toLowerCase().includes(this.searchQuery.toLowerCase()) &&
-        (this.selectedCategory ? event.category === this.selectedCategory : true)
-      );
+  fetchEvents(): void {
+    this.eventService.getAllEvents().subscribe((data: Event[]) => {
+      this.events = data;
+      this.filteredEvents = data;
     });
   }
 
-  viewEventDetails(event: Event): void {
-    // Implement the logic to view event details
-    console.log('View details for', event);
+  filterEvents(): void {
+    this.filteredEvents = this.events.filter(event =>
+      (this.selectedCategory === '' || event.category === this.selectedCategory) &&
+      (this.searchQuery === '' || event.title.toLowerCase().includes(this.searchQuery.toLowerCase()))
+    );
+  }
+
+  ngOnChanges(): void {
+    this.filterEvents();
   }
 }

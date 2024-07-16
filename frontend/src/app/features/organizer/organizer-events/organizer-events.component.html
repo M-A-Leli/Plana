@@ -1,0 +1,24 @@
+<div class="events-layout">
+  <div class="left-display">
+    <button (click)="onCreateEvent()">Create Event</button>
+    <app-organizer-list-events (viewEvent)="onViewEvent($event)" (editEvent)="onEditEvent($event)" (deleteEvent)="onDeleteEvent($event)"></app-organizer-list-events>
+  </div>
+  <div class="right-display">
+    <div *ngIf="showCreateEvent">
+      <app-organizer-create-event (close)="onClose()"></app-organizer-create-event>
+    </div>
+    <div *ngIf="showSingleEvent">
+      <app-organizer-single-event [eventId]="selectedEventId || '' " (close)="onClose()"></app-organizer-single-event>
+    </div>
+    <div *ngIf="showEditEvent">
+      <!-- <app-organizer-edit-event [eventId]="selectedEventId || '' " (close)="onClose()"></app-organizer-edit-event> -->
+    </div>
+    <div *ngIf="showDeleteEvent">
+      <!-- <app-organizer-delete-event [eventId]="selectedEventId || '' " (close)="onClose()"></app-organizer-delete-event> -->
+    </div>
+    <div *ngIf="!showCreateEvent && !showSingleEvent && !showEditEvent && !showDeleteEvent" class="default-display">
+      <img src="/logo.png" alt="Logo">
+      <h1>Company Name</h1>
+    </div>
+  </div>
+</div>

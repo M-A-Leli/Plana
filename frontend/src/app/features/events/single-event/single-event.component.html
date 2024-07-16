@@ -1,23 +1,40 @@
 <app-header></app-header>
-<section class="event-details" *ngIf="event">
-  <button class="back-button" (click)="goBack()">Back to Events</button>
-  <div class="event-header">
-    <img [src]="event.imageUrl" alt="{{ event.title }}" />
-    <div class="event-info">
-      <h1>{{ event.title }}</h1>
-      <p class="event-date">{{ event.date | date:'fullDate' }}</p>
-      <p class="event-time">{{ event.time }}</p>
-      <p class="event-location">{{ event.location }}</p>
+<!-- <button class="back-button" (click)="goBack()">Back to Events</button> -->
+<!-- single-event.component.html -->
+<section class="single-event">
+  <div class="event-details">
+    <h1 class="event-title">{{ event.title }}</h1>
+    <p class="event-description">{{ event.description }}</p>
+    <p class="event-date">Date: {{ event.date | date: 'mediumDate' }}</p>
+    <p class="event-time">Time: {{ event.time | date: 'shortTime' }}</p>
+    <p class="event-venue">Venue: {{ event.venue }}</p>
+    <p class="event-organizer">Organizer: {{ event.organizer?.company }}</p>
+    <p class="event-rating">Rating: {{ event.average_rating }} ({{ event.number_of_reviews }} reviews)</p>
+  </div>
+  <div class="event-images">
+    <img [src]="event.images?.[currentImageIndex]?.url" alt="Event Image" class="current-image">
+    <div class="image-controls">
+      <button (click)="prevImage()">Previous</button>
+      <button (click)="nextImage()">Next</button>
     </div>
   </div>
-  <div class="event-description">
-    <h2>Description</h2>
-    <p>{{ event.description }}</p>
-  </div>
-  <div class="ticket-booking">
-    <h2>Book Tickets</h2>
-    <!-- Implement ticket booking logic here -->
-    <button (click)="bookTickets()">Book Now</button>
+</section>
+
+<section class="related-events">
+  <h2>Related Events</h2>
+  <div class="related-event-cards">
+    <div *ngFor="let event of relatedEvents" class="related-event-card">
+      <img [src]="event.images?.[0]?.url" alt="{{ event.title }}" class="related-event-image">
+      <div class="related-event-details">
+        <h3 class="related-event-title">{{ event.title }}</h3>
+        <p class="related-event-date">{{ event.date | date: 'mediumDate' }}</p>
+        <p class="related-event-venue">{{ event.venue }}</p>
+      </div>
+    </div>
   </div>
 </section>
 <app-footer></app-footer>
+<!-- <div class="ticket-booking">
+  <h2>Book Tickets</h2>
+  <button (click)="bookTickets()">Book Now</button>
+</div> -->

@@ -20,6 +20,7 @@ class AuthService {
                     }
                 },
                 organizers: {
+                    where: { approved: true },
                     select: {
                         id: true
                     }

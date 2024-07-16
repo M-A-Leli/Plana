@@ -1,1 +1,20 @@
-<p>reset-code-verification works!</p>
+<div class="reset-code-container">
+  <app-header></app-header>
+  <div class="reset-code-content">
+    <div class="reset-code-form">
+      <h2>Reset Code Verification</h2>
+      <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+      <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+      <form (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <input type="text" [(ngModel)]="resetCode" name="resetCode" placeholder="Enter Reset Code" required autocomplete="off">
+        </div>
+        <button type="submit">Verify Code</button>
+      </form>
+      <div class="reset-code-links">
+        <p>Didn't receive the code? <a (click)="resendCode()">Resend</a></p>
+        <p>Remember password? <a (click)="navigateToLogin()">Login here</a></p>
+      </div>
+    </div>
+  </div>
+</div>

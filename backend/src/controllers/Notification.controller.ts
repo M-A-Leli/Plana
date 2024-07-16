@@ -28,7 +28,8 @@ class NotificationController {
 
   createNotification = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const notification = await this.notificationService.createNotification(req.body);
+      const user_id = req.user?.id as string;
+      const notification = await this.notificationService.createNotification(user_id, req.body);
       res.status(201).json(notification);
     } catch (error: any) {
       next(error);
@@ -68,6 +69,15 @@ class NotificationController {
     try {
       await this.notificationService.markNotificationAsRead(req.params.id);
       res.status(204).send();
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getNotificationAnalytics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const analytics = await this.notificationService.getNotificationAnalytics();
+      res.status(200).json(analytics);
     } catch (error: any) {
       next(error);
     }

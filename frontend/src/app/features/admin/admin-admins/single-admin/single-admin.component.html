@@ -1,0 +1,13 @@
+<div class="view-admin">
+  <div *ngIf="admin">
+    <h2>{{ admin.user?.username }}</h2>
+    <div class="admin-details">
+      <img [src]="admin.user?.profile_img" alt="Profile Image">
+      <div class="details">
+        <p><strong>Email:</strong> {{ admin.user?.email }}</p>
+        <p><strong>Phone Number:</strong> {{ admin.user?.phone_number }}</p>
+      </div>
+    </div>
+  </div>
+  <button (click)="onBack()">Back</button>
+</div>

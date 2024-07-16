@@ -1,1 +1,27 @@
-<p>admin-dashboard works!</p>
+<div class="admin-entity-layout">
+  <div class="left-display">
+    <div class="highlights">
+      <div class="card" *ngFor="let card of highlightCards">
+        <h3>{{ card.title }}</h3>
+        <p>{{ card.value }}</p>
+      </div>
+    </div>
+    <div class="yearly-graph">
+      <canvas id="yearlyGraph"></canvas>
+    </div>
+    <div class="other-analytics">
+      <div class="card" *ngFor="let analytic of otherAnalytics">
+        <h3>{{ analytic.title }}</h3>
+        <p>{{ analytic.value }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="right-display">
+    <div class="profile">
+      <img [src]="profile.user.profile_img" alt="Profile Image">
+      <h2>{{ profile.user.username }}</h2>
+      <p>{{ profile.user.email }}</p>
+      <p>{{ profile.user.phone_number }}</p>
+    </div>
+  </div>
+</div>

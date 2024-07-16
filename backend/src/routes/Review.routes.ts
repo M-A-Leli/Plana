@@ -4,6 +4,7 @@ import AuthMiddleware from '../middleware/Authorization';
 
 const router = Router();
 
+router.get('/analytics', ReviewController.getReviewAnalytics); // Get review analytics
 router.get('/user', ReviewController.getReviewsByUserId); // Get user's reviews
 router.get('/', ReviewController.getAllReviews); // Get all reviews
 router.post('/', ReviewController.createReview); // Create review

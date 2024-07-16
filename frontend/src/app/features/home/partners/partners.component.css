@@ -1,41 +1,50 @@
 .partners {
-  padding: 60px 20px;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: #0b1739;
   color: #ffffff;
+  padding: 40px 20px;
   text-align: center;
 }
 
+.section-header {
+  margin-bottom: 40px;
+}
+
 .section-header h2 {
-  font-size: 36px;
-  color: #ff007f;
+  color: #cb3cff;
+  font-size: 2em;
   margin-bottom: 10px;
 }
 
 .section-header p {
-  font-size: 18px;
-  color: #ffffff;
-  margin-bottom: 40px;
+  color: #aeb9e1;
+  font-size: 1.2em;
 }
 
-.partner-logos {
+.carousel-container {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.carousel {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
+  white-space: nowrap;
+  transition: transform 0.1s linear;
 }
 
 .partner-logo {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  border-radius: 10px;
-  transition: transform 0.3s ease;
+  flex: 0 0 auto;
+  margin: 0 10px;
 }
 
 .partner-logo img {
-  max-width: 150px;
-  height: auto;
+  height: 100px;
+  width: auto;
+  object-fit: contain;
 }
 
-.partner-logo:hover {
-  transform: translateY(-10px);
+@media (max-width: 768px) {
+  .partner-logo img {
+    height: 70px;
+  }
 }

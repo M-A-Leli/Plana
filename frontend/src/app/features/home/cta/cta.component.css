@@ -1,8 +1,8 @@
 .cta-section {
-  padding: 60px 20px;
-  background-color: rgba(255, 0, 127, 0.1);
-  display: flex;
-  justify-content: center;
+  background-color: #081028;
+  color: #ffffff;
+  padding: 40px 20px;
+  text-align: center;
 }
 
 .cta-container {
@@ -10,43 +10,47 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
-  max-width: 1200px;
 }
 
 .cta-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: #0b1739;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  text-align: center;
-  width: 300px;
-  transition: transform 0.3s;
+  max-width: 300px;
+  width: 100%;
+  transition: transform 0.3s ease;
 }
 
 .cta-card:hover {
-  transform: scale(1.05);
+  transform: translateY(-10px);
 }
 
 .cta-icon img {
-  width: 80px;
-  height: 80px;
-  margin-bottom: 20px;
+  width: 50px;
+  height: 50px;
+  margin-bottom: 15px;
 }
 
 .cta-title {
-  font-size: 24px;
-  color: #ff007f;
-  margin-bottom: 10px;
+  color: #cb3cff;
+  font-size: 1.5em;
+  margin: 10px 0;
 }
 
 .cta-description {
-  font-size: 16px;
-  color: #ffffff;
+  color: #aeb9e1;
+  font-size: 1em;
 }
 
 @media (max-width: 768px) {
+  .cta-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
   .cta-card {
-    width: 90%;
+    max-width: none;
+    margin-bottom: 20px;
   }
 }

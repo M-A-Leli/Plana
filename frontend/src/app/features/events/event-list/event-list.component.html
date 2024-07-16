@@ -1,22 +1,27 @@
 <app-header></app-header>
-<section class="events">
+<section class="event-list">
   <h1 class="section-title">Upcoming Events</h1>
   <div class="events-filters">
-    <!-- Add filters for category, date, etc. -->
-    <input type="text" placeholder="Search events..." [(ngModel)]="searchQuery" />
-    <select [(ngModel)]="selectedCategory">
+    <input type="text" placeholder="Search events..." [(ngModel)]="searchQuery" (input)="filterEvents()" />
+    <select [(ngModel)]="selectedCategory" (change)="filterEvents()">
       <option value="">All Categories</option>
       <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
     </select>
   </div>
-  <div class="events-list">
-    <div *ngFor="let event of filteredEvents()" class="event-card">
-      <img [src]="event.imageUrl" alt="{{ event.title }}" />
-      <h3>{{ event.title }}</h3>
-      <p>{{ event.date | date }}</p>
-      <p>{{ event.location }}</p>
-      <button (click)="viewEventDetails(event)">View Details</button>
+  <div class="events-container">
+    <!-- <div class="event-card" *ngFor="let event of filteredEvents | paginate: { itemsPerPage: 6, currentPage: page }"> -->
+    <div class="event-card" *ngFor="let event of filteredEvents">
+      <!-- <img [src]="event.images?.[0]?.url ?? '/event.jpeg'" alt="{{ event.title }}" class="event-image" /> -->
+      <img src="/event.jpeg" alt="{{ event.title }}" class="event-image" />
+      <div class="event-details">
+        <h3 class="event-title">{{ event.title }}</h3>
+        <p class="event-date">{{ event.date | date: 'longDate' }} at {{ event.time | date: 'shortTime' }}</p>
+        <p class="event-venue">{{ event.venue }}</p>
+        <p class="event-description">{{ event.description }}</p>
+        <p class="event-organizer">Organized by: {{ event.organizer?.company }}</p>
+      </div>
     </div>
   </div>
+  <!-- <pagination-controls (pageChange)="page = $event"></pagination-controls> -->
 </section>
 <app-footer></app-footer>

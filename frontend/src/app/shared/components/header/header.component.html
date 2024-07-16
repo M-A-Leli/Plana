@@ -1,14 +1,18 @@
 <header class="header" [class.scrolled]="isScrolled">
   <div class="header-content">
     <div class="logo">
-      <img src="assets/logo.png" alt="Plana Logo" />
+      <img src="/logo.svg" alt="Plana Logo" />
       <span class="company-name">Plana</span>
     </div>
     <nav class="nav-links" [class.active]="menuOpen">
-      <a routerLink="/" (click)="toggleMenu()">Home</a>
-      <a routerLink="/events" (click)="toggleMenu()">Events</a>
-      <a routerLink="/about" (click)="toggleMenu()">About Us</a>
-      <a routerLink="/contact" (click)="toggleMenu()">Contact</a>
+      <!-- <a routerLink="/" >Home</a>
+      <a routerLink="/events" >Events</a>
+      <a routerLink="/about" >About Us</a>
+      <a routerLink="/contact" >Contact</a> -->
+      <a href="/">Home</a>
+      <a href="/events">Events</a>
+      <a href="#">About Us</a>
+      <a href="#">Contact</a>
     </nav>
     <div class="auth-buttons" [class.active]="menuOpen">
       <button (click)="navigateToLogin()">Login</button>

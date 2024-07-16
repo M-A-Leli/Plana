@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to the Admin Team</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #081028;
+      color: #ffffff;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #061027;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    h1 {
+      color: #00c2ff;
+    }
+    p {
+      color: #aeb9e1;
+    }
+    .highlight {
+      color: #cb3cff;
+    }
+    .button {
+      display: inline-block;
+      padding: 10px 20px;
+      color: #ffffff;
+      background-color: #0e43fb;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to the Admin Team, <%= username %>!</h1>
+    <p>Your admin account has been created successfully. Here are your login details:</p>
+    <p><strong>Email:</strong> <%= email %></p>
+    <p><strong>Password:</strong> <span class="highlight"><%= password %></span></p>
+    <p>Your password must be 8 to 16 characters long and contain uppercase and lowercase letters, numbers, and special characters.</p>
+    <p>You can log in using the link below and change your password after logging in:</p>
+    <a href="<%= loginUrl %>" class="button">Log In</a>
+    <p>Thank you for joining our team. We are excited to have you on board!</p>
+    <p>Best regards,<br>Plana Team</p>
+  </div>
+</body>
+</html>

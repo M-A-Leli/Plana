@@ -1,8 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import createError from 'http-errors';
-import multer from 'multer';
 import OrganizerService from '../services/Organizer.service';
-import { uploadSingle } from '../utils/ImageUpload.util';
 
 class OrganizerController {
 
@@ -30,48 +27,32 @@ class OrganizerController {
     }
   }
 
-  createOrganizer = async (req: Request, res: Response, next: NextFunction) => {
-    uploadSingle(req, res, async (err) => {
-      if (err instanceof multer.MulterError) {
-        return next(createError(400, err.message));
-      } else if (err) {
-        return next(createError(400, err.message));
-      }
+  async createOrganizer(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user_id = req.user?.id as string;
+      const response = await this.organizerService.createOrganizer(user_id, req.body);
+      res.status(201).json(response);
+    } catch (error: any) {
+      next(error);
+    }
+  }
 
-      if (!req.file) {
-        return next(createError(400, 'No file uploaded'));
-      }
-
-      try {
-        const imagePath = req.file.path;
-        const organizer = await this.organizerService.createOrganizer(req.body, imagePath);
-        res.status(201).json(organizer);
-      } catch (error: any) {
-        next(error);
-      }
-    });
+  async approveOrganizer(req: Request, res: Response, next: NextFunction) {
+    try {
+      const organizer = await this.organizerService.approveOrganizer(req.params.id);
+      res.status(200).json(organizer);
+    } catch (error: any) {
+      next(error);
+    }
   }
 
   updateOrganizer = async (req: Request, res: Response, next: NextFunction) => {
-    uploadSingle(req, res, async (err) => {
-      if (err instanceof multer.MulterError) {
-        return next(createError(400, err.message));
-      } else if (err) {
-        return next(createError(400, err.message));
-      }
-
-      if (!req.file) {
-        return next(createError(400, 'No file uploaded'));
-      }
-
-      try {
-        const imagePath = req.file.path;
-        const organizer = await this.organizerService.updateOrganizer(req.params.id, req.body, imagePath);
-        res.status(201).json(organizer);
-      } catch (error: any) {
-        next(error);
-      }
-    });
+    try {
+      const organizer = await this.organizerService.updateOrganizer(req.params.id, req.body);
+      res.status(201).json(organizer);
+    } catch (error: any) {
+      next(error);
+    }
   }
 
   deleteOrganizer = async (req: Request, res: Response, next: NextFunction) => {
@@ -94,26 +75,22 @@ class OrganizerController {
   }
 
   updateOrganizerProfile = async (req: Request, res: Response, next: NextFunction) => {
-    uploadSingle(req, res, async (err) => {
-      if (err instanceof multer.MulterError) {
-        return next(createError(400, err.message));
-      } else if (err) {
-        return next(createError(400, err.message));
-      }
+    try {
+      const user_id = req.user?.id as string;
+      const updatedProfile = await this.organizerService.updateOrganizerProfile(user_id, req.body);
+      res.status(201).json(updatedProfile);
+    } catch (error: any) {
+      next(error);
+    }
+  }
 
-      if (!req.file) {
-        return next(createError(400, 'No file uploaded'));
-      }
-
-      try {
-        const user_id = req.user?.id as string;
-        const imagePath = req.file.path;
-        const updatedProfile = await this.organizerService.updateOrganizerProfile(user_id, req.body, imagePath);
-        res.status(201).json(updatedProfile);
-      } catch (error: any) {
-        next(error);
-      }
-    });
+  getOrganizerAnalytics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const analytics = await this.organizerService.getOrganizerAnalytics();
+      res.status(200).json(analytics);
+    } catch (error: any) {
+      next(error);
+    }
   }
 }
 

@@ -7,6 +7,8 @@
     <div class="accordion-item">
       <h3 class="accordion-header" (click)="toggleAccordion(i)">
         {{ faq.question }}
+        <span class="icon" *ngIf="activeIndex !== i">▼</span>
+        <span class="icon" *ngIf="activeIndex === i">▲</span>
       </h3>
       <div class="accordion-body" [class.active]="activeIndex === i">
         <p>{{ faq.answer }}</p>

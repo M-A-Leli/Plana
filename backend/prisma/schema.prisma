@@ -13,7 +13,6 @@ model User {
   password     String
   salt         String
   username     String   @unique
-  phone_number String?  @unique
   profile_img  String?
   is_deleted   Boolean  @default(false)
   is_suspended Boolean  @default(false)
@@ -32,8 +31,6 @@ model User {
 model Attendee {
   id         String  @id @default(uuid())
   user_id    String  @unique
-  first_name String?
-  last_name  String?
   bio        String?
   is_deleted Boolean @default(false)
 
@@ -52,6 +49,7 @@ model Organizer {
   bio        String?
   events     Event[]
   is_deleted Boolean @default(false)
+  approved   Boolean @default(false)
 
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
@@ -61,6 +59,7 @@ model Organizer {
 model Admin {
   id         String  @id @default(uuid())
   user_id    String  @unique
+  level      Int
   is_deleted Boolean @default(false)
 
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)

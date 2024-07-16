@@ -1,0 +1,45 @@
+<div class="admin-entity-layout">
+  <div class="left-display">
+    <button class="create-btn" (click)="onCreate()">Create Organizer</button>
+    <table>
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Company</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Phone Number</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let organizer of organizers">
+          <td><img [src]="organizer.user?.profile_img" alt="Organizer Image"></td>
+          <td>{{ organizer.company }}</td>
+          <td>{{ organizer.user?.username }}</td>
+          <td>{{ organizer.user?.email }}</td>
+          <td>{{ organizer.user?.phone_number }}</td>
+          <td>
+            <button (click)="onView(organizer.id || '')">View</button>
+            <button (click)="onEdit(organizer.id || '')">Edit</button>
+            <button (click)="onDelete(organizer.id || '')">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="pagination">
+      <button class="pagination-buttons" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button class="pagination-buttons" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+    </div>
+  </div>
+  <div class="right-display">
+    <ng-container [ngSwitch]="currentView">
+      <div *ngSwitchCase="'default'">Default View Content</div>
+      <app-create-organizer *ngSwitchCase="'create'"></app-create-organizer>
+      <app-edit-organizer *ngSwitchCase="'edit'" [organizerId]="selectedOrganizerId"></app-edit-organizer>
+      <app-single-organizer *ngSwitchCase="'view'" [organizerId]="selectedOrganizerId"></app-single-organizer>
+      <app-delete-organizer *ngSwitchCase="'delete'" [organizerId]="selectedOrganizerId"></app-delete-organizer>
+    </ng-container>
+  </div>
+</div>

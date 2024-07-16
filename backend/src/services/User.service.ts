@@ -14,15 +14,26 @@ class UserService {
 
     async getAllUsers(): Promise<Partial<User>[]> {
         const users = await prisma.user.findMany({
-            where: {
-                is_deleted: false
-            },
             select: {
                 id: true,
                 username: true,
                 email: true,
-                phone_number: true,
-                profile_img: true
+                profile_img: true,
+                admin: {
+                    select: {
+                        id: true,
+                    }
+                },
+                organizers: {
+                    select: {
+                        id: true,
+                    }
+                },
+                attendees: {
+                    select: {
+                        id: true,
+                    }
+                }
             }
         });
 
@@ -35,13 +46,27 @@ class UserService {
 
     async getUserById(id: string): Promise<Partial<User> | null> {
         const user = await prisma.user.findFirst({
-            where: { id, is_deleted: false },
+            where: { id, is_deleted: false, is_suspended: false },
             select: {
                 id: true,
                 username: true,
                 email: true,
-                phone_number: true,
-                profile_img: true
+                profile_img: true,
+                admin: {
+                    select: {
+                        id: true,
+                    }
+                },
+                organizers: {
+                    select: {
+                        id: true,
+                    }
+                },
+                attendees: {
+                    select: {
+                        id: true,
+                    }
+                }
             }
         });
 
@@ -52,13 +77,16 @@ class UserService {
         return user;
     }
 
-    async createUser(data: any, imagePath: string) {
+    async createUser(data: Partial<User>, imagePath: string): Promise<Partial<User> | null> {
         const {
             username,
             email,
-            password,
-            phone_number
+            password
         } = data;
+
+        if (!username || !email || !password) {
+            throw createError(400, 'Username, email, and password are required');
+        }
 
         const emailExists = await prisma.user.findUnique({
             where: { email: data.email }
@@ -76,15 +104,7 @@ class UserService {
             throw createError(409, 'Username already exists');
         }
 
-        const phoneNumberExists = await prisma.user.findUnique({
-            where: { phone_number: data.phone_number }
-        });
-
-        if (phoneNumberExists) {
-            throw createError(409, 'Phone number already exists');
-        }
-
-        const { hash, salt } = await this.hashPassword(password);
+        const { hash, salt } = await this.hashPassword(password as string);
 
         const user = await prisma.user.create({
             data: {
@@ -92,33 +112,36 @@ class UserService {
                 email,
                 password: hash,
                 salt: salt,
-                phone_number,
                 profile_img: `${BASE_URL}/images/${imagePath.split('/').pop()}`,
             },
             select: {
                 id: true,
                 username: true,
                 email: true,
-                phone_number: true,
                 profile_img: true
+            }
+        });
+
+        const attendee = await prisma.attendee.create({
+            data: {
+                user_id: user.id
             }
         });
 
         return user;
     }
 
-    async updateUser(id: string, data: any, imagePath: string) {
+    async updateUser(id: string, data: Partial<User>, imagePath: string): Promise<Partial<User> | null> {
         const {
             username,
-            email,
-            phone_number
+            email
         } = data;
 
         const user = await prisma.user.findUnique({
             where: { id },
         });
 
-        if (!user || user.is_deleted) {
+        if (!user || user.is_deleted || user.is_suspended) {
             throw createError(404, 'User not found');
         }
 
@@ -148,32 +171,17 @@ class UserService {
             }
         }
 
-        if (data.phone_number) {
-            const existingUserWithPhoneNumber = await prisma.user.findFirst({
-                where: {
-                    phone_number: data.phone_number,
-                    id: { not: user.id },
-                },
-            });
-
-            if (existingUserWithPhoneNumber) {
-                throw createError(409, 'Phone number already exists');
-            }
-        }
-
         const updatedUser = await prisma.user.update({
             where: { id },
             data: {
                 username,
                 email,
-                phone_number,
                 profile_img: `${BASE_URL}/images/${imagePath.split('/').pop()}`,
             },
             select: {
                 id: true,
                 username: true,
                 email: true,
-                phone_number: true,
                 profile_img: true
             }
         });
@@ -192,17 +200,64 @@ class UserService {
             where: { id },
             data: { is_deleted: true }
         });
+
+        await prisma.$transaction(async (tx) => {
+            await tx.user.update({
+                where: { id: user.id },
+                data: { is_deleted: true }
+            });
+
+            const attendee = await tx.attendee.findUnique({ where: { user_id: user.id } });
+            if (attendee) {
+                await tx.attendee.update({
+                    where: { user_id: user.id },
+                    data: { is_deleted: true }
+                });
+            }
+
+            const organizer = await tx.organizer.findUnique({ where: { user_id: user.id } });
+            if (organizer) {
+                await tx.organizer.update({
+                    where: { user_id: user.id },
+                    data: { is_deleted: true }
+                });
+            }
+
+            const admin = await tx.admin.findUnique({ where: { user_id: user.id } });
+            if (admin) {
+                await tx.admin.update({
+                    where: { user_id: user.id },
+                    data: { is_deleted: true }
+                });
+            }
+        }).catch((error) => {
+            throw createError(500, `Error deleting user: ${error.message}`);
+        });
     }
 
     async getUserProfile(id: string): Promise<Partial<User> | null> {
         const user = await prisma.user.findFirst({
-            where: { id, is_deleted: false },
+            where: { id, is_deleted: false, is_suspended: false },
             select: {
                 id: true,
                 username: true,
                 email: true,
-                phone_number: true,
-                profile_img: true
+                profile_img: true,
+                admin: {
+                    select: {
+                        id: true,
+                    }
+                },
+                organizers: {
+                    select: {
+                        id: true,
+                    }
+                },
+                attendees: {
+                    select: {
+                        id: true,
+                    }
+                }
             }
         });
 
@@ -213,17 +268,15 @@ class UserService {
         return user;
     }
 
-    async updateUserProfile(id: string, data: Partial<User>, imagePath: string): Promise<Partial<User> | null> {
+    async updateUserProfile(id: string, data: Partial<User>): Promise<Partial<User> | null> {
         const {
             username,
-            email,
-            password,
-            phone_number
+            email
         } = data;
 
         const user = await prisma.user.findUnique({ where: { id } });
 
-        if (!user || user.is_deleted) {
+        if (!user || user.is_deleted || user.is_suspended) {
             throw createError(404, 'User not found');
         }
 
@@ -253,42 +306,56 @@ class UserService {
             }
         }
 
-        if (data.phone_number) {
-            const existingUserWithPhoneNumber = await prisma.user.findFirst({
-                where: {
-                    phone_number: data.phone_number,
-                    id: { not: user.id },
-                },
-            });
-
-            if (existingUserWithPhoneNumber) {
-                throw createError(409, 'Phone number already exists');
-            }
-        }
-
-        //! const { hash, salt } = await this.hashPassword(password);
-        const { hash, salt } = await this.hashPassword(password as string);
-
         const updatedprofile = await prisma.user.update({
             where: { id },
             data: {
                 username,
-                email,
-                password: hash,
-                salt: salt,
-                phone_number,
-                profile_img: `${BASE_URL}/images/${imagePath.split('/').pop()}`,
+                email
             },
             select: {
                 id: true,
                 username: true,
                 email: true,
-                phone_number: true,
                 profile_img: true
             }
         });
 
         return updatedprofile;
+    }
+
+    async getUserProfileImage(id: string): Promise<String | null> {
+        const user = await prisma.user.findFirst({
+            where: { id, is_deleted: false, is_suspended: false },
+            select: {
+                profile_img: true
+            }
+        });
+
+        if (!user) {
+            throw createError(404, 'User not found');
+        }
+
+        return user.profile_img;
+    }
+
+    async updateUserProfileImage(id: string, imagePath: string): Promise<String | null> {
+        const user = await prisma.user.findUnique({ where: { id } });
+
+        if (!user || user.is_deleted || user.is_suspended) {
+            throw createError(404, 'User not found');
+        }
+
+        const updatedprofile = await prisma.user.update({
+            where: { id },
+            data: {
+                profile_img: `${BASE_URL}/images/${imagePath.split('/').pop()}`,
+            },
+            select: {
+                profile_img: true
+            }
+        });
+
+        return updatedprofile.profile_img;
     }
 
     async suspendUser(id: string) {
@@ -308,6 +375,140 @@ class UserService {
             where: { id },
             data: { is_suspended: true }
         });
+    }
+
+    async getActiveUsers(): Promise<Partial<User>[]> {
+        const users = await prisma.user.findMany({
+            where: {
+                is_deleted: false,
+                is_suspended: false
+            },
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                profile_img: true,
+                admin: {
+                    select: {
+                        id: true,
+                    }
+                },
+                organizers: {
+                    select: {
+                        id: true,
+                    }
+                },
+                attendees: {
+                    select: {
+                        id: true,
+                    }
+                }
+            }
+        });
+
+        if (users.length === 0) {
+            throw createError(404, 'No active users found');
+        }
+
+        return users;
+    }
+
+    async getSuspendedUsers(): Promise<Partial<User>[]> {
+        const users = await prisma.user.findMany({
+            where: {
+                is_suspended: true
+            },
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                profile_img: true,
+                admin: {
+                    select: {
+                        id: true,
+                    }
+                },
+                organizers: {
+                    select: {
+                        id: true,
+                    }
+                },
+                attendees: {
+                    select: {
+                        id: true,
+                    }
+                }
+            }
+        });
+
+        if (users.length === 0) {
+            throw createError(404, 'No suspended users found');
+        }
+
+        return users;
+    }
+
+    async getDeletedUsers(): Promise<Partial<User>[]> {
+        const users = await prisma.user.findMany({
+            where: {
+                is_deleted: true
+            },
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                profile_img: true,
+                admin: {
+                    select: {
+                        id: true,
+                    }
+                },
+                organizers: {
+                    select: {
+                        id: true,
+                    }
+                },
+                attendees: {
+                    select: {
+                        id: true,
+                    }
+                }
+            }
+        });
+
+        if (users.length === 0) {
+            throw createError(404, 'No deleted users found');
+        }
+
+        return users;
+    }
+
+    async getUserAnalytics(): Promise<Object> {
+        const all_users = await prisma.user.count();
+
+        const active_users = await prisma.user.count({
+            where: {
+                is_deleted: false,
+                is_suspended: false,
+            },
+        });
+
+        const deleted_users = await prisma.user.count({
+            where: { is_deleted: true },
+        });
+
+        const suspended_users = await prisma.user.count({
+            where: { is_suspended: true },
+        });
+
+        // ! More analytics
+
+        return {
+            all_users,
+            active_users,
+            deleted_users,
+            suspended_users,
+        };
     }
 }
 

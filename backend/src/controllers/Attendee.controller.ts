@@ -1,8 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import createError from 'http-errors';
-import multer from 'multer';
 import AttendeeService from '../services/Attendee.service';
-import { uploadSingle } from '../utils/ImageUpload.util';
 
 class AttendeeController {
 
@@ -31,47 +28,24 @@ class AttendeeController {
   }
 
   createAttendee = async (req: Request, res: Response, next: NextFunction) => {
-    uploadSingle(req, res, async (err) => {
-      if (err instanceof multer.MulterError) {
-        return next(createError(400, err.message));
-      } else if (err) {
-        return next(createError(400, err.message));
-      }
-
-      if (!req.file) {
-        return next(createError(400, 'No file uploaded'));
-      }
-
-      try {
-        const imagePath = req.file.path;
-        const attendee = await this.attendeeService.createAttendee(req.body, imagePath);
-        res.status(201).json(attendee);
-      } catch (error: any) {
-        next(error);
-      }
-    });
+    try {
+      console.log('executed');
+      console.log(req.body);
+      
+      const attendee = await this.attendeeService.createAttendee(req.body);
+      res.status(201).json(attendee);
+    } catch (error: any) {
+      next(error);
+    }
   }
 
   updateAttendee = async (req: Request, res: Response, next: NextFunction) => {
-    uploadSingle(req, res, async (err) => {
-      if (err instanceof multer.MulterError) {
-        return next(createError(400, err.message));
-      } else if (err) {
-        return next(createError(400, err.message));
-      }
-
-      if (!req.file) {
-        return next(createError(400, 'No file uploaded'));
-      }
-
-      try {
-        const imagePath = req.file.path;
-        const attendee = await this.attendeeService.updateAttendee(req.params.id, req.body, imagePath);
-        res.status(201).json(attendee);
-      } catch (error: any) {
-        next(error);
-      }
-    });
+    try {
+      const attendee = await this.attendeeService.updateAttendee(req.params.id, req.body);
+      res.status(201).json(attendee);
+    } catch (error: any) {
+      next(error);
+    }
   }
 
   deleteAttendee = async (req: Request, res: Response, next: NextFunction) => {
@@ -94,26 +68,22 @@ class AttendeeController {
   }
 
   updateAttendeeProfile = async (req: Request, res: Response, next: NextFunction) => {
-    uploadSingle(req, res, async (err) => {
-      if (err instanceof multer.MulterError) {
-        return next(createError(400, err.message));
-      } else if (err) {
-        return next(createError(400, err.message));
-      }
+    try {
+      const user_id = req.user?.id as string;
+      const updatedProfile = await this.attendeeService.updateAttendeeProfile(user_id, req.body);
+      res.status(201).json(updatedProfile);
+    } catch (error: any) {
+      next(error);
+    }
+  }
 
-      if (!req.file) {
-        return next(createError(400, 'No file uploaded'));
-      }
-
-      try {
-        const user_id = req.user?.id as string;
-        const imagePath = req.file.path;
-        const updatedProfile = await this.attendeeService.updateAttendeeProfile(user_id, req.body, imagePath);
-        res.status(201).json(updatedProfile);
-      } catch (error: any) {
-        next(error);
-      }
-    });
+  getAttendeeAnalytics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const analytics = await this.attendeeService.getAttendeeAnalytics();
+      res.status(200).json(analytics);
+    } catch (error: any) {
+      next(error);
+    }
   }
 }
 
