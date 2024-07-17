@@ -8,7 +8,6 @@
           <th>Company</th>
           <th>Username</th>
           <th>Email</th>
-          <th>Phone Number</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -18,7 +17,6 @@
           <td>{{ organizer.company }}</td>
           <td>{{ organizer.user?.username }}</td>
           <td>{{ organizer.user?.email }}</td>
-          <td>{{ organizer.user?.phone_number }}</td>
           <td>
             <button (click)="onView(organizer.id || '')">View</button>
             <button (click)="onEdit(organizer.id || '')">Edit</button>

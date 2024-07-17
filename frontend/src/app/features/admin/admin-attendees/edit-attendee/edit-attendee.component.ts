@@ -34,7 +34,6 @@ export class EditAttendeeComponent {
       bio: ['', Validators.required],
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      phone_number: ['', Validators.required],
       profile_img: ['', Validators.required]
     });
   }
@@ -54,7 +53,6 @@ export class EditAttendeeComponent {
             bio: attendee.bio,
             username: attendee.user?.username,
             email: attendee.user?.email,
-            phone_number: attendee.user?.phone_number,
             profile_img: attendee.user?.profile_img
           });
         },
@@ -81,7 +79,6 @@ export class EditAttendeeComponent {
         id: this.attendee?.user?.id || '',  // Adjust as needed
         username: this.editForm.value.username,
         email: this.editForm.value.email,
-        phone_number: this.editForm.value.phone_number,
         profile_img: this.editForm.value.profile_img
       }
     };

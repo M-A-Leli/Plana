@@ -19,7 +19,6 @@ export class CreateAdminComponent {
     this.createAdminForm = this.fb.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      phone_number: ['', Validators.required],
       profile_img: ['', Validators.required]
     });
   }

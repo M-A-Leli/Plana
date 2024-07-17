@@ -22,8 +22,11 @@
   width: 100%;
   padding: 1rem 0;
   flex-wrap: wrap;
-  overflow: auto; /* ! */
-  /* position: relative; */
+  overflow: auto;
+}
+
+.content-section::-webkit-scrollbar {
+  display: none;
 }
 
 @media (max-width: 768px) {

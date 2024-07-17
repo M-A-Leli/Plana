@@ -19,6 +19,8 @@ class UserService {
                 username: true,
                 email: true,
                 profile_img: true,
+                is_deleted: true,
+                is_suspended: true,
                 admin: {
                     select: {
                         id: true,
@@ -52,6 +54,8 @@ class UserService {
                 username: true,
                 email: true,
                 profile_img: true,
+                is_deleted: true,
+                is_suspended: true,
                 admin: {
                     select: {
                         id: true,

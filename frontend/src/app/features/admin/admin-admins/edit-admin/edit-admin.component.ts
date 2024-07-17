@@ -31,7 +31,6 @@ export class EditAdminComponent {
     this.editForm = this.fb.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      phone_number: ['', Validators.required],
       profile_img: ['', Validators.required]
     });
   }
@@ -48,7 +47,6 @@ export class EditAdminComponent {
           this.editForm.patchValue({
             username: admin.user?.username,
             email: admin.user?.email,
-            phone_number: admin.user?.phone_number,
             profile_img: admin.user?.profile_img
           });
         },
@@ -72,7 +70,6 @@ export class EditAdminComponent {
         id: this.admin?.user?.id || '',  // Adjust as needed
         username: this.editForm.value.username,
         email: this.editForm.value.email,
-        phone_number: this.editForm.value.phone_number,
         profile_img: this.editForm.value.profile_img
       }
     };

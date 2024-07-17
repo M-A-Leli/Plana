@@ -21,7 +21,6 @@ export class CreateOrganizerComponent {
       bio: ['', Validators.required],
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      phone_number: ['', Validators.required],
       profile_img: ['', Validators.required]
     });
   }
