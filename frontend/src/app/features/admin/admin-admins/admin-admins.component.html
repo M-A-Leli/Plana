@@ -7,7 +7,6 @@
           <th>Image</th>
           <th>Username</th>
           <th>Email</th>
-          <th>Phone Number</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -16,7 +15,6 @@
           <td><img [src]="admin.user?.profile_img" alt="Admin Image"></td>
           <td>{{ admin.user?.username }}</td>
           <td>{{ admin.user?.email }}</td>
-          <td>{{ admin.user?.phone_number }}</td>
           <td>
             <button (click)="onView(admin.id || '')">View</button>
             <button (click)="onEdit(admin.id || '')">Edit</button>

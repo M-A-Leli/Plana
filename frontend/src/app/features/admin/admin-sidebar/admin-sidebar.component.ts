@@ -23,12 +23,9 @@ export class AdminSidebarComponent {
     { label: 'dashboard', icon: '/icons/dashboard.png', route: '/admin/dashboard' },
     { label: 'admins', icon: '/icons/admins.png', route: '/admin/admins' },
     { label: 'organizers', icon: '/icons/organizers.png', route: '/admin/organizers' },
-    { label: 'attendees', icon: '/icons/users.png', route: '/admin/attendees' },
+    { label: 'attendees', icon: '/icons/attendees.png', route: '/admin/attendees' },
+    { label: 'users', icon: '/icons/users.png', route: '/admin/users' },
     { label: 'events', icon: '/icons/event.png', route: '/admin/events' },
-  ];
-
-  secondaryNavItems: NavItem[] = [
-    { label: 'logout', icon: '/icons/logout.png', route: '/admin/logout' },
   ];
 
   constructor(private router: Router) { }
@@ -38,7 +35,7 @@ export class AdminSidebarComponent {
   }
 
   navigate(route: string): void {
-    const foundItem = this.mainNavItems.concat(this.secondaryNavItems).find(item => item.route === route);
+    const foundItem = this.mainNavItems.find(item => item.route === route);
     this.selectedItem = foundItem ? foundItem : null;
     this.router.navigate([route]);
   }

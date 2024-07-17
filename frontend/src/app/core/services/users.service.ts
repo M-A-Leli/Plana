@@ -20,7 +20,7 @@ export class UsersService {
     return this.http.get<User>(`${this.baseUrl}/${id}`);
   }
 
-  createUser(user: User): Observable<User> {
+  createUser(user: Partial<User>): Observable<User> {
     return this.http.post<User>(this.baseUrl, user);
   }
 
@@ -62,6 +62,10 @@ export class UsersService {
 
   suspendUser(id: string): Observable<void> {
     return this.http.put<void>(`${this.baseUrl}/suspend/${id}`, null);
+  }
+
+  reinstateUser(id: string): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/reinstate/${id}`, null);
   }
 
   getUserAnalytics(): Observable<Object> {

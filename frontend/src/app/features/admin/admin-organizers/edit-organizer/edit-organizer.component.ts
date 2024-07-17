@@ -33,7 +33,6 @@ export class EditOrganizerComponent {
       bio: ['', Validators.required],
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      phone_number: ['', Validators.required],
       profile_img: ['', Validators.required]
     });
   }
@@ -52,7 +51,6 @@ export class EditOrganizerComponent {
             bio: organizer.bio,
             username: organizer.user?.username,
             email: organizer.user?.email,
-            phone_number: organizer.user?.phone_number,
             profile_img: organizer.user?.profile_img
           });
         },
@@ -78,7 +76,6 @@ export class EditOrganizerComponent {
         id: this.organizer?.user?.id || '',  // Adjust as needed
         username: this.editForm.value.username,
         email: this.editForm.value.email,
-        phone_number: this.editForm.value.phone_number,
         profile_img: this.editForm.value.profile_img
       }
     };

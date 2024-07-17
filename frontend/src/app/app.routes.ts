@@ -27,6 +27,7 @@ import { AdminEventsComponent } from './features/admin/admin-events/admin-events
 import { AdminNotificationsComponent } from './features/admin/admin-notifications/admin-notifications.component';
 import { AdminSettingsComponent } from './features/admin/admin-settings/admin-settings.component';
 import { AdminAdminsComponent } from './features/admin/admin-admins/admin-admins.component';
+import { AdminUsersComponent } from './features/admin/admin-users/admin-users.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -63,6 +64,7 @@ export const routes: Routes = [
       { path: 'admins', component: AdminAdminsComponent },
       { path: 'organizers', component: AdminOrganizersComponent },
       { path: 'attendees', component: AdminAttendeesComponent },
+      { path: 'users', component: AdminUsersComponent },
       { path: 'events', component: AdminEventsComponent },
       { path: 'notifications', component: AdminNotificationsComponent },
       { path: 'settings', component: AdminSettingsComponent },
