@@ -145,6 +145,15 @@ class UserController {
     }
   }
 
+  reinstateUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await this.userService.reinstateUser(req.params.id);
+      res.status(204).send();
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
   getActiveUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const users = await this.userService.getActiveUsers();

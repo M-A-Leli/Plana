@@ -40,6 +40,18 @@ export class AdminService {
     return this.http.put<Admin>(`${this.baseUrl}/profile`, admin);
   }
 
+  getActiveAdmins(): Observable<Admin[]> {
+    return this.http.get<Admin[]>(`${this.baseUrl}/active`);
+  }
+
+  getSuspendedAdmins(): Observable<Admin[]> {
+    return this.http.get<Admin[]>(`${this.baseUrl}/suspended`);
+  }
+
+  getDeletedAdmins(): Observable<Admin[]> {
+    return this.http.get<Admin[]>(`${this.baseUrl}/deleted`);
+  }
+
   getAdminAnalytics(): Observable<Object> {
     return this.http.get<Object>(`${this.baseUrl}/analytics`);
   }

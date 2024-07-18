@@ -5,7 +5,9 @@ export default interface Organizer {
   id?: string,
   user_id?: string,
   company?: string,
-  bio?: string
-  events?: Event[]
+  bio?: string,
+  is_deleted: boolean,
+  approved: boolean,
+  events?: Event[],
   user?: User,
 }

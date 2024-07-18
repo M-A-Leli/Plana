@@ -27,7 +27,7 @@ class OrganizerController {
     }
   }
 
-  async createOrganizer(req: Request, res: Response, next: NextFunction) {
+ createOrganizer = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user_id = req.user?.id as string;
       const response = await this.organizerService.createOrganizer(user_id, req.body);
@@ -37,9 +37,18 @@ class OrganizerController {
     }
   }
 
-  async approveOrganizer(req: Request, res: Response, next: NextFunction) {
+ approveOrganizer = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const organizer = await this.organizerService.approveOrganizer(req.params.id);
+      res.status(200).json(organizer);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+ revokeOrganizer = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const organizer = await this.organizerService.revokeOrganizer(req.params.id);
       res.status(200).json(organizer);
     } catch (error: any) {
       next(error);
@@ -79,6 +88,33 @@ class OrganizerController {
       const user_id = req.user?.id as string;
       const updatedProfile = await this.organizerService.updateOrganizerProfile(user_id, req.body);
       res.status(201).json(updatedProfile);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getActiveOrganizers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const organizers = await this.organizerService.getActiveOrganizers();
+      res.status(200).json(organizers);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getApprovedOrganizers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const organizers = await this.organizerService.getApprovedOrganizers();
+      res.status(200).json(organizers);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getDeletedOrganizers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const organizers = await this.organizerService.getDeletedOrganizers();
+      res.status(200).json(organizers);
     } catch (error: any) {
       next(error);
     }

@@ -1,47 +1,104 @@
-<div class="admin-entity-layout">
+<div class="analytics-section">
+  <div class="card glassmorphism" (click)="filterAdmins('all')">
+    <div class="number">{{ analytics.all_admins }}</div>
+    <div class="heading">Total Admins</div>
+  </div>
+  <div class="card glassmorphism" (click)="filterAdmins('active')">
+    <div class="number">{{ analytics.active_admins }}</div>
+    <div class="heading">Active Admins</div>
+  </div>
+  <div class="card glassmorphism" (click)="filterAdmins('suspended')">
+    <div class="number">{{ analytics.suspended_admins }}</div>
+    <div class="heading">Suspended Admins</div>
+  </div>
+  <div class="card glassmorphism" (click)="filterAdmins('deleted')">
+    <div class="number">{{ analytics.deleted_admins }}</div>
+    <div class="heading">Deleted Admins</div>
+  </div>
+</div>
+
+<div class="display-section">
   <div class="left-display">
-    <button class="create-btn" (click)="onCreate()">Create Admin</button>
-    <table>
+    <table class="admin-table glassmorphism">
       <thead>
         <tr>
-          <th>Image</th>
+          <th>Profile</th>
           <th>Username</th>
           <th>Email</th>
+          <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let admin of admins">
+        <tr *ngFor="let admin of paginatedAdmins">
           <td><img [src]="admin.user?.profile_img" alt="Admin Image"></td>
           <td>{{ admin.user?.username }}</td>
           <td>{{ admin.user?.email }}</td>
-          <td>
-            <button (click)="onView(admin.id || '')">View</button>
-            <button (click)="onEdit(admin.id || '')">Edit</button>
-            <button (click)="onDelete(admin.id || '')">Delete</button>
+          <td>{{ getAdminStatus(admin) }}</td>
+          <td class="actions">
+            <button class="btn view" (click)="showView(admin)">
+              <img src="/icons/view.png" alt="View">
+            </button>
+            <button *ngIf="!admin.is_deleted && !admin.user?.is_suspended" class="btn suspend" (click)="showSuspend(admin)">
+              <img src="/icons/suspend.png" alt="Suspend">
+            </button>
+            <button *ngIf="!admin.is_deleted && admin.user?.is_suspended" class="btn reinstate" (click)="showReinstate(admin)">
+              <img src="/icons/reinstate.png" alt="Unsuspend">
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
-    <div class="pagination">
-      <button class="pagination-buttons" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+
+    <div class="pagination glassmorphism">
+      <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
       <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <button class="pagination-buttons" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
     </div>
   </div>
+
   <div class="right-display">
-    <ng-container [ngSwitch]="currentView">
-      <div *ngSwitchCase="'default'">Default View Content</div>
-      <app-create-admin *ngSwitchCase="'create'"></app-create-admin>
-      <app-edit-admin *ngSwitchCase="'edit'" [adminId]="selectedAdminId"></app-edit-admin>
-      <app-single-admin *ngSwitchCase="'view'" [adminId]="selectedAdminId"></app-single-admin>
-      <app-delete-admin *ngSwitchCase="'delete'" [adminId]="selectedAdminId"></app-delete-admin>
-    </ng-container>
+    <div *ngIf="errorMessage" class="message error glassmorphism">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="message success glassmorphism">{{ successMessage }}</div>
+
+    <div *ngIf="viewMode === 'default'" class="default-section glassmorphism">
+      <img src="/logo.svg" alt="Company Logo">
+      <h2>Plana</h2>
+    </div>
+
+    <div *ngIf="viewMode === 'view'" class="view-section glassmorphism">
+      <h2>Admin Details</h2>
+      <div class="admin-details">
+        <div class="profile-image">
+          <img [src]="selectedAdmin?.user?.profile_img" alt="Profile Image">
+        </div>
+        <div class="details">
+          <p><strong>Username:</strong> {{ selectedAdmin?.user?.username }}</p>
+          <p><strong>Email:</strong> {{ selectedAdmin?.user?.email }}</p>
+          <!-- <p><strong>Status:</strong> {{ getAdminStatus(selectedAdmin) }}</p> -->
+        </div>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" (click)="resetView()">Back</button>
+      </div>
+    </div>
+
+    <div *ngIf="viewMode === 'suspend'" class="suspend-section glassmorphism">
+      <h2>Confirm Suspend</h2>
+      <p>Are you sure you want to suspend the admin {{ selectedAdmin?.user?.username }}?</p>
+      <div class="form-group actions">
+        <button type="button" class="btn btn-danger" (click)="suspendAdmin()">Proceed</button>
+        <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+      </div>
+    </div>
+
+    <div *ngIf="viewMode === 'reinstate'" class="reinstate-section glassmorphism">
+      <h2>Confirm Reinstate</h2>
+      <p>Are you sure you want to reinstate the admin {{ selectedAdmin?.user?.username }}?</p>
+      <div class="form-group actions">
+        <button type="button" class="btn btn-danger" (click)="reinstateAdmin()">Proceed</button>
+        <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+      </div>
+    </div>
   </div>
 </div>
-
-
-<!-- <div *ngIf="!showCreateAdmin && !showSingleAdmin && !showEditAdmin && !showDeleteAdmin" class="default-display">
-  <img src="/logo.png" alt="Logo">
-  <h1>Plana</h1>
-</div> -->

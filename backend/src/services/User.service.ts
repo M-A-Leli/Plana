@@ -381,6 +381,25 @@ class UserService {
         });
     }
 
+    async reinstateUser(id: string) {
+        const user = await prisma.user.findUnique({
+            where: { id }
+        });
+
+        if (!user || user.is_deleted) {
+            throw createError(404, 'User not found');
+        }
+
+        if (!user.is_suspended) {
+            throw createError(400, 'User is not yet suspended');
+        }
+
+        await prisma.user.update({
+            where: { id },
+            data: { is_suspended: false }
+        });
+    }
+
     async getActiveUsers(): Promise<Partial<User>[]> {
         const users = await prisma.user.findMany({
             where: {

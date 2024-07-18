@@ -40,6 +40,18 @@ export class AttendeeService {
     return this.http.put<Attendee>(`${this.baseUrl}/profile`, attendee);
   }
 
+  getActiveAttendees(): Observable<Attendee[]> {
+    return this.http.get<Attendee[]>(`${this.baseUrl}/active`);
+  }
+
+  getSuspendedAttendees(): Observable<Attendee[]> {
+    return this.http.get<Attendee[]>(`${this.baseUrl}/suspended`);
+  }
+
+  getDeletedAttendees(): Observable<Attendee[]> {
+    return this.http.get<Attendee[]>(`${this.baseUrl}/deleted`);
+  }
+
   getAttendeeAnalytics(): Observable<Object> {
     return this.http.get<Object>(`${this.baseUrl}/analytics`);
   }

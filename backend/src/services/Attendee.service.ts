@@ -15,21 +15,17 @@ class AttendeeService {
 
   async getAllAttendees(): Promise<Partial<Attendee>[]> {
     const attendees = await prisma.attendee.findMany({
-      where: {
-        is_deleted: false,
-        user: {
-          is_suspended: false
-        }
-      },
       select: {
         id: true,
         bio: true,
+        is_deleted: true,
         user: {
           select: {
             id: true,
             username: true,
             email: true,
-            profile_img: true
+            profile_img: true,
+            is_suspended: true
           },
         },
       }
@@ -93,7 +89,7 @@ class AttendeeService {
         email,
         password: hash,
         salt: salt,
-        profile_img: `${BASE_URL}/images/default_profile_image.png`,
+        profile_img: `${BASE_URL}/images/default_profile_image.svg`,
       },
       select: {
         id: true,
@@ -355,12 +351,111 @@ class AttendeeService {
     return updatedAttendee;
   }
 
+  async getActiveAttendees(): Promise<Partial<Attendee>[]> {
+    const attendees = await prisma.attendee.findMany({
+      where: {
+        is_deleted: false,
+        user: {
+          is_suspended: false
+        }
+      },
+      select: {
+        id: true,
+        bio: true,
+        is_deleted:true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+            profile_img: true,
+            is_suspended: true
+          },
+        },
+      }
+    });
+
+    if (attendees.length === 0) {
+      throw createError(404, 'No attendees found');
+    }
+
+    return attendees;
+  }
+
+  async getSuspendedAttendees(): Promise<Partial<Attendee>[]> {
+    const attendees = await prisma.attendee.findMany({
+      where: {
+        is_deleted: false,
+        user: {
+          is_suspended: true
+        }
+      },
+      select: {
+        id: true,
+        bio: true,
+        is_deleted:true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+            profile_img: true,
+            is_suspended: true
+          },
+        },
+      }
+    });
+
+    if (attendees.length === 0) {
+      throw createError(404, 'No attendees found');
+    }
+
+    return attendees;
+  }
+
+  async getDeletedAttendees(): Promise<Partial<Attendee>[]> {
+    const attendees = await prisma.attendee.findMany({
+      where: {
+        is_deleted: true
+      },
+      select: {
+        id: true,
+        bio: true,
+        is_deleted:true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+            profile_img: true,
+            is_suspended: true
+          },
+        },
+      }
+    });
+
+    if (attendees.length === 0) {
+      throw createError(404, 'No attendees found');
+    }
+
+    return attendees;
+  }
+
   async getAttendeeAnalytics(): Promise<Object> {
     const all_attendees = await prisma.attendee.count();
 
     const active_attendees = await prisma.attendee.count({
       where: {
         is_deleted: false
+      },
+    });
+
+    const suspended_attendees = await prisma.attendee.count({
+      where: {
+        is_deleted: false,
+        user: {
+          is_suspended: true
+        }
       },
     });
 
@@ -373,6 +468,7 @@ class AttendeeService {
     return {
       all_attendees,
       active_attendees,
+      suspended_attendees,
       deleted_attendees
     };
   }

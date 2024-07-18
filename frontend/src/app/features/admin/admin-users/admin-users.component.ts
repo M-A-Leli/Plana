@@ -21,6 +21,8 @@ export class AdminUsersComponent {
   currentPage: number = 1;
   usersPerPage: number = 10;
   totalPages: number = 1;
+  errorMessage: string = '';
+  successMessage: string = '';
 
   analytics: any = {
     all_users: 0,
@@ -151,52 +153,133 @@ export class AdminUsersComponent {
     this.viewMode = 'default';
   }
 
+  clearErrors() {
+    setTimeout(() => {
+      this.errorMessage = '';
+    }, 3000);
+  }
+
   createUser(): void {
     if (this.newUser.username && this.newUser.email) {
-      this.usersService.createUser(this.newUser).subscribe(() => {
-        this.fetchUsers();
-        this.fetchAnalytics();
-        this.resetView();
+      this.usersService.createUser(this.newUser).subscribe({
+        next: data => {
+          this.successMessage = 'User created successfull!';
+          setTimeout(() => {
+            this.successMessage = '';
+            this.fetchUsers();
+            this.fetchAnalytics();
+            this.resetView();
+          }, 3000);
+        },
+        error: err => {
+          if (err.status === 401 || err.status === 404) {
+            this.errorMessage = err.error.error.message;
+            this.clearErrors();
+          } else {
+            this.errorMessage = 'An unexpected error occurred. Please try again.';
+            this.clearErrors();
+          }
+        }
       });
     }
   }
 
   updateUser(): void {
     if (this.selectedUser && this.selectedUser.username && this.selectedUser.email) {
-      this.usersService.updateUser(this.selectedUser.id as string, this.selectedUser).subscribe(() => {
-        this.fetchUsers();
-        this.fetchAnalytics();
-        this.resetView();
+      this.usersService.updateUser(this.selectedUser.id as string, this.selectedUser).subscribe({
+        next: data => {
+          this.successMessage = 'User updated successfull!';
+          setTimeout(() => {
+            this.successMessage = '';
+            this.fetchUsers();
+            this.fetchAnalytics();
+            this.resetView();
+          }, 3000);
+        },
+        error: err => {
+          if (err.status === 401 || err.status === 404 || err.status === 409) {
+            this.errorMessage = err.error.error.message;
+            this.clearErrors();
+          } else {
+            this.errorMessage = 'An unexpected error occurred. Please try again.';
+            this.clearErrors();
+          }
+        }
       });
     }
   }
 
   deleteUser(): void {
     if (this.selectedUser) {
-      this.usersService.deleteUser(this.selectedUser.id as string).subscribe(() => {
-        this.fetchUsers();
-        this.fetchAnalytics();
-        this.resetView();
+      this.usersService.deleteUser(this.selectedUser.id as string).subscribe({
+        next: data => {
+          this.successMessage = 'User deleted successfull!';
+          setTimeout(() => {
+            this.successMessage = '';
+            this.fetchUsers();
+            this.fetchAnalytics();
+            this.resetView();
+          }, 3000);
+        },
+        error: err => {
+          if (err.status === 401 || err.status === 404) {
+            this.errorMessage = err.error.error.message;
+            this.clearErrors();
+          } else {
+            this.errorMessage = 'An unexpected error occurred. Please try again.';
+            this.clearErrors();
+          }
+        }
       });
     }
   }
 
   suspendUser(): void {
     if (this.selectedUser) {
-      this.usersService.suspendUser(this.selectedUser.id as string).subscribe(() => {
-        this.fetchUsers();
-        this.fetchAnalytics();
-        this.resetView();
+      this.usersService.suspendUser(this.selectedUser.id as string).subscribe({
+        next: data => {
+          this.successMessage = 'User suspended successfull!';
+          setTimeout(() => {
+            this.successMessage = '';
+            this.fetchUsers();
+            this.fetchAnalytics();
+            this.resetView();
+          }, 3000);
+        },
+        error: err => {
+          if (err.status === 401 || err.status === 404) {
+            this.errorMessage = err.error.error.message;
+            this.clearErrors();
+          } else {
+            this.errorMessage = 'An unexpected error occurred. Please try again.';
+            this.clearErrors();
+          }
+        }
       });
     }
   }
 
   reinstateUser(): void {
     if (this.selectedUser) {
-      this.usersService.reinstateUser(this.selectedUser.id as string).subscribe(() => {
-        this.fetchUsers();
-        this.fetchAnalytics();
-        this.resetView();
+      this.usersService.reinstateUser(this.selectedUser.id as string).subscribe({
+        next: data => {
+          this.successMessage = 'User reinstated successfull!';
+          setTimeout(() => {
+            this.successMessage = '';
+            this.fetchUsers();
+            this.fetchAnalytics();
+            this.resetView();
+          }, 3000);
+        },
+        error: err => {
+          if (err.status === 401 || err.status === 404) {
+            this.errorMessage = err.error.error.message;
+            this.clearErrors();
+          } else {
+            this.errorMessage = 'An unexpected error occurred. Please try again.';
+            this.clearErrors();
+          }
+        }
       });
     }
   }

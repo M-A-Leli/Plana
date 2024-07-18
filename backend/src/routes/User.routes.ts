@@ -18,5 +18,6 @@ router.get('/:id', UserController.getUserById); // Get user by id
 router.put('/:id', UserController.updateUser); // Update user
 router.delete('/:id', UserController.deleteUser); // Delete user
 router.put('/suspend/:id', UserController.suspendUser); // Suspend user
+router.put('/reinstate/:id', UserController.reinstateUser); // Reinstate user
 
 export default router;

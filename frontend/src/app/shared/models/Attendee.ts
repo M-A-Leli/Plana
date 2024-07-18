@@ -8,6 +8,7 @@ export default interface Attendee {
   first_name?: string,
   last_name?: string,
   bio?: string,
+  is_deleted?: boolean,
   tickets?: Ticket[],
   reviews?: Review[],
   user?: User

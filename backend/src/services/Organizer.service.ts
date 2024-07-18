@@ -15,23 +15,19 @@ class OrganizerService {
 
   async getAllOrganizers(): Promise<Partial<Organizer>[]> {
     const organizers = await prisma.organizer.findMany({
-      where: {
-        is_deleted: false,
-        user: {
-          is_suspended: false
-        }
-      },
       select: {
         id: true,
         company: true,
         bio: true,
+        is_deleted:true,
         approved: true,
         user: {
           select: {
             id: true,
             username: true,
             email: true,
-            profile_img: true
+            profile_img: true,
+            is_suspended: true
           },
         },
       }
@@ -127,35 +123,37 @@ class OrganizerService {
     return organizer;
   }
 
-  async approveOrganizer(userId: string) {
+  async approveOrganizer(organizerId: string) {
+    const organizer = await prisma.organizer.findUnique({
+      where: { id: organizerId },
+    });
+
+    if (!organizer || organizer.is_deleted) {
+      throw createError(404, 'Organizer not found');
+    }
+
+    if (organizer.approved) {
+      throw createError(400, 'Organizer already approved');
+    }
+
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: organizer.user_id },
     });
 
     if (!user || user.is_deleted || user.is_suspended) {
       throw createError(404, 'User not found');
     }
 
-    const attendee = await prisma.attendee.findFirst({
-      where: {
-        user_id: userId,
-        is_deleted: false,
-        user: {
-          is_suspended: false,
-        },
-      },
-    });
-
-    if (!attendee) {
-      throw createError(404, 'Attendee not found');
-    }
-
     try {
       await prisma.$transaction(async (tx) => {
-        await tx.attendee.delete({ where: { user_id: userId } });
-
+        await tx.attendee.delete({ where: { user_id: user.id } })
+        // await tx.attendee.update({
+        //   where: { user_id: user.id },
+        //   data: { is_deleted: true },
+        // });
+        
         await tx.organizer.update({
-          where: { user_id: userId },
+          where: { id: organizerId },
           data: { approved: true },
         });
       });
@@ -172,6 +170,62 @@ class OrganizerService {
       }
     } catch (error: any) {
       throw createError(500, `Error approving organizer: ${error.message}`);
+    }
+  }
+
+  async revokeOrganizer(organizerId: string) {
+    const organizer = await prisma.organizer.findUnique({
+      where: { id: organizerId },
+    });
+
+    if (!organizer || organizer.is_deleted) {
+      throw createError(404, 'Organizer not found');
+    }
+
+    if (!organizer.approved) {
+      throw createError(400, 'Organizer already revoked');
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: organizer.user_id },
+    });
+
+    if (!user || user.is_deleted || user.is_suspended) {
+      throw createError(404, 'User not found');
+    }
+
+    try {
+      await prisma.$transaction(async (tx) => {
+        await tx.attendee.create({
+          data: {
+            user_id: user.id,
+            bio: organizer.bio
+          }
+        })
+        
+        // await tx.attendee.update({
+        //   where: { user_id: user.id  },
+        //   data: { is_deleted: false },
+        // });
+        
+        await tx.organizer.update({
+          where: { id: organizerId },
+          data: { approved: false },
+        });
+      });
+
+      try {
+        await sendEmail({
+          to: user.email,
+          subject: 'Organizer Status Revoked',
+          template: 'OrganizerRevoke',
+          context: { username: user.username },
+        });
+      } catch (emailError: any) {
+        throw createError(500, `Failed to send email: ${emailError.message}`);
+      }
+    } catch (error: any) {
+      throw createError(500, `Error revoking organizer: ${error.message}`);
     }
   }
 
@@ -429,6 +483,103 @@ class OrganizerService {
     });
 
     return updatedOrganizer;
+  }
+
+  async getActiveOrganizers(): Promise<Partial<Organizer>[]> {
+    const organizers = await prisma.organizer.findMany({
+      where: {
+        is_deleted: false,
+        user: {
+          is_suspended: false
+        }
+      },
+      select: {
+        id: true,
+        company: true,
+        bio: true,
+        is_deleted:true,
+        approved: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+            profile_img: true,
+            is_suspended: true
+          },
+        },
+      }
+    });
+
+    if (organizers.length === 0) {
+      throw createError(404, 'No organizers found');
+    }
+
+    return organizers;
+  }
+
+  async getApprovedOrganizers(): Promise<Partial<Organizer>[]> {
+    const organizers = await prisma.organizer.findMany({
+      where: {
+        is_deleted: false,
+        approved: true,
+        user: {
+          is_suspended: false
+        }
+      },
+      select: {
+        id: true,
+        company: true,
+        bio: true,
+        is_deleted:true,
+        approved: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+            profile_img: true,
+            is_suspended: true
+          },
+        },
+      }
+    });
+
+    if (organizers.length === 0) {
+      throw createError(404, 'No organizers found');
+    }
+
+    return organizers;
+  }
+
+  async getDeletedOrganizers(): Promise<Partial<Organizer>[]> {
+    const organizers = await prisma.organizer.findMany({
+      where: {
+        is_deleted: true
+      },
+      select: {
+        id: true,
+        company: true,
+        bio: true,
+        is_deleted:true,
+        approved: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+            profile_img: true,
+            is_suspended: true
+          },
+        },
+      }
+    });
+
+    if (organizers.length === 0) {
+      throw createError(404, 'No organizers found');
+    }
+
+    return organizers;
   }
 
   async getOrganizerAnalytics(): Promise<Object> {

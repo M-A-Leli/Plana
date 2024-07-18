@@ -10,17 +10,19 @@ class AuthService {
                 id: true,
                 password: true,
                 admin: {
+                    where: { is_deleted: false },
                     select: {
                         id: true
                     }
                 },
                 attendees: {
+                    where: { is_deleted: false },
                     select: {
                         id: true
                     }
                 },
                 organizers: {
-                    where: { approved: true },
+                    where: { is_deleted: false, approved: true },
                     select: {
                         id: true
                     }

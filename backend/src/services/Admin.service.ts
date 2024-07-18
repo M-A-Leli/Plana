@@ -125,7 +125,7 @@ class AdminService {
         username,
         password: hash,
         salt,
-        profile_img: `${BASE_URL}/images/default_profile_image.png`,
+        profile_img: `${BASE_URL}/images/default_profile_image.svg`,
       },
       select: {
         id: true
@@ -389,6 +389,15 @@ class AdminService {
       },
     });
 
+    const suspended_admins = await prisma.admin.count({
+      where: {
+        is_deleted: false,
+        user: {
+          is_suspended: true
+        }
+      },
+    });
+
     const deleted_admins = await prisma.admin.count({
       where: { is_deleted: true },
     });
@@ -398,6 +407,7 @@ class AdminService {
     return {
       all_admins,
       active_admins,
+      suspended_admins,
       deleted_admins
     };
   }

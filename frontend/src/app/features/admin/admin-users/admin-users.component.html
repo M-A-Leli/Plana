@@ -68,6 +68,9 @@
   </div>
 
   <div class="right-display">
+    <div *ngIf="errorMessage" class="message error glassmorphism">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="message success glassmorphism">{{ successMessage }}</div>
+
     <div *ngIf="viewMode === 'default'" class="default-section glassmorphism">
       <img src="/logo.svg" alt="Company Logo">
       <h2>Plana</h2>

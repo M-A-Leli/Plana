@@ -9,7 +9,10 @@ const router = Router();
 
 router.get('/analytics', AttendeeController.getAttendeeAnalytics); // Get attendee analytics
 router.get('/profile', AttendeeController.getAttendeeProfile); // Get attendee profile
-router.put('/profile', AttendeeController.updateAttendeeProfile); // Update attendee 
+router.put('/profile', AttendeeController.updateAttendeeProfile); // Update attendee
+router.get('/active', AttendeeController.getActiveAttendees); // Get active attendees
+router.get('/suspended', AttendeeController.getSuspendedAttendees); // Get suspended attendees
+router.get('/deleted', AttendeeController.getDeletedAttendees); // Get deleted attendees
 router.get('/', AttendeeController.getAllAttendees); // Get all attendees
 router.post('/', AttendeeController.createAttendee); // Create attendee
 router.get('/:id', AttendeeController.getAttendeeById); // Get attendee by id

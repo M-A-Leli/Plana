@@ -77,6 +77,33 @@ class AttendeeController {
     }
   }
 
+  getActiveAttendees = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const attendees = await this.attendeeService.getActiveAttendees();
+      res.status(200).json(attendees);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getSuspendedAttendees = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const attendees = await this.attendeeService.getSuspendedAttendees();
+      res.status(200).json(attendees);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getDeletedAttendees = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const attendees = await this.attendeeService.getDeletedAttendees();
+      res.status(200).json(attendees);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
   getAttendeeAnalytics = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const analytics = await this.attendeeService.getAttendeeAnalytics();
