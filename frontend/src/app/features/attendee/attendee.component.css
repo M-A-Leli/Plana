@@ -1,0 +1,44 @@
+.attendee-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: #081028;
+  padding: 15px;
+  gap: 15px;
+}
+
+.main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  width: 100%;
+  padding: 1rem 0;
+  flex-wrap: wrap;
+  overflow: auto;
+}
+
+.content-section::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .attendee-layout {
+    flex-direction: column;
+    padding: 0;
+  }
+
+  .main {
+    width: 100%;
+  }
+
+  .content-section {
+    padding: 0.5rem;
+  }
+}

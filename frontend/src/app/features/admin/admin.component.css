@@ -14,12 +14,12 @@
 }
 
 .content-section {
-  /* border: 1px solid greenyellow; */
   display: flex;
   align-items: center;
   justify-content: center;
   flex-grow: 1;
   width: 100%;
+  height: 100%;
   padding: 1rem 0;
   flex-wrap: wrap;
   overflow: auto;
@@ -27,6 +27,22 @@
 
 .content-section::-webkit-scrollbar {
   display: none;
+}
+
+app-admin-admins,
+app-admin-attendees,
+app-admin-dashboard,
+app-admin-events,
+app-admin-logout,
+app-admin-notifications,
+app-admin-organizers,
+app-admin-profile,
+app-admin-users {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @media (max-width: 768px) {

@@ -3,7 +3,12 @@
   <div class="main" [class.collapsed]="isSidebarCollapsed">
     <app-organizer-topbar></app-organizer-topbar>
     <div class="content-section">
-      <router-outlet></router-outlet>
+      <app-organizer-dashboard *ngIf="currentRoute === 'dashboard'"></app-organizer-dashboard>
+      <app-organizer-events *ngIf="currentRoute === 'events'"></app-organizer-events>
+      <app-organizer-calendar *ngIf="currentRoute === 'calendar'"></app-organizer-calendar>
+      <app-organizer-messages *ngIf="currentRoute === 'messages'"></app-organizer-messages>
+      <app-organizer-profile *ngIf="currentRoute === 'profile'"></app-organizer-profile>
+      <app-organizer-logout *ngIf="currentRoute === 'logout'"></app-organizer-logout>
     </div>
   </div>
 </div>

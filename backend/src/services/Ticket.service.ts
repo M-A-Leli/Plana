@@ -3,6 +3,16 @@ import createError from 'http-errors';
 import prisma from '../config/Prisma.config';
 
 class TicketService {
+    static generateUniqueCode(length: number): string {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let code = '';
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * chars.length);
+            code += chars[randomIndex];
+        }
+        return code;
+    }
+
     async getAllTickets(): Promise<Partial<Ticket>[]> {
         const tickets = await prisma.ticket.findMany({
             where: { is_deleted: false },
@@ -45,43 +55,47 @@ class TicketService {
 
     async createTicket(data: Omit<Ticket, 'id'>): Promise<Partial<Ticket>> {
         const event = await prisma.event.findUnique({
-            where: { id: data.event_id },
+          where: { id: data.event_id },
         });
-
+      
         if (!event || event.is_deleted) {
-            throw createError(404, 'Event not found');
+          throw createError(404, 'Event not found');
         }
-
+      
         const ticketType = await prisma.ticketType.findUnique({
-            where: { id: data.ticket_type_id },
+          where: { id: data.ticket_type_id },
         });
-
+      
         if (!ticketType) {
-            throw createError(404, 'Ticket type not found');
+          throw createError(404, 'Ticket type not found');
         }
-
+      
         const attendee = await prisma.attendee.findUnique({
-            where: { id: data.attendee_id },
+          where: { id: data.attendee_id },
         });
-
+      
         if (!attendee || attendee.is_deleted) {
-            throw createError(404, 'Attendee not found');
+          throw createError(404, 'Attendee not found');
         }
-
+      
+        const uniqueCode = TicketService.generateUniqueCode(12);
+      
         const newTicket = await prisma.ticket.create({
-            data,
-            select: {
-                //! more on event specific data
-                id: true,
-                ticket_type_id: true,
-                attendee_id: true,
-                event_id: true,
-                unique_code: true,
-            }
+          data: {
+            ...data,
+            unique_code: uniqueCode,
+          },
+          select: {
+            id: true,
+            ticket_type_id: true,
+            attendee_id: true,
+            event_id: true,
+            unique_code: true,
+          },
         });
-
+      
         return newTicket;
-    }
+      }
 
     async updateTicket(id: string, data: Prisma.TicketUpdateInput): Promise<Partial<Ticket>> {
         const ticket = await prisma.ticket.findUnique({ where: { id } });
@@ -146,7 +160,7 @@ class TicketService {
         }
 
         const attendee = await prisma.attendee.findUnique({
-            where: { user_id: user.id}
+            where: { user_id: user.id }
         });
 
         if (!attendee || attendee.is_deleted) {
@@ -186,7 +200,7 @@ class TicketService {
         }
 
         const attendee = await prisma.attendee.findUnique({
-            where: { user_id: user.id}
+            where: { user_id: user.id }
         });
 
         if (!attendee || attendee.is_deleted) {

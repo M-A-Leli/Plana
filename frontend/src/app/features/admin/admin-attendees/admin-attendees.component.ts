@@ -107,7 +107,7 @@ export class AdminAttendeesComponent {
   getAttendeeStatus(attendee: Attendee): string {
     if (attendee.is_deleted) return 'Deleted';
     if (attendee.user?.is_suspended) return 'Suspended';
-    return 'Pending';
+    return 'Active';
   }
 
   showView(attendee: Attendee): void {

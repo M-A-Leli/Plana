@@ -247,7 +247,7 @@ class AttendeeService {
 
   async getAttendeeProfile(id: string): Promise<Partial<Attendee> | null> {
     const attendee = await prisma.attendee.findFirst({
-      where: {id, is_deleted: false, user: { is_suspended: false } },
+      where: { user_id: id, is_deleted: false, user: { is_suspended: false } },
       select: {
         id: true,
         bio: true,
@@ -330,7 +330,7 @@ class AttendeeService {
     });
   
     const updatedAttendee = await prisma.attendee.update({
-      where: { id },
+      where: { user_id: id },
       data: { 
         bio 
       },

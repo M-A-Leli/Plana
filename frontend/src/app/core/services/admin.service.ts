@@ -20,7 +20,7 @@ export class AdminService {
     return this.http.get<Admin>(`${this.baseUrl}/${id}`);
   }
 
-  createAdmin(admin: Admin): Observable<Admin> {
+  createAdmin(admin: Object): Observable<Admin> {
     return this.http.post<Admin>(this.baseUrl, admin);
   }
 

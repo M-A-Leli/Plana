@@ -6,7 +6,7 @@ import TicketType from "./TicketTypes";
 
 export default interface Event {
   id?: string,
-  organizer_id: string,
+  organizer_id?: string,
   title: string,
   description: string,
   date: Date,
@@ -15,6 +15,8 @@ export default interface Event {
   category?: string, //!
   average_rating?: number,
   number_of_reviews?: number,
+  is_deleted?: boolean,
+  is_featured?: boolean,
   images?: EventImage[],
   ticket_types?: TicketType[],
   tickets?: Ticket[],

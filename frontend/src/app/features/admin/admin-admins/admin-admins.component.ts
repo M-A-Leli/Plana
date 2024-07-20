@@ -16,7 +16,8 @@ export class AdminAdminsComponent {
   admins: Admin[] = [];
   paginatedAdmins: Admin[] = [];
   selectedAdmin: Admin | null = null;
-  viewMode: 'default' | 'view' | 'suspend' | 'reinstate' = 'default';
+  newAdmin = { username: '', email: '' };
+  viewMode: 'default' | 'view' | 'create' | 'edit' | 'suspend' | 'reinstate' | 'delete' = 'default';
   currentPage: number = 1;
   adminsPerPage: number = 10;
   totalPages: number = 1;
@@ -107,12 +108,27 @@ export class AdminAdminsComponent {
   getAdminStatus(admin: Admin): string {
     if (admin.is_deleted) return 'Deleted';
     if (admin.user?.is_suspended) return 'Suspended';
-    return 'Pending';
+    return 'Active';
   }
 
   showView(admin: Admin): void {
     this.selectedAdmin = admin;
     this.viewMode = 'view';
+  }
+
+  showEdit(admin: Admin): void {
+    this.selectedAdmin = admin;
+    this.viewMode = 'edit';
+  }
+
+  showCreate(): void {
+    this.selectedAdmin = null;
+    this.viewMode = 'create';
+  }
+
+  showDelete(admin: Admin): void {
+    this.selectedAdmin = admin;
+    this.viewMode = 'delete';
   }
 
   showSuspend(admin: Admin): void {
@@ -134,6 +150,81 @@ export class AdminAdminsComponent {
     setTimeout(() => {
       this.errorMessage = '';
     }, 3000);
+  }
+
+  createAdmin(): void {
+    if (this.newAdmin.username && this.newAdmin.email) {
+      this.adminService.createAdmin(this.newAdmin).subscribe({
+        next: data => {
+          this.successMessage = 'Admin created successfull!';
+          setTimeout(() => {
+            this.successMessage = '';
+            this.fetchAdmins();
+            this.fetchAnalytics();
+            this.resetView();
+          }, 3000);
+        },
+        error: err => {
+          if (err.status === 401 || err.status === 404 || err.status === 409 || err.status === 400) {
+            this.errorMessage = err.error.error.message;
+            this.clearErrors();
+          } else {
+            this.errorMessage = 'An unexpected error occurred. Please try again.';
+            this.clearErrors();
+          }
+        }
+      });
+    }
+  }
+
+  updateAdmin(): void {
+    if (this.selectedAdmin && this.selectedAdmin.user?.username && this.selectedAdmin.user?.email) {
+      this.adminService.updateAdmin(this.selectedAdmin.id as string, this.selectedAdmin).subscribe({
+        next: data => {
+          this.successMessage = 'Admin updated successfull!';
+          setTimeout(() => {
+            this.successMessage = '';
+            this.fetchAdmins();
+            this.fetchAnalytics();
+            this.resetView();
+          }, 3000);
+        },
+        error: err => {
+          if (err.status === 401 || err.status === 404 || err.status === 409 || err.status === 400 || err.status === 403) {
+            this.errorMessage = err.error.error.message;
+            this.clearErrors();
+          } else {
+            this.errorMessage = 'An unexpected error occurred. Please try again.';
+            this.clearErrors();
+          }
+        }
+      });
+    }
+  }
+
+  deleteAdmin(): void {
+    if (this.selectedAdmin) {
+      this.adminService.deleteAdmin(this.selectedAdmin.id as string).subscribe({
+        next: data => {
+          this.successMessage = 'Admin deleted successfull!';
+          setTimeout(() => {
+            this.successMessage = '';
+            this.fetchAdmins();
+            this.fetchAnalytics();
+            this.resetView();
+          }, 3000);
+        },
+        error: err => {
+          if (err.status === 401 || err.status === 404 || err.status === 400 || err.status === 403) {
+            this.errorMessage = err.error.error.message;
+            this.clearErrors();
+          } else {
+            this.errorMessage = 'An unexpected error occurred. Please try again.';
+            this.clearErrors();
+          }
+        }
+      });
+    }
   }
 
   suspendAdmin(): void {

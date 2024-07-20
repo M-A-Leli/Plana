@@ -1,1 +1,9 @@
-<p>attendee-topbar works!</p>
+<!-- top-bar.component.html -->
+<div class="top-bar">
+  <div class="search-section">
+    <form (submit)="onSearch(searchTerm.value)">
+      <input type="text" #searchTerm placeholder="Search...">
+      <button type="submit">Search</button>
+    </form>
+  </div>
+</div>

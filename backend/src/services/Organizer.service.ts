@@ -365,7 +365,7 @@ class OrganizerService {
 
   async getOrganizerProfile(id: string): Promise<Partial<Organizer> | null> {
     const organizer = await prisma.organizer.findFirst({
-      where: { id, is_deleted: false, user: { is_suspended: false } },
+      where: { user_id: id, is_deleted: false, user: { is_suspended: false } },
       select: {
         id: true,
         company: true,
@@ -462,7 +462,7 @@ class OrganizerService {
     });
 
     const updatedOrganizer = await prisma.organizer.update({
-      where: { id },
+      where: { user_id: id },
       data: {
         company,
         bio

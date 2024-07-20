@@ -3,7 +3,15 @@
   <div class="main" [class.collapsed]="isSidebarCollapsed">
     <app-admin-topbar></app-admin-topbar>
     <div class="content-section">
-      <router-outlet></router-outlet>
+      <app-admin-admins *ngIf="currentRoute === 'admins'"></app-admin-admins>
+      <app-admin-attendees *ngIf="currentRoute === 'attendees'"></app-admin-attendees>
+      <app-admin-dashboard *ngIf="currentRoute === 'dashboard'"></app-admin-dashboard>
+      <app-admin-events *ngIf="currentRoute === 'events'"></app-admin-events>
+      <app-admin-logout *ngIf="currentRoute === 'logout'"></app-admin-logout>
+      <app-admin-notifications *ngIf="currentRoute === 'notifications'"></app-admin-notifications>
+      <app-admin-organizers *ngIf="currentRoute === 'organizers'"></app-admin-organizers>
+      <app-admin-profile *ngIf="currentRoute === 'profile'"></app-admin-profile>
+      <app-admin-users *ngIf="currentRoute === 'users'"></app-admin-users>
     </div>
   </div>
 </div>

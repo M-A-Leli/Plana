@@ -1,51 +1,123 @@
 <div class="admin-entity-layout">
-  <div class="left-display">
-    <button class="create-btn" (click)="onCreate()">Create Event</button>
-    <table>
-      <thead>
-        <tr>
-          <th>Image</th>
-          <th>Title</th>
-          <th>Date</th>
-          <th>Time</th>
-          <th>Venue</th>
-          <th>Organizer</th>
-          <th>Average Rating</th>
-          <th>Total Reviews</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let event of events">
-          <td><img [src]="event.images?.[0]?.url" alt="Event Image"></td>
-          <td>{{ event.title }}</td>
-          <td>{{ event.date }}</td>
-          <td>{{ event.time }}</td>
-          <td>{{ event.venue }}</td>
-          <td>{{ event.organizer?.company }}</td>
-          <td>{{ event.average_rating }}</td>
-          <td>{{ event.number_of_reviews }}</td>
-          <td>
-            <button (click)="onView(event.id || '')">View</button>
-            <button (click)="onEdit(event.id || '')">Edit</button>
-            <button (click)="onDelete(event.id || '')">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="pagination">
-      <button class="pagination-buttons" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <button class="pagination-buttons" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+  <div class="analytics-section">
+    <div class="card glassmorphism" (click)="filterEvents('all')">
+      <div class="number">{{ analytics.all_events }}</div>
+      <div class="heading">Total Events</div>
+    </div>
+    <div class="card glassmorphism" (click)="filterEvents('upcoming')">
+      <div class="number">{{ analytics.upcoming_events }}</div>
+      <div class="heading">Upcoming Events</div>
+    </div>
+    <div class="card glassmorphism" (click)="filterEvents('past')">
+      <div class="number">{{ analytics.past_events }}</div>
+      <div class="heading">Past Events</div>
+    </div>
+    <div class="card glassmorphism" (click)="filterEvents('featured')">
+      <div class="number">{{ analytics.featured_events }}</div>
+      <div class="heading">Featured Events</div>
+    </div>
+    <div class="card glassmorphism" (click)="filterEvents('deleted')">
+      <div class="number">{{ analytics.deleted_events }}</div>
+      <div class="heading">Deleted Events</div>
+    </div>
+    <div class="card glassmorphism">
+      <div class="number">{{ analytics.average_rating }}</div>
+      <div class="heading">Average Rating</div>
+    </div>
+    <div class="card glassmorphism">
+      <div class="number">{{ analytics.total_reviews }}</div>
+      <div class="heading">Total Reviews</div>
     </div>
   </div>
-  <div class="right-display">
-    <ng-container [ngSwitch]="currentView">
-      <div *ngSwitchCase="'default'">Default View Content</div>
-      <app-create-event *ngSwitchCase="'create'"></app-create-event>
-      <!-- <app-edit-event *ngSwitchCase="'edit'" [eventId]="selectedEventId"></app-edit-event> -->
-      <!-- <app-single-event *ngSwitchCase="'view'" [eventId]="selectedEventId"></app-single-event> -->
-      <!-- <app-delete-event *ngSwitchCase="'delete'" [eventId]="selectedEventId"></app-delete-event> -->
-    </ng-container>
+
+  <div class="display-section">
+    <div class="left-display">
+      <table class="event-table glassmorphism">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Venue</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let event of paginatedEvents">
+            <td>{{ event.title }}</td>
+            <td>{{ event.date | date: 'longDate'}}</td>
+            <td>{{ event.time | date: 'shortTime' }}</td>
+            <td>{{ event.venue }}</td>
+            <td class="actions">
+              <button class="btn view" (click)="showView(event)">
+                <img src="/icons/view.png" alt="View">
+              </button>
+              <button *ngIf="!event.is_deleted && !event.is_featured" class="btn feature" (click)="showFeature(event)">
+                <img src="/icons/feature.png" alt="Feature">
+              </button>
+              <button *ngIf="!event.is_deleted && event.is_featured" class="btn exclude" (click)="showExclude(event)">
+                <img src="/icons/exclude.png" alt="Exclude">
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination glassmorphism">
+        <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+      </div>
+    </div>
+
+    <div class="right-display">
+      <div *ngIf="errorMessage" class="message error glassmorphism">{{ errorMessage }}</div>
+      <div *ngIf="successMessage" class="message success glassmorphism">{{ successMessage }}</div>
+
+      <div *ngIf="viewMode === 'default'" class="default-section glassmorphism">
+        <img src="/logo.svg" alt="Company Logo">
+        <h2>Plana</h2>
+      </div>
+
+      <div *ngIf="viewMode === 'view'" class="view-section glassmorphism">
+        <h2>Event Details</h2>
+        <div class="event-details">
+          <div class="event-images">
+            <img [src]="selectedEvent?.images?.[0]?.url" alt="Event Image">
+          </div>
+          <div class="details">
+            <p><strong>Title:</strong> {{ selectedEvent?.title }}</p>
+            <p><strong>Date:</strong> {{ selectedEvent?.date }}</p>
+            <p><strong>Time:</strong> {{ selectedEvent?.time }}</p>
+            <p><strong>Venue:</strong> {{ selectedEvent?.venue }}</p>
+            <p><strong>Organizer:</strong> {{ selectedEvent?.organizer?.company }}</p>
+            <p><strong>Rating:</strong> {{ selectedEvent?.average_rating }}</p>
+            <p><strong>Total Reviews:</strong> {{ selectedEvent?.number_of_reviews }}</p>
+            <!-- <p><strong>Status:</strong> {{ getEventStatus(selectedEvent) }}</p> -->
+          </div>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" (click)="resetView()">Back</button>
+        </div>
+      </div>
+
+      <div *ngIf="viewMode === 'feature'" class="feature-section glassmorphism">
+        <h2>Confirm Feature</h2>
+        <p>Are you sure you want to feature the event {{ selectedEvent?.title }}?</p>
+        <div class="form-group actions">
+          <button type="button" class="btn btn-danger" (click)="featureEvent()">Proceed</button>
+          <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+        </div>
+      </div>
+
+      <div *ngIf="viewMode === 'exclude'" class="exclude-section glassmorphism">
+        <h2>Confirm Exclude</h2>
+        <p>Are you sure you want to exclude the event {{ selectedEvent?.title }}?</p>
+        <div class="form-group actions">
+          <button type="button" class="btn btn-danger" (click)="excludeEvent()">Proceed</button>
+          <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

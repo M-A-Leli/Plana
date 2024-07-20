@@ -1,1 +1,9 @@
-<p>attendee works!</p>
+<div class="attendee-layout">
+  <app-attendee-sidebar></app-attendee-sidebar>
+  <div class="main" [class.collapsed]="isSidebarCollapsed">
+    <app-attendee-topbar></app-attendee-topbar>
+    <div class="content-section">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

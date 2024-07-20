@@ -48,6 +48,18 @@ export class EventService {
     return this.http.get<Event[]>(`${this.baseUrl}/organizer`);
   }
 
+  getOrganizersUpcomingEvents(): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.baseUrl}/organizer/upcoming`);
+  }
+
+  getOrganizersPastEvents(): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.baseUrl}/organizer/past`);
+  }
+
+  getOrganizersEventsAnalytics(): Observable<Object> {
+    return this.http.get<Object>(`${this.baseUrl}/organizer/analytics`);
+  }
+
   getEventsByOrganizerId(id: string): Observable<Event[]> {
     return this.http.get<Event[]>(`${this.baseUrl}/organizer/${id}`);
   }
