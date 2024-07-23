@@ -34,7 +34,7 @@ model Attendee {
   bio        String?
   is_deleted Boolean @default(false)
 
-  tickets Ticket[]
+  orders  Order[]
   reviews Review[]
 
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -86,7 +86,8 @@ model Event {
   title             String
   description       String
   date              DateTime
-  time              DateTime
+  start_time        String
+  end_time          String
   venue             String
   is_deleted        Boolean  @default(false)
   is_featured       Boolean  @default(false)
@@ -97,7 +98,7 @@ model Event {
 
   images       EventImage[]
   ticket_types TicketType[]
-  tickets      Ticket[]
+  orders       Order[]
   reviews      Review[]
 
   organizer Organizer @relation(fields: [organizer_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -121,10 +122,9 @@ model TicketType {
   id           String   @id @default(uuid())
   event_id     String
   name         String
-  type         String   @default("SINGLE") // Options: SINGLE, GROUP
   price        Decimal
   availability Int
-  group_size   Int?
+  group_size   Int?     @id @default(1)
   is_deleted   Boolean  @default(false)
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
@@ -139,19 +139,37 @@ model TicketType {
 model Ticket {
   id             String   @id @default(uuid())
   ticket_type_id String
-  attendee_id    String
-  event_id       String
+  order_id       String
+  quantity       Int
+  subtotal       Decimal
   unique_code    String   @unique
   is_deleted     Boolean  @default(false)
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
 
   ticket_type TicketType @relation(fields: [ticket_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  attendee    Attendee   @relation(fields: [attendee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  event       Event      @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  Payment     Payment?
+  order       Order      @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("Tickets")
+}
+
+model Order {
+  id           String   @id @default(uuid())
+  attendee_id  String
+  event_id     String
+  total        Decimal
+  payment_id   String?
+  is_deleted   Boolean  @default(false)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  tickets Ticket[]
+  payment Payment?
+
+  attendee Attendee @relation(fields: [attendee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  event    Event    @relation(fields: [event_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("Orders")
 }
 
 model Notification {
@@ -185,13 +203,13 @@ model Review {
 
 model Payment {
   id           String   @id @default(uuid())
-  ticket_id    String   @unique
+  order_id     String   @unique
   amount       Decimal
   payment_date DateTime @default(now())
   status       String   @default("PENDING") // Options: PENDING, COMPLETED, FAILED
   is_deleted   Boolean  @default(false)
 
-  ticket Ticket @relation(fields: [ticket_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  order Order @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("Payments")
 }

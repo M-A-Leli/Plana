@@ -10,7 +10,6 @@ class TicketTypeService {
         id: true,
         event_id: true,
         name: true,
-        type: true,
         price: true,
         availability: true,
         group_size: true,
@@ -18,7 +17,7 @@ class TicketTypeService {
     });
 
     if (ticketTypes.length === 0) {
-        throw createError(404, 'No ticket types found');
+      throw createError(404, 'No ticket types found');
     }
 
     return ticketTypes;
@@ -31,7 +30,6 @@ class TicketTypeService {
         id: true,
         event_id: true,
         name: true,
-        type: true,
         price: true,
         availability: true,
         group_size: true,
@@ -62,7 +60,6 @@ class TicketTypeService {
         id: true,
         event_id: true,
         name: true,
-        type: true,
         price: true,
         availability: true,
         group_size: true,
@@ -88,7 +85,6 @@ class TicketTypeService {
         id: true,
         event_id: true,
         name: true,
-        type: true,
         price: true,
         availability: true,
         group_size: true,
@@ -99,15 +95,32 @@ class TicketTypeService {
   }
 
   async deleteTicketType(id: string): Promise<void> {
-    const ticketType = await prisma.ticketType.findUnique({ where: { id } });
+    const ticketType = await prisma.ticketType.findUnique({
+      where: { id },
+      include: {
+        tickets: {
+          where: {
+            is_deleted: false
+          }
+        }
+      }
+    });
 
     if (!ticketType || ticketType.is_deleted) {
       throw createError(404, 'Ticket type not found');
     }
 
+    const hasPurchasedTickets = ticketType.tickets.length > 0;
+
+    if (hasPurchasedTickets) {
+      throw createError(400, 'Ticket type cannot be deleted as it has purchased tickets');
+    }
+
     await prisma.ticketType.update({
       where: { id },
       data: { is_deleted: true },
+    }).catch((error) => {
+      throw createError(500, `Error deleting ticket type: ${error.message}`);
     });
   }
 
@@ -124,7 +137,6 @@ class TicketTypeService {
         id: true,
         event_id: true,
         name: true,
-        type: true,
         price: true,
         availability: true,
         group_size: true,
@@ -132,7 +144,7 @@ class TicketTypeService {
     });
 
     if (ticketTypes.length === 0) {
-        throw createError(404, 'No ticket types found');
+      throw createError(404, 'No ticket types found');
     }
 
     return ticketTypes;

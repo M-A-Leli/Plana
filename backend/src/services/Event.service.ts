@@ -13,7 +13,8 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
@@ -50,7 +51,8 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
@@ -123,7 +125,8 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
@@ -179,7 +182,8 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
@@ -206,28 +210,33 @@ class EventService {
         const event = await prisma.event.findUnique({
             where: { id },
             include: {
-                tickets: {
+                orders: {
                     where: {
                         is_deleted: false
                     }
                 }
             }
         });
-
+    
         if (!event || event.is_deleted) {
             throw createError(404, 'Event not found');
         }
-
-        const purchasedTickets = event.tickets.length > 0;
-
-        if (purchasedTickets) {
+    
+        const currentDateTime = new Date();
+        const eventEndDateTime = new Date(event.date);
+        const [hours, minutes] = event.end_time.split(':').map(Number);
+        eventEndDateTime.setHours(hours, minutes);
+    
+        const eventEnded = currentDateTime > eventEndDateTime;
+        const hasOrders = event.orders.length > 0;
+    
+        if (!eventEnded && hasOrders) {
             //! Placeholder for refund logic
             // await paymentService.refundAttendees(event.id);
-
-            // !
-            throw createError(400, 'Event cannot be deleted as it has purchased tickets');
+    
+            throw createError(400, 'Event cannot be deleted as it has purchased tickets and the event has not ended');
         }
-
+    
         await prisma.event.update({
             where: { id },
             data: { is_deleted: true }
@@ -255,7 +264,8 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
@@ -307,7 +317,8 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
@@ -359,7 +370,8 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
@@ -415,7 +427,8 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
@@ -475,7 +488,8 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
@@ -535,7 +549,8 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
@@ -588,7 +603,8 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
@@ -633,7 +649,8 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
@@ -706,7 +723,8 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
@@ -741,7 +759,8 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
@@ -767,7 +786,8 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
@@ -810,7 +830,8 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
@@ -849,7 +870,8 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,

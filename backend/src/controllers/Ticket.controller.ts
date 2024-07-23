@@ -91,6 +91,24 @@ class TicketController {
       next(error);
     }
   }
+
+  getTicketsByOrderId = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const ticket = await this.ticketService.getTicketsByOrderId(req.params.id);
+      res.status(200).json(ticket);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getTicketAnalytics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const analytics = await this.ticketService.getTicketAnalytics();
+      res.status(200).json(analytics);
+    } catch (error: any) {
+      next(error);
+    }
+  }
 }
 
 export default new TicketController();

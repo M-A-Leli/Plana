@@ -1,6 +1,6 @@
 import createError from 'http-errors';
 import bcrypt from 'bcrypt';
-import { Attendee, Prisma, User } from '@prisma/client';
+import { Attendee } from '@prisma/client';
 import prisma from '../config/Prisma.config';
 import sendEmail from '../utils/Email.util';
 
