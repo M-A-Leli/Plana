@@ -32,8 +32,8 @@ export class TicketService {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
-  validateTicket(id: string): Observable<Ticket[]> {
-    return this.http.get<Ticket[]>(`${this.baseUrl}/validate/${id}`);
+  validateTicket(): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(`${this.baseUrl}/validate`);
   }
 
   getTicketsByUserId(): Observable<Ticket[]> {
@@ -46,5 +46,13 @@ export class TicketService {
 
   getTicketsByEventId(id: string): Observable<Ticket[]> {
     return this.http.get<Ticket[]>(`${this.baseUrl}/event/${id}`);
+  }
+
+  getTicketsByOrderId(id: string): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(`${this.baseUrl}/order/${id}`);
+  }
+
+  getTicketAnalytics(): Observable<Object> {
+    return this.http.get<Object>(`${this.baseUrl}/analytics`);
   }
 }

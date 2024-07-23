@@ -29,7 +29,8 @@
           <tr>
             <th>Title</th>
             <th>Date</th>
-            <th>Time</th>
+            <th>Starts</th>
+            <th>Ends</th>
             <th>Venue</th>
             <th>Actions</th>
           </tr>
@@ -38,7 +39,8 @@
           <tr *ngFor="let event of paginatedEvents">
             <td>{{ event.title }}</td>
             <td>{{ event.date | date: 'longDate'}}</td>
-            <td>{{ event.time | date: 'shortTime' }}</td>
+            <td>{{ event.start_time | date: 'shortTime' }}</td>
+            <td>{{ event.end_time | date: 'shortTime' }}</td>
             <td>{{ event.venue }}</td>
             <td class="actions">
               <button class="btn view" (click)="showView(event)">
@@ -88,8 +90,12 @@
             <input id="date" formControlName="date" type="date">
           </div>
           <div class="form-group">
-            <label for="time">Time</label>
-            <input id="time" formControlName="time" type="time">
+            <label for="start_time">Starts At</label>
+            <input id="start_time" formControlName="start_time" type="time">
+          </div>
+          <div class="form-group">
+            <label for="end_time">Ends At</label>
+            <input id="end_time" formControlName="end_time" type="time">
           </div>
           <div class="form-group">
             <label for="venue">Venue</label>
@@ -115,7 +121,8 @@
           <div class="details">
             <p><strong>Title:</strong> {{ selectedEvent?.title }}</p>
             <p><strong>Date:</strong> {{ selectedEvent?.date | date: 'longDate' }}</p>
-            <p><strong>Time:</strong> {{ selectedEvent?.time | date: 'shortTime' }}</p>
+            <p><strong>Starts:</strong> {{ selectedEvent?.start_time | date: 'shortTime' }}</p>
+            <p><strong>Ends:</strong> {{ selectedEvent?.end_time | date: 'shortTime' }}</p>
             <p><strong>Venue:</strong> {{ selectedEvent?.venue }}</p>
             <p><strong>Rating:</strong> {{ selectedEvent?.average_rating }}</p>
             <p><strong>Total Reviews:</strong> {{ selectedEvent?.number_of_reviews }}</p>
@@ -143,8 +150,12 @@
             <!-- <input id="date" [(ngModel)]="selectedEvent?.date" name="date" type="date" /> -->
           </div>
           <div class="form-group">
-            <label for="time">Time</label>
-            <!-- <input id="time" [(ngModel)]="selectedEvent?.time" name="time" type="time" /> -->
+            <label for="start_time">Starts</label>
+            <!-- <input id="start_time" [(ngModel)]="selectedEvent?.start_time" name="start_time" type="time" /> -->
+          </div>
+          <div class="form-group">
+            <label for="end_time">Ends</label>
+            <!-- <input id="end_time" [(ngModel)]="selectedEvent?.end_time" name="end_time" type="time" /> -->
           </div>
           <div class="form-group">
             <label for="venue">Venue</label>

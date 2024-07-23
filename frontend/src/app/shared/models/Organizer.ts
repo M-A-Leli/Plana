@@ -1,4 +1,4 @@
-import Event from "./Event";
+import IEvent from "./Event";
 import User from "./User";
 
 export default interface Organizer {
@@ -8,6 +8,6 @@ export default interface Organizer {
   bio?: string,
   is_deleted: boolean,
   approved: boolean,
-  events?: Event[],
+  events?: IEvent[],
   user?: User,
 }

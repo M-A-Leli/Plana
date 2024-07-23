@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EventService } from '../../../core/services/event.service';
-import Event from '../../../shared/models/Event';
+import IEvent from '../../../shared/models/Event';
 
 @Component({
   selector: 'app-organizer-events',
@@ -12,9 +12,9 @@ import Event from '../../../shared/models/Event';
   styleUrl: './organizer-events.component.css'
 })
 export class OrganizerEventsComponent {
-  events: Event[] = [];
-  paginatedEvents: Event[] = [];
-  selectedEvent: Event | null = null;
+  events: IEvent[] = [];
+  paginatedEvents: IEvent[] = [];
+  selectedEvent: IEvent | null = null;
   viewMode: 'default' | 'view' | 'create' | 'edit' | 'delete' = 'default';
   currentPage: number = 1;
   eventsPerPage: number = 10;
@@ -37,7 +37,8 @@ export class OrganizerEventsComponent {
       title: ['', Validators.required],
       description: ['', Validators.required],
       date: ['', Validators.required],
-      time: ['', Validators.required],
+      start_time: ['', Validators.required],
+      end_time: ['', Validators.required],
       venue: ['', Validators.required],
       images: [null, Validators.required]
     });
@@ -108,7 +109,7 @@ export class OrganizerEventsComponent {
     }
   }
 
-  getEventStatus(event: Event): string {
+  getEventStatus(event: IEvent): string {
     let status = '';
     if (event.date > new Date())
       status = 'Upcoming';
@@ -117,6 +118,7 @@ export class OrganizerEventsComponent {
     return status;
   }
 
+  // !
   hasEventStarted(eventDate: Date, eventTime: Date): boolean {
     const currentDateTime = new Date();
     const eventDateTime = new Date(eventDate);
@@ -124,7 +126,7 @@ export class OrganizerEventsComponent {
     return currentDateTime >= eventDateTime;
   }
 
-  showView(event: Event): void {
+  showView(event: IEvent): void {
     this.selectedEvent = event;
     this.viewMode = 'view';
   }
@@ -134,12 +136,12 @@ export class OrganizerEventsComponent {
     this.viewMode = 'create';
   }
 
-  showEdit(event: Event): void {
+  showEdit(event: IEvent): void {
     this.selectedEvent = event;
     this.viewMode = 'edit';
   }
 
-  showDelete(event: Event): void {
+  showDelete(event: IEvent): void {
     this.selectedEvent = event;
     this.viewMode = 'delete';
   }
@@ -167,7 +169,7 @@ export class OrganizerEventsComponent {
 
   createEvent(): void {
     if (this.eventForm.valid) {
-      const event: Event = {
+      const event: IEvent = {
         ...this.eventForm.value,
       };
 
@@ -175,7 +177,8 @@ export class OrganizerEventsComponent {
       formData.append('title', event.title);
       formData.append('description', event.description);
       formData.append('date', event.date.toString());
-      formData.append('time', event.time.toString());
+      formData.append('start_time', event.start_time.toString());
+      formData.append('end_time', event.end_time.toString());
       formData.append('venue', event.venue);
       Array.from(this.images).forEach((image, index) => {
         formData.append(`images[${index}]`, image, image.name);

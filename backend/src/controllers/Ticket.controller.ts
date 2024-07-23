@@ -29,7 +29,8 @@ class TicketController {
 
   createTicket = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const ticket = await this.ticketService.createTicket(req.body);
+      const user_id = req.user?.id as string;
+      const ticket = await this.ticketService.createTicket(user_id, req.body);
       res.status(201).json(ticket);
     } catch (error: any) {
       next(error);
@@ -56,7 +57,7 @@ class TicketController {
 
   validateTicket = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const ticket = await this.ticketService.validateTicket(req.params.id);
+      const ticket = await this.ticketService.validateTicket(req.body);
       res.status(200).json(ticket);
     } catch (error: any) {
       next(error);

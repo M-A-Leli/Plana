@@ -15,7 +15,7 @@ router.get('/upcoming', EventController.getUpcomingEvents); // Get upcoming even
 router.get('/past', AuthMiddleware.authorizeAdmin, EventController.getPastEvents); // Get past events
 router.get('/deleted', AuthMiddleware.authorizeAdmin, EventController.getDeletedEvents); // Get deleted events
 router.post('/', AuthMiddleware.authorizeOrganizer, EventController.createEvent); // Create event
-router.get('/:id', AuthMiddleware.authorizeUser, EventController.getEventById); // Get event by id
+router.get('/:id', EventController.getEventById); // Get event by id
 router.put('/:id', AuthMiddleware.authorizeOrganizer, EventController.updateEvent); // Update event
 router.delete('/:id', AuthMiddleware.authorizeOrganizer, EventController.deleteEvent); // Delete event
 router.get('/related-events/:id', EventController.getRelatedEvents); // Get related events
@@ -24,5 +24,6 @@ router.put('/featured/:id/exclude', AuthMiddleware.authorizeAdmin, EventControll
 router.get('/organizer/:id', EventController.getEventsByOrganizerId); // Get events by organizer id
 router.get('/organizer/:id/upcoming', EventController.getUpcomingEventsByOrganizerId); // Get organizer's upcoming events
 router.get('/organizer/:id/past', EventController.getPastEventsByOrganizerId); // Get organizer's past events
+router.get('/category/:id', EventController.getEventsByCategoryId); // Get upcoming events by category id
 
 export default router;

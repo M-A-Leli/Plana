@@ -3,23 +3,34 @@
   padding-top: 70px;
   color: #ffffff;
   background-color: #081028;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .section-title {
   font-size: 2em;
-  margin-bottom: 20px;
   color: #cb3cff;
+}
+
+.events-filters,
+.events-container,
+.pagination {
+  width: 100%;
 }
 
 .events-filters {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
 }
 
 .events-filters input,
 .events-filters select {
-  padding: 10px;
+  outline: none;
+  padding: 0.5rem;
   border-radius: 5px;
   border: 1px solid #aeb9e1;
   background-color: #061027;
@@ -29,61 +40,122 @@
 .events-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 1rem;
+  justify-content: center;
 }
 
 .event-card {
-  flex: 1 1 calc(33.333% - 20px);
   background-color: #0b1739;
-  padding: 20px;
   border-radius: 10px;
-  transition: transform 0.3s ease;
+  overflow: hidden;
+  color: #ffffff;
+  width: calc(33.333% - 1rem);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .event-card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
-.event-image {
+.event-img {
+  height: 200px;
+  overflow: hidden;
+}
+
+.event-img img {
   width: 100%;
-  height: auto;
-  border-radius: 10px;
+  height: 100%;
   object-fit: cover;
 }
 
 .event-details {
-  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  flex-grow: 1;
 }
 
-.event-title {
-  font-size: 1.5em;
+.event-details strong{
   color: #00c2ff;
 }
 
+.event-title {
+  font-size: 1.2em;
+  margin-bottom: 0.5rem;
+  color: #cb3cff;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rating i {
+  color: #ffd700;
+}
+
+.event-organizer,
 .event-date,
-.event-venue,
-.event-description {
-  margin: 5px 0;
+.event-time,
+.event-venue {
   color: #aeb9e1;
 }
 
-.pagination-controls {
+.action {
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.action button {
+  padding: 0.5rem 1rem;
+  background-color: #cb3cff;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.action button:hover {
+  background-color: #a800e1;
+}
+
+.pagination {
   display: flex;
   justify-content: center;
   margin-top: 20px;
 }
 
-.pagination-controls .ngx-pagination {
-  display: flex;
-  gap: 10px;
-  align-items: center;
+.pagination button {
+  padding: 5px 10px;
+  border: none;
+  background-color: #cb3cff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.pagination-controls .ngx-pagination .current {
-  background-color: #cb3cff;
-  color: #ffffff;
-  border-radius: 5px;
-  padding: 5px 10px;
+.pagination button:hover:not(:disabled) {
+  background-color: #a800e1;
+}
+
+.pagination button:disabled {
+  background-color: #6a0dad;
+  cursor: not-allowed;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .event-card {
+    width: calc(50% - 1rem);
+  }
 }
 
 @media (max-width: 768px) {
@@ -94,5 +166,16 @@
 
   .event-card {
     width: 90%;
+  }
+}
+
+@media (max-width: 479px) {
+  .event-card {
+    width: 100%;
+  }
+
+  .events-filters {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 }

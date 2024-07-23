@@ -72,6 +72,7 @@ CREATE TABLE [dbo].[Events] (
     [start_time] NVARCHAR(1000) NOT NULL,
     [end_time] NVARCHAR(1000) NOT NULL,
     [venue] NVARCHAR(1000) NOT NULL,
+    [category_id] NVARCHAR(1000) NOT NULL,
     [is_deleted] BIT NOT NULL CONSTRAINT [Events_is_deleted_df] DEFAULT 0,
     [is_featured] BIT NOT NULL CONSTRAINT [Events_is_featured_df] DEFAULT 0,
     [average_rating] FLOAT(53) NOT NULL CONSTRAINT [Events_average_rating_df] DEFAULT 0,
@@ -92,13 +93,21 @@ CREATE TABLE [dbo].[EventImages] (
 );
 
 -- CreateTable
+CREATE TABLE [dbo].[Categories] (
+    [id] NVARCHAR(1000) NOT NULL,
+    [name] NVARCHAR(1000) NOT NULL,
+    [is_deleted] BIT NOT NULL CONSTRAINT [Categories_is_deleted_df] DEFAULT 0,
+    CONSTRAINT [Categories_pkey] PRIMARY KEY CLUSTERED ([id])
+);
+
+-- CreateTable
 CREATE TABLE [dbo].[TicketTypes] (
     [id] NVARCHAR(1000) NOT NULL,
     [event_id] NVARCHAR(1000) NOT NULL,
     [name] NVARCHAR(1000) NOT NULL,
     [price] DECIMAL(32,16) NOT NULL,
     [availability] INT NOT NULL,
-    [group_size] INT,
+    [group_size] INT CONSTRAINT [TicketTypes_group_size_df] DEFAULT 1,
     [is_deleted] BIT NOT NULL CONSTRAINT [TicketTypes_is_deleted_df] DEFAULT 0,
     [created_at] DATETIME2 NOT NULL CONSTRAINT [TicketTypes_created_at_df] DEFAULT CURRENT_TIMESTAMP,
     [updated_at] DATETIME2 NOT NULL,
@@ -183,6 +192,9 @@ ALTER TABLE [dbo].[PasswordResetCodes] ADD CONSTRAINT [PasswordResetCodes_user_i
 
 -- AddForeignKey
 ALTER TABLE [dbo].[Events] ADD CONSTRAINT [Events_organizer_id_fkey] FOREIGN KEY ([organizer_id]) REFERENCES [dbo].[Organizers]([id]) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE [dbo].[Events] ADD CONSTRAINT [Events_category_id_fkey] FOREIGN KEY ([category_id]) REFERENCES [dbo].[Categories]([id]) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE [dbo].[EventImages] ADD CONSTRAINT [EventImages_event_id_fkey] FOREIGN KEY ([event_id]) REFERENCES [dbo].[Events]([id]) ON DELETE NO ACTION ON UPDATE CASCADE;

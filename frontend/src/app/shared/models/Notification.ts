@@ -6,6 +6,7 @@ export default interface Notification {
   type?: string,
   message: string,
   read?: boolean,
+  is_deleted?: boolean,
   created_at?: Date,
   user?: User
 }

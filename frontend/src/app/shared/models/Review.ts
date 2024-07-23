@@ -1,5 +1,5 @@
 import Attendee from "./Attendee";
-import Event from "./Event";
+import IEvent from "./Event";
 
 export default interface Review {
   id?: string,
@@ -7,6 +7,7 @@ export default interface Review {
   event_id: string,
   rating: number,
   comment: string,
+  is_deleted?: boolean,
   attendee?: Attendee
-  event?: Event
+  event?: IEvent
 }

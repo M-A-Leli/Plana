@@ -41,10 +41,28 @@ async function main() {
             )
         );
 
+        // Seed categories
+        const categories = await Promise.all(
+            ["Category 1", "Category 2", "Category 3"].map((name) =>
+                prisma.category.create({
+                    data: {
+                        id: uuidv4(),
+                        name: name,
+                        is_deleted: false,
+                    },
+                })
+            )
+        );
+
         // Seed events and related data
         const organizers = await prisma.organizer.findMany();
+        let categoryIndex = 0;
+        
         for (const organizer of organizers) {
             for (let j = 0; j < 5; j++) {
+                const category = categories[categoryIndex % categories.length];
+                categoryIndex++;
+
                 const event = await prisma.event.create({
                     data: {
                         id: uuidv4(),
@@ -55,11 +73,12 @@ async function main() {
                         start_time: new Date().toTimeString(),
                         end_time: new Date().toTimeString(),
                         venue: `Venue ${j + 1}`,
+                        category_id: category.id,
                         is_deleted: false,
                         images: {
                             create: {
                                 id: uuidv4(),
-                                url: `https://localhost:3000/images/event${j + 1}.jpeg`,
+                                url: `http://localhost:3000/images/event${j + 1}.jpeg`,
                                 created_at: new Date(),
                                 is_deleted: false,
                             },

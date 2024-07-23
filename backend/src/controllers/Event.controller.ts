@@ -223,6 +223,15 @@ class EventController {
       next(error);
     }
   }
+
+  getEventsByCategoryId = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const events = await this.eventService.getEventsByCategoryId(req.params.id);
+      res.status(200).json(events);
+    } catch (error: any) {
+      next(error);
+    }
+  }
 }
 
 export default new EventController();

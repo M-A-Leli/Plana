@@ -12,11 +12,12 @@ import { AdminNotificationsComponent } from './admin-notifications/admin-notific
 import { AdminOrganizersComponent } from './admin-organizers/admin-organizers.component';
 import { AdminProfileComponent } from './admin-profile/admin-profile.component';
 import { AdminUsersComponent } from './admin-users/admin-users.component';
+import { AdminCategoriesComponent } from './admin-categories/admin-categories.component';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, AdminSidebarComponent, AdminTopbarComponent, AdminAdminsComponent, AdminAttendeesComponent, AdminDashboardComponent, AdminEventsComponent, AdminLogoutComponent, AdminNotificationsComponent, AdminOrganizersComponent, AdminProfileComponent, AdminUsersComponent],
+  imports: [CommonModule, AdminSidebarComponent, AdminTopbarComponent, AdminAdminsComponent, AdminAttendeesComponent, AdminDashboardComponent, AdminEventsComponent, AdminLogoutComponent, AdminNotificationsComponent, AdminOrganizersComponent, AdminProfileComponent, AdminUsersComponent, AdminCategoriesComponent],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css'
 })

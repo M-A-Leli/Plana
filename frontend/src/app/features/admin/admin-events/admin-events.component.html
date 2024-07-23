@@ -37,7 +37,8 @@
           <tr>
             <th>Title</th>
             <th>Date</th>
-            <th>Time</th>
+            <th>Starts</th>
+            <th>Ends</th>
             <th>Venue</th>
             <th>Actions</th>
           </tr>
@@ -46,7 +47,8 @@
           <tr *ngFor="let event of paginatedEvents">
             <td>{{ event.title }}</td>
             <td>{{ event.date | date: 'longDate'}}</td>
-            <td>{{ event.time | date: 'shortTime' }}</td>
+            <td>{{ event.start_time | date: 'shortTime' }}</td>
+            <td>{{ event.end_time | date: 'shortTime' }}</td>
             <td>{{ event.venue }}</td>
             <td class="actions">
               <button class="btn view" (click)="showView(event)">
@@ -88,7 +90,8 @@
           <div class="details">
             <p><strong>Title:</strong> {{ selectedEvent?.title }}</p>
             <p><strong>Date:</strong> {{ selectedEvent?.date }}</p>
-            <p><strong>Time:</strong> {{ selectedEvent?.time }}</p>
+            <p><strong>Starts:</strong> {{ selectedEvent?.start_time }}</p>
+            <p><strong>Ends:</strong> {{ selectedEvent?.end_time }}</p>
             <p><strong>Venue:</strong> {{ selectedEvent?.venue }}</p>
             <p><strong>Organizer:</strong> {{ selectedEvent?.organizer?.company }}</p>
             <p><strong>Rating:</strong> {{ selectedEvent?.average_rating }}</p>

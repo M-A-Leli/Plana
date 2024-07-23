@@ -2,6 +2,7 @@ import { PrismaClient, Order } from '@prisma/client';
 import createError from 'http-errors';
 import prisma from '../config/Prisma.config';
 import PaymentService from './Payment.service';
+import sendEmail from '../utils/Email.util';
 
 class OrderService {
     async getAllOrders(): Promise<Partial<Order>[]> {
@@ -383,7 +384,6 @@ class OrderService {
         // !
         await PaymentService.verifyPayment(payment?.id as string);
 
-        // Proceed to checkout the order
         const updatedOrder = await prisma.order.update({
             where: { id: pendingOrder.id },
             data: {
@@ -397,7 +397,29 @@ class OrderService {
                 total: true,
                 payment_id: true,
                 is_deleted: true,
-                updated_at: true
+                updated_at: true,
+                tickets: {
+                    include: {
+                        ticket_type: true
+                    }
+                }
+            }
+        });
+
+        const event = await prisma.event.findUnique
+            ({ where: { id: pendingOrder.event_id } });
+
+        await sendEmail({
+            to: user.email,
+            subject: 'Your Order Receipt',
+            template: 'OrderReceipt',
+            context: {
+                order_id: pendingOrder.id,
+                username: user.username,
+                event: event?.title,
+                date: new Date().toLocaleString(),
+                tickets: pendingOrder.tickets,
+                total: pendingOrder.total
             }
         });
 

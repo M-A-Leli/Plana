@@ -1,4 +1,4 @@
-CREATE DATABASE Plana;
+Create DATABASE Plana;
 GO
 
 USE Plana;
@@ -34,6 +34,9 @@ UPDATE Organizers SET is_deleted = 0;
 
 
 SELECT * FROM Events;
+-- UPDATE Events SET date = '2024-08-01 18:36:55.9280000', start_time = '13:15:00 GMT+0300 (East Africa Time)', end_time = '15:45:00 GMT+0300 (East Africa Time)';
+
+SELECT * FROM Categories;
 
 SELECT * FROM EventImages;
 

@@ -20,6 +20,7 @@ class EventService {
                 number_of_reviews: true,
                 is_deleted: true,
                 is_featured: true,
+                category_id: true,
                 organizer: {
                     select: {
                         id: true,
@@ -56,6 +57,7 @@ class EventService {
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
                 is_deleted: true,
                 is_featured: true,
                 organizer: {
@@ -81,7 +83,7 @@ class EventService {
         return event;
     }
 
-    async createEvent(id: string, data: Omit<Prisma.EventCreateInput, 'id' | 'organizer_id'>, imagePaths: string[]): Promise<Partial<Event> | null> {
+    async createEvent(id: string, data: Omit<Prisma.EventCreateInput, 'id' | 'organizer_id'> & { category_id: string }, imagePaths: string[]): Promise<Partial<Event> | null> {
         const organizer = await prisma.organizer.findFirst({
             where: {
                 user_id: id,
@@ -130,6 +132,7 @@ class EventService {
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
                 organizer: {
                     select: {
                         id: true,
@@ -187,6 +190,7 @@ class EventService {
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
                 organizer: {
                     select: {
                         id: true,
@@ -269,6 +273,7 @@ class EventService {
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
                 is_deleted: true,
                 is_featured: true,
                 organizer: {
@@ -324,6 +329,7 @@ class EventService {
                 number_of_reviews: true,
                 is_deleted: true,
                 is_featured: true,
+                category_id: true,
                 organizer: {
                     select: {
                         id: true,
@@ -375,6 +381,7 @@ class EventService {
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
                 is_deleted: true,
                 is_featured: true,
                 organizer: {
@@ -432,6 +439,7 @@ class EventService {
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
                 is_deleted: true,
                 is_featured: true,
                 organizer: {
@@ -493,6 +501,7 @@ class EventService {
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
                 is_deleted: true,
                 is_featured: true,
                 organizer: {
@@ -554,6 +563,7 @@ class EventService {
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
                 is_deleted: true,
                 is_featured: true,
                 organizer: {
@@ -608,6 +618,7 @@ class EventService {
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
                 is_deleted: true,
                 is_featured: true,
                 organizer: {
@@ -624,7 +635,7 @@ class EventService {
                     }
                 }
             },
-            take: 4
+            take: 3
         });
 
         if (relatedEvents.length === 0) {
@@ -654,6 +665,7 @@ class EventService {
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
                 is_deleted: true,
                 is_featured: true,
                 organizer: {
@@ -728,6 +740,7 @@ class EventService {
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
                 is_deleted: true,
                 is_featured: true,
             },
@@ -764,6 +777,7 @@ class EventService {
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
                 is_deleted: true,
                 is_featured: true,
             },
@@ -791,6 +805,53 @@ class EventService {
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
+                is_deleted: true,
+                is_featured: true,
+                organizer: {
+                    select: {
+                        id: true,
+                        company: true,
+                    }
+                },
+                images: {
+                    where: { is_deleted: false },
+                    select: {
+                        id: true,
+                        url: true,
+                    }
+                }
+            }
+        });
+
+        if (events.length === 0) {
+            throw createError(404, 'No upcoming events found');
+        }
+
+        return events;
+    }
+
+    async getEventsByCategoryId(category_id: string): Promise<Partial<Event>[]> {
+        const currentDate = new Date();
+        const events = await prisma.event.findMany({
+            where: {
+                category_id,
+                date: {
+                    gte: currentDate,
+                },
+                is_deleted: false,
+            },
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                date: true,
+                start_time: true,
+                end_time: true,
+                venue: true,
+                average_rating: true,
+                number_of_reviews: true,
+                category_id: true,
                 is_deleted: true,
                 is_featured: true,
                 organizer: {
@@ -835,6 +896,7 @@ class EventService {
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
                 is_deleted: true,
                 is_featured: true,
                 organizer: {
@@ -875,6 +937,7 @@ class EventService {
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
                 is_deleted: true,
                 is_featured: true,
                 organizer: {

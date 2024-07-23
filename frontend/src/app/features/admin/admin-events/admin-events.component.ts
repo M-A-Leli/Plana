@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import Event from '../../../shared/models/Event';
+import IEvent from '../../../shared/models/Event';
 import { EventService } from '../../../core/services/event.service';
 import { CommonModule } from '@angular/common';
 
@@ -11,9 +11,9 @@ import { CommonModule } from '@angular/common';
   styleUrl: './admin-events.component.css'
 })
 export class AdminEventsComponent {
-  events: Event[] = [];
-  paginatedEvents: Event[] = [];
-  selectedEvent: Event | null = null;
+  events: IEvent[] = [];
+  paginatedEvents: IEvent[] = [];
+  selectedEvent: IEvent | null = null;
   viewMode: 'default' | 'view' | 'feature' | 'exclude' = 'default';
   currentPage: number = 1;
   eventsPerPage: number = 10;
@@ -112,7 +112,7 @@ export class AdminEventsComponent {
     }
   }
 
-  getEventStatus(event: Event): string {
+  getEventStatus(event: IEvent): string {
     if (event.is_deleted) return 'Deleted';
     if (event.is_featured) return 'Featured';
     if (event.date > new Date()) return 'Upcoming';
@@ -120,17 +120,17 @@ export class AdminEventsComponent {
     return 'Active'; //!
   }
 
-  showView(event: Event): void {
+  showView(event: IEvent): void {
     this.selectedEvent = event;
     this.viewMode = 'view';
   }
 
-  showFeature(event: Event): void {
+  showFeature(event: IEvent): void {
     this.selectedEvent = event;
     this.viewMode = 'feature';
   }
 
-  showExclude(event: Event): void {
+  showExclude(event: IEvent): void {
     this.selectedEvent = event;
     this.viewMode = 'exclude';
   }

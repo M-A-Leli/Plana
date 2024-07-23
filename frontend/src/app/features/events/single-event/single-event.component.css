@@ -1,74 +1,245 @@
 .single-event {
+  padding: 20px;
+  padding-top: 70px;
+  color: #ffffff;
+  background-color: #081028;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 20px;
-  color: #aeb9e1;
+  justify-content: center;
+  gap: 1rem;
 }
 
-.event-details {
-  text-align: center;
+.back-button {
+  display: inline-block;
   margin-bottom: 20px;
+  padding: 10px 20px;
+  background-color: #cb3cff;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #a92bcc;
+}
+
+.upper-display {
+  width: 100%;
+  display: flex;
+  gap: 20px;
+}
+
+.event {
+  flex: 1;
+  background-color: #0b1739;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
 .event-images {
   position: relative;
-  text-align: center;
 }
 
 .current-image {
   width: 100%;
-  max-width: 600px;
   height: auto;
-  border-radius: 10px;
+  display: block;
 }
 
 .image-controls {
-  margin-top: 10px;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 .image-controls button {
-  background-color: #0e43fb;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #ffffff;
   border: none;
-  padding: 10px 20px;
-  color: #fff;
-  margin: 0 5px;
-  cursor: pointer;
   border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.image-controls button:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.event-details {
+  padding: 20px;
+}
+
+.event-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #081028;
+}
+
+.event-organizer {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #0e43fb;
+  cursor: pointer;
+}
+
+.event-description,
+.event-date,
+.event-time,
+.event-venue,
+.event-rating {
+  margin-bottom: 10px;
+  color: #061027;
+}
+
+.ticket-types {
+  flex: 1;
+  background-color: #0b1739;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.event-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.event-table th,
+.event-table td {
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.event-table th {
+  background-color: #cb3cff;
+  color: #ffffff;
+}
+
+.actions .btn {
+  background-color: #18a854;
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.actions .btn:hover {
+  background-color: #137a3d;
 }
 
 .related-events {
-  margin-top: 50px;
-  text-align: center;
+  width: 100%;
+  padding: 1rem;
+  margin-top: 40px;
+}
+
+.related-events h2 {
+  font-size: 2em;
+  margin: 1rem;
 }
 
 .related-event-cards {
   display: flex;
-  justify-content: center;
-  gap: 20px;
   flex-wrap: wrap;
+  gap: 1.5rem;
 }
 
 .related-event-card {
-  background-color: #061027;
-  padding: 15px;
+  background-color: #0b1739;
   border-radius: 10px;
-  width: 300px;
-  color: #aeb9e1;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
+  overflow: hidden;
+  color: #ffffff;
+  width: calc(33.333% - 1rem);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .related-event-card:hover {
-  transform: scale(1.05);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
-.related-event-image {
+.related-event-img {
+  height: 200px;
+  overflow: hidden;
+}
+
+.related-event-img img {
   width: 100%;
-  height: auto;
-  border-radius: 10px;
+  height: 100%;
+  object-fit: cover;
 }
 
 .related-event-details {
-  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  flex-grow: 1;
+}
+
+.related-event-details strong{
+  color: #00c2ff;
+}
+
+.event-title {
+  font-size: 1.2em;
+  margin-bottom: 0.5rem;
+  color: #cb3cff;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rating i {
+  color: #ffd700;
+}
+
+.event-organizer,
+.event-date,
+.event-time,
+.event-venue {
+  color: #aeb9e1;
+}
+
+.action {
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.action button {
+  padding: 0.5rem 1rem;
+  background-color: #cb3cff;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.action button:hover {
+  background-color: #a800e1;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .related-event-card {
+    width: 100%;
+  }
 }

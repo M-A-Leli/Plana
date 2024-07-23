@@ -33,6 +33,7 @@ import { AttendeeEventsComponent } from './features/attendee/attendee-events/att
 import { AttendeeCalendarComponent } from './features/attendee/attendee-calendar/attendee-calendar.component';
 import { OrganizerMessagesComponent } from './features/organizer/organizer-messages/organizer-messages.component';
 import { AttendeeMessagesComponent } from './features/attendee/attendee-messages/attendee-messages.component';
+import { AdminCategoriesComponent } from './features/admin/admin-categories/admin-categories.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -77,6 +78,7 @@ export const routes: Routes = [
       { path: 'attendees', component: AdminAttendeesComponent },
       { path: 'users', component: AdminUsersComponent },
       { path: 'events', component: AdminEventsComponent },
+      { path: 'categories', component: AdminCategoriesComponent },
       { path: 'notifications', component: AdminNotificationsComponent },
       { path: 'profile', component: AdminProfileComponent },
       { path: 'logout', component: AdminLogoutComponent },

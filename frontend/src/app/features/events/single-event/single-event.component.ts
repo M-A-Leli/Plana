@@ -5,7 +5,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { EventService } from '../../../core/services/event.service';
-import Event from '../../../shared/models/Event';
+import IEvent from '../../../shared/models/Event';
+import TicketType from '../../../shared/models/TicketTypes';
+import { TicketTypesService } from '../../../core/services/ticket-types.service';
 
 @Component({
   selector: 'app-single-event',
@@ -16,54 +18,86 @@ import Event from '../../../shared/models/Event';
 })
 export class SingleEventComponent {
 
-  event!: Event;
-  relatedEvents: Event[] = [];
-  currentImageIndex: number = 0;
+  event!: IEvent;
+  relatedEvents: IEvent[] = [];
+  currentImageIndex = 0;
+  ticketTypes: TicketType[] = [];
+  newTicket = {
 
-  constructor(private eventService: EventService, private route: ActivatedRoute, private router: Router) {}
-
-  ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      const eventId = params['id'];
-      this.fetchEventDetails(eventId);
-      this.fetchRelatedEvents(eventId);
-    });
   }
 
-  fetchEventDetails(eventId: string): void {
-    this.eventService.getEventById(eventId).subscribe((data: Event) => {
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private eventService: EventService,
+    private ticketTypeService: TicketTypesService
+  ) {}
+
+  ngOnInit(): void {
+    const eventId = this.route.snapshot.paramMap.get('id');
+    if (eventId) {
+      this.loadEvent(eventId);
+      this.loadRelatedEvents(eventId);
+      this.loadTicketTypes(eventId);
+    }
+  }
+
+  loadEvent(eventId: string): void {
+    this.eventService.getEventById(eventId).subscribe((data: IEvent) => {
       this.event = data;
     });
   }
 
-  fetchRelatedEvents(eventId: string): void {
-    this.eventService.getRelatedEvents(eventId).subscribe((data: Event[]) => {
+  loadRelatedEvents(eventId: string): void {
+    this.eventService.getRelatedEvents(eventId).subscribe((data: IEvent[]) => {
       this.relatedEvents = data;
     });
   }
 
-  prevImage(): void {
-    if (this.currentImageIndex > 0) {
-      this.currentImageIndex--;
-    } else {
-      // this.currentImageIndex = this.event.images.length - 1;
-    }
-  }
-
-  nextImage(): void {
-    // if (this.currentImageIndex < this.event.images.length - 1) {
-    //   this.currentImageIndex++;
-    // } else {
-    //   this.currentImageIndex = 0;
-    // }
+  loadTicketTypes(eventId: string): void {
+    this.ticketTypeService.getTicketTypesByEventId(eventId).subscribe((data: TicketType[]) => {
+      this.ticketTypes = data;
+    });
   }
 
   goBack(): void {
     this.router.navigate(['/events']);
   }
 
-  bookTickets(): void {
-    // Implement ticket booking logic here
-    alert('Tickets booked successfully!');
+  prevImage(): void {
+    if (this.currentImageIndex > 0) {
+      this.currentImageIndex--;
+    }
+  }
+
+  nextImage(): void {
+    if (this.currentImageIndex < (this.event.images?.length || 1) - 1) {
+      this.currentImageIndex++;
+    }
+  }
+
+  viewEvent(eventId: string): void {
+    this.router.navigate(['/events', eventId]);
+  }
+
+  viewOrganizerEvents(organizerId: string, event: MouseEvent): void {
+    event.stopPropagation();
+    this.router.navigate(['/events/organizer', organizerId]);
+  }
+
+  getRatingArray(rating: number): string[] {
+    const fullStars = Math.floor(rating);
+    const halfStars = rating % 1 >= 0.5 ? 1 : 0;
+    const emptyStars = 5 - fullStars - halfStars;
+
+    return [
+      ...Array(fullStars).fill('fa-star'),
+      ...Array(halfStars).fill('fa-star-half-o'),
+      ...Array(emptyStars).fill('fa-star-o')
+    ];
+  }
+
+  purchase() {
+
   }
 }

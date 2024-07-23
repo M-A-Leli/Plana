@@ -1,16 +1,14 @@
-import Attendee from "./Attendee";
-import Event from "./Event";
-import Payment from "./Payment";
+import Order from "./Order";
 import TicketType from "./TicketTypes";
 
 export default interface Ticket {
   id?: string,
   ticket_type_id: string,
-  attendee_id: string,
-  event_id: string,
-  unique_code: string,
+  order_id: string,
+  quantity: number,
+  subtotal: number,
+  unique_code?: string,
+  is_deleted?: boolean,
   ticket_type?: TicketType,
-  attendee?: Attendee,
-  event?: Event
-  payment?: Payment
+  order?: Order
 }

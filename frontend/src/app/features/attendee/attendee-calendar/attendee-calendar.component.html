@@ -35,7 +35,8 @@
           <div class="details">
             <h3>{{ event.title }}</h3>
             <p><strong>Venue:</strong> {{ event.venue }}</p>
-            <p><strong>Time:</strong> {{ event.time | date:'shortTime' }}</p>
+            <p><strong>Starts:</strong> {{ event.start_time | date:'shortTime' }}</p>
+            <p><strong>Ends:</strong> {{ event.end_time | date:'shortTime' }}</p>
           </div>
         </div>
       </div>
