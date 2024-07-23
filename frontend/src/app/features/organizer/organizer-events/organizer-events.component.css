@@ -332,6 +332,7 @@ form .actions {
 }
 
 form .actions .btn {
+  color: #ffffff;
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 5px;

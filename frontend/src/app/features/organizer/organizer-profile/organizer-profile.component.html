@@ -1,1 +1,114 @@
-<p>organizer-profile works!</p>
+<div class="organizer-entity-layout">
+  <div class="display-section">
+    <div class="left-display">
+      <div class="profile glassmorphism">
+        <div class="profile-img">
+          <img [src]="organizer.user?.profile_img" alt="Profile Picture" class="profile-picture">
+          <button (click)="showChangeProfilePicture()">Change Profile Picture</button>
+        </div>
+        <div class="profile-details">
+          <p><strong>Company:</strong> {{ organizer.company }}</p>
+          <p><strong>Username:</strong> {{ organizer.user?.username }}</p>
+          <p><strong>Email:</strong> {{ organizer.user?.email }}</p>
+          <p><strong>Bio:</strong> {{ organizer.bio }}</p>
+          <button (click)="showEditProfile()">Edit Profile</button>
+        </div>
+      </div>
+
+      <div class="change-password glassmorphism">
+        <h2>Change Your Password</h2>
+        <p>Keep your account secure by updating your password regularly.</p>
+        <button (click)="showChangePassword()">Change Password</button>
+      </div>
+
+      <div class="danger-zone glassmorphism">
+        <h2>Danger Zone</h2>
+        <p>Delete your account permanently. This action cannot be undone.</p>
+        <button class="danger-button" (click)="showDeleteAccount()">Delete Account</button>
+      </div>
+    </div>
+
+    <div class="right-display">
+      <div *ngIf="errorMessage" class="message error glassmorphism">{{ errorMessage }}</div>
+      <div *ngIf="successMessage" class="message success glassmorphism">{{ successMessage }}</div>
+
+      <div *ngIf="viewMode === 'default'" class="default-section glassmorphism">
+        <img src="/logo.svg" alt="Company Logo">
+        <h2>Plana</h2>
+      </div>
+
+      <div *ngIf="viewMode === 'edit-profile'" class="edit-profile-section glassmorphism">
+        <h2>Edit Profile</h2>
+        <form (ngSubmit)="updateProfile()">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input id="username" [(ngModel)]="newProfile.username" name="username" type="text" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" [(ngModel)]="newProfile.email" name="email" type="email" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="company">Company</label>
+            <input id="company" [(ngModel)]="newProfile.company" name="company" type="text" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="bio">Bio</label>
+            <textarea id="bio" [(ngModel)]="newProfile.bio" name="bio"></textarea>
+          </div>
+          <div class="form-group actions">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <div *ngIf="viewMode === 'change-password'" class="change-password-section glassmorphism">
+        <h2>Change Password</h2>
+        <form (ngSubmit)="changePassword()">
+          <div class="form-group">
+            <label for="current-password">Current Password</label>
+            <input id="current-password" [(ngModel)]="passwords.current_password" name="currentPassword" type="password">
+          </div>
+          <div class="form-group">
+            <label for="new-password">New Password</label>
+            <input id="new-password" [(ngModel)]="passwords.new_password" name="newPassword" type="password">
+          </div>
+          <div class="form-group">
+            <label for="confirm-password">Confirm New Password</label>
+            <input id="confirm-password" [(ngModel)]="passwords.confirm_password" name="confirmPassword" type="password">
+          </div>
+          <div class="form-group actions">
+            <button type="submit" class="btn btn-primary">Update Password</button>
+            <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <div *ngIf="viewMode === 'delete-account'" class="delete-account-section glassmorphism">
+        <h2>Delete Account</h2>
+        <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+        <div class="form-group actions">
+          <button (click)="deleteAccount()" class="btn btn-danger">Confirm Delete</button>
+          <button (click)="resetView()" class="btn btn-secondary">Cancel</button>
+        </div>
+      </div>
+
+      <div *ngIf="viewMode === 'change-profile-picture'" class="change-profile-picture-section glassmorphism">
+        <h2>Change Profile Picture</h2>
+        <form (ngSubmit)="changeProfilePicture()" enctype="multipart/form-data">
+          <div class="form-group">
+            <img *ngIf="imageUrl" [src]="imageUrl" class="preview-image" alt="Preview Image">
+          </div>
+          <div class="form-group">
+            <input type="file" (change)="onFileSelected($event)" required>
+          </div>
+          <div class="form-group actions">
+            <button type="submit" class="btn btn-primary">Upload</button>
+            <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

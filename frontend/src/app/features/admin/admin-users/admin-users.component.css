@@ -143,14 +143,6 @@
   background-color: #0e43fb;
 }
 
-.actions .btn.edit {
-  background-color: #00c2ff;
-}
-
-.actions .btn.delete {
-  background-color: #ff3b3b;
-}
-
 .actions .btn.suspend {
   background-color: #ffcb3b;
 }
@@ -166,14 +158,6 @@
 
 .actions .btn.view:hover {
   background-color: rgba(14, 67, 251, 0.2);
-}
-
-.actions .btn.edit:hover {
-  background-color: rgba(0, 194, 255, 0.2);
-}
-
-.actions .btn.delete:hover {
-  background-color: rgba(255, 59, 59, 0.2);
 }
 
 .actions .btn.suspend:hover {
@@ -269,24 +253,6 @@
   color: #cb3cff;
 }
 
-/* Edit section */
-.edit-section {
-  width: 100%;
-  height: auto;
-  padding: 1rem;
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 1rem;
-}
-
-.edit-section h2 {
-  text-align: center;
-  color: #cb3cff;
-}
-
 /* Forms */
 form {
   width: 100%;
@@ -338,6 +304,7 @@ form .actions {
 }
 
 form .actions .btn {
+  color: #ffffff;
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 5px;
@@ -434,8 +401,7 @@ form .actions .btn-secondary:hover {
 
 /* Delete, Suspend, Reinstate Sections */
 .suspend-section,
-.reinstate-section,
-.delete-section {
+.reinstate-section {
   width: 100%;
   height: auto;
   padding: 1rem;
@@ -448,29 +414,25 @@ form .actions .btn-secondary:hover {
 }
 
 .suspend-section h2,
-.reinstate-section h2,
-.delete-section h2 {
+.reinstate-section h2 {
   color: #cb3cff;
 }
 
 .suspend-section p,
-.reinstate-section p,
-.delete-section p {
+.reinstate-section p {
   font-size: 16px;
   color: #ffffff;
 }
 
 .suspend-section .form-group.actions,
-.reinstate-section .form-group.actions,
-.delete-section .form-group.actions {
+.reinstate-section .form-group.actions {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
 
 .suspend-section .btn,
-.reinstate-section .btn,
-.delete-section .btn {
+.reinstate-section .btn {
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 5px;
@@ -479,29 +441,25 @@ form .actions .btn-secondary:hover {
 }
 
 .suspend-section .btn-danger,
-.reinstate-section .btn-danger,
-.delete-section .btn-danger {
+.reinstate-section .btn-danger {
   background-color: #e74c3c;
   color: #ffffff;
 }
 
 .suspend-section .btn-secondary,
-.reinstate-section .btn-secondary,
-.delete-section .btn-secondary {
+.reinstate-section .btn-secondary {
   background-color: #7b818c;
   color: #ffffff;
 }
 
 .suspend-section .btn-danger:hover,
-.reinstate-section .btn-danger:hover,
-.delete-section .btn-danger:hover {
+.reinstate-section .btn-danger:hover {
   background-color: #ff6655;
   color: #ffffff;
 }
 
 .suspend-section .btn-secondary:hover,
-.reinstate-section .btn-secondary:hover,
-.delete-section .btn-secondary:hover {
+.reinstate-section .btn-secondary:hover {
   background-color: #63686f;
   color: #ffffff;
 }
@@ -544,7 +502,7 @@ form .actions .btn-secondary:hover {
     gap: 5px;
   }
 
-  .create-section, .edit-section, .view-section, .suspend-section, .reinstate-section, .delete-section {
+  .create-section, .view-section, .suspend-section, .reinstate-section {
     padding: 0.5rem;
   }
 
@@ -605,7 +563,7 @@ form .actions .btn-secondary:hover {
     gap: 5px;
   }
 
-  .create-section, .edit-section, .view-section, .suspend-section, .reinstate-section, .delete-section {
+  .create-section, .view-section, .suspend-section, .reinstate-section {
     padding: 0.5rem;
   }
 
@@ -666,7 +624,7 @@ form .actions .btn-secondary:hover {
     gap: 5px;
   }
 
-  .create-section, .edit-section, .view-section, .suspend-section, .reinstate-section, .delete-section {
+  .create-section, .view-section, .suspend-section, .reinstate-section {
     padding: 0.5rem;
   }
 

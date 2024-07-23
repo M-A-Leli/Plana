@@ -12,8 +12,8 @@ router.get('/suspended', AuthMiddleware.authorizeAdmin, AttendeeController.getSu
 router.get('/deleted', AuthMiddleware.authorizeAdmin, AttendeeController.getDeletedAttendees); // Get deleted attendees
 router.get('/', AuthMiddleware.authorizeAdmin, AttendeeController.getAllAttendees); // Get all attendees
 router.post('/', AttendeeController.createAttendee); // Create attendee
+router.delete('/', AuthMiddleware.authorizeAttendee, AttendeeController.deleteAttendee); // Delete attendee
 router.get('/:id', AuthMiddleware.authorizeAdmin, AttendeeController.getAttendeeById); // Get attendee by id
 router.put('/:id', AuthMiddleware.authorizeAdmin, AttendeeController.updateAttendee); // Update attendee
-router.delete('/:id', AuthMiddleware.authorizeAttendee, AttendeeController.deleteAttendee); // Delete attendee
 
 export default router;

@@ -66,7 +66,8 @@ class OrganizerController {
 
   deleteOrganizer = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.organizerService.deleteOrganizer(req.params.id);
+      const user_id = req.user?.id as string;
+      await this.organizerService.deleteOrganizer(user_id);
       res.status(204).send();
     } catch (error: any) {
       next(error);

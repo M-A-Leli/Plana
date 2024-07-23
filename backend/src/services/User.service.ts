@@ -2,6 +2,7 @@ import createError from 'http-errors';
 import bcrypt from 'bcrypt';
 import { User, Prisma } from '@prisma/client';
 import prisma from '../config/Prisma.config';
+import sendEmail from '../utils/Email.util';
 
 const BASE_URL = `http://localhost:${process.env.PORT}`;
 
@@ -10,6 +11,28 @@ class UserService {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
         return { hash, salt };
+    }
+
+    static generatePassword(length: number = 12): string {
+        const upperCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const lowerCase = 'abcdefghijklmnopqrstuvwxyz';
+        const numbers = '0123456789';
+        const specialChars = '!@#$%^&*()-_=+[]{}|;:,.<>?';
+
+        const allChars = upperCase + lowerCase + numbers + specialChars;
+        const getRandomChar = (chars: string) => chars[Math.floor(Math.random() * chars.length)];
+
+        let password = '';
+        password += getRandomChar(upperCase);
+        password += getRandomChar(lowerCase);
+        password += getRandomChar(numbers);
+        password += getRandomChar(specialChars);
+
+        for (let i = 4; i < length; i++) {
+            password += getRandomChar(allChars);
+        }
+
+        return password.split('').sort(() => Math.random() - 0.5).join('');
     }
 
     async getAllUsers(): Promise<Partial<User>[]> {
@@ -81,14 +104,13 @@ class UserService {
         return user;
     }
 
-    async createUser(data: Partial<User>, imagePath: string): Promise<Partial<User> | null> {
+    async createUser(data: Partial<User>): Promise<Partial<User> | null> {
         const {
             username,
-            email,
-            password
+            email
         } = data;
 
-        if (!username || !email || !password) {
+        if (!username || !email) {
             throw createError(400, 'Username, email, and password are required');
         }
 
@@ -108,7 +130,9 @@ class UserService {
             throw createError(409, 'Username already exists');
         }
 
-        const { hash, salt } = await this.hashPassword(password as string);
+        const generatedPassword = UserService.generatePassword();
+
+        const { hash, salt } = await this.hashPassword(generatedPassword);
 
         const user = await prisma.user.create({
             data: {
@@ -116,7 +140,7 @@ class UserService {
                 email,
                 password: hash,
                 salt: salt,
-                profile_img: `${BASE_URL}/images/${imagePath.split('/').pop()}`,
+                profile_img: `${BASE_URL}/images/default_profile_image.svg`,
             },
             select: {
                 id: true,
@@ -132,10 +156,22 @@ class UserService {
             }
         });
 
+        await sendEmail({
+            to: email,
+            subject: 'Welcome to Plana',
+            template: 'WelcomeUser',
+            context: {
+                username,
+                email,
+                password: generatedPassword,
+                loginUrl: `http://localhost:4200/login`
+            }
+        });
+
         return user;
     }
 
-    async updateUser(id: string, data: Partial<User>, imagePath: string): Promise<Partial<User> | null> {
+    async updateUser(id: string, data: Partial<User>): Promise<Partial<User> | null> {
         const {
             username,
             email
@@ -180,7 +216,7 @@ class UserService {
             data: {
                 username,
                 email,
-                profile_img: `${BASE_URL}/images/${imagePath.split('/').pop()}`,
+                updated_at: new Date(),
             },
             select: {
                 id: true,
@@ -379,6 +415,13 @@ class UserService {
             where: { id },
             data: { is_suspended: true }
         });
+
+        await sendEmail({
+            to: user.email,
+            subject: 'Account Suspension Notice',
+            template: 'UserSuspension',
+            context: { username: user.username },
+        });
     }
 
     async reinstateUser(id: string) {
@@ -397,6 +440,13 @@ class UserService {
         await prisma.user.update({
             where: { id },
             data: { is_suspended: false }
+        });
+
+        await sendEmail({
+            to: user.email,
+            subject: 'Account Reinstatement Notice',
+            template: 'UserReinstate',
+            context: { username: user.username },
         });
     }
 
@@ -504,6 +554,41 @@ class UserService {
         }
 
         return users;
+    }
+
+    async changePassword(id: string, data: { current_password: string; new_password: string; }) {
+        const { current_password, new_password } = data;
+
+        try {
+            const user = await prisma.user.findUnique({ where: { id } });
+
+            if (!user || user.is_deleted || user.is_suspended) {
+                throw createError(404, 'User not found or is inactive');
+            }
+
+            const isPasswordValid = await bcrypt.compare(current_password, user.password);
+
+            if (!isPasswordValid) {
+                throw createError(401, 'Current password is incorrect');
+            }
+
+            if (current_password === new_password) {
+                throw createError(400, 'New password must be different from current password');
+            }
+
+            const { hash, salt } = await this.hashPassword(new_password);
+
+            await prisma.user.update({
+                where: { id },
+                data: {
+                    password: hash,
+                    salt
+                }
+            });
+
+        } catch (error: any) {
+            throw createError(error);
+        }
     }
 
     async getUserAnalytics(): Promise<Object> {

@@ -237,9 +237,11 @@ class AttendeeService {
       });
 
       await tx.attendee.update({
-        where: { id },
+        where: { user_id: user.id },
         data: { is_deleted: true }
       });
+
+      await tx.organizer.delete({ where:{ user_id: id } });
     }).catch((error) => {
       throw createError(500, `Error deleting attendee: ${error.message}`);
     });

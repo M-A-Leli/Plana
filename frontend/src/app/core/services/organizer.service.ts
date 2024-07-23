@@ -36,8 +36,8 @@ export class OrganizerService {
     return this.http.put<Organizer>(`${this.baseUrl}/${id}`, organizer);
   }
 
-  deleteOrganizer(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  deleteOrganizer(): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/`);
   }
 
   getOrganizerProfile(): Observable<Organizer> {

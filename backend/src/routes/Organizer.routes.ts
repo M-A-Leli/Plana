@@ -12,9 +12,9 @@ router.get('/approved', AuthMiddleware.authorizeAdmin, OrganizerController.getAp
 router.get('/deleted', AuthMiddleware.authorizeAdmin, OrganizerController.getDeletedOrganizers); // Get deleted organizers
 router.get('/', AuthMiddleware.authorizeAdmin, OrganizerController.getAllOrganizers); // Get all organizers
 router.post('/', AuthMiddleware.authorizeAttendee, OrganizerController.createOrganizer); // Create organizer on request
+router.delete('/', AuthMiddleware.authorizeOrganizer, OrganizerController.deleteOrganizer); // Delete organizer
 router.get('/:id', AuthMiddleware.authorizeAdmin, OrganizerController.getOrganizerById); // Get organizer by id
 router.put('/:id', AuthMiddleware.authorizeAdmin, OrganizerController.updateOrganizer); // Update organizer
-router.delete('/:id', AuthMiddleware.authorizeOrganizer, OrganizerController.deleteOrganizer); // Delete organizer
 router.put('/approve/:id', AuthMiddleware.authorizeAdmin, OrganizerController.approveOrganizer); // Aprove organizer request
 router.put('/revoke/:id', AuthMiddleware.authorizeAdmin, OrganizerController.revokeOrganizer); // Revoke organizer
 

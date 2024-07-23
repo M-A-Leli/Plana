@@ -13,16 +13,6 @@ Chart.register(CategoryScale, LinearScale, LineController, PointElement, LineEle
   styleUrl: './admin-dashboard.component.css'
 })
 export class AdminDashboardComponent {
-  profile = {
-    id: "239f7e0f-9216-4f05-9d44-b5bf2a42d354",
-    user: {
-      id: "9b6359ab-edfd-4c54-a680-3fd2f67936a8",
-      username: "user1",
-      email: "user1@example.com",
-      phone_number: "0700000000",
-      profile_img: "http://localhost:3000/images/profile0.png"
-    }
-  };
 
   highlightCards = [
     { title: 'Total Organizers', value: 50 },

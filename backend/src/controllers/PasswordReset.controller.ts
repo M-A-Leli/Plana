@@ -29,8 +29,8 @@ class PasswordResetController {
 
   verifyPasswordResetCode = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { user_id, reset_code } = req.body;
-      const passwordResetToken = await this.passwordResetService.verifyPasswordResetCode(user_id, reset_code);
+      const { code } = req.body;
+      const passwordResetToken = await this.passwordResetService.verifyPasswordResetCode(code);
 
       const resetToken = this.generateResetToken(passwordResetToken.user_id as string);
 

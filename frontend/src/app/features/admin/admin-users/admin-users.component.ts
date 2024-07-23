@@ -17,7 +17,7 @@ export class AdminUsersComponent {
   paginatedUsers: User[] = [];
   selectedUser: User | null = null;
   newUser: Partial<User> = { username: '', email: '' };
-  viewMode: 'default' | 'view' | 'edit' | 'create' | 'delete' | 'suspend' | 'reinstate' = 'default';
+  viewMode: 'default' | 'view' | 'create' | 'suspend' | 'reinstate' = 'default';
   currentPage: number = 1;
   usersPerPage: number = 10;
   totalPages: number = 1;
@@ -123,19 +123,9 @@ export class AdminUsersComponent {
     this.viewMode = 'view';
   }
 
-  showEdit(user: User): void {
-    this.selectedUser = user;
-    this.viewMode = 'edit';
-  }
-
   showCreate(): void {
     this.selectedUser = null;
     this.viewMode = 'create';
-  }
-
-  showDelete(user: User): void {
-    this.selectedUser = user;
-    this.viewMode = 'delete';
   }
 
   showSuspend(user: User): void {
@@ -164,56 +154,6 @@ export class AdminUsersComponent {
       this.usersService.createUser(this.newUser).subscribe({
         next: data => {
           this.successMessage = 'User created successfull!';
-          setTimeout(() => {
-            this.successMessage = '';
-            this.fetchUsers();
-            this.fetchAnalytics();
-            this.resetView();
-          }, 3000);
-        },
-        error: err => {
-          if (err.status === 401 || err.status === 404) {
-            this.errorMessage = err.error.error.message;
-            this.clearErrors();
-          } else {
-            this.errorMessage = 'An unexpected error occurred. Please try again.';
-            this.clearErrors();
-          }
-        }
-      });
-    }
-  }
-
-  updateUser(): void {
-    if (this.selectedUser && this.selectedUser.username && this.selectedUser.email) {
-      this.usersService.updateUser(this.selectedUser.id as string, this.selectedUser).subscribe({
-        next: data => {
-          this.successMessage = 'User updated successfull!';
-          setTimeout(() => {
-            this.successMessage = '';
-            this.fetchUsers();
-            this.fetchAnalytics();
-            this.resetView();
-          }, 3000);
-        },
-        error: err => {
-          if (err.status === 401 || err.status === 404 || err.status === 409) {
-            this.errorMessage = err.error.error.message;
-            this.clearErrors();
-          } else {
-            this.errorMessage = 'An unexpected error occurred. Please try again.';
-            this.clearErrors();
-          }
-        }
-      });
-    }
-  }
-
-  deleteUser(): void {
-    if (this.selectedUser) {
-      this.usersService.deleteUser(this.selectedUser.id as string).subscribe({
-        next: data => {
-          this.successMessage = 'User deleted successfull!';
           setTimeout(() => {
             this.successMessage = '';
             this.fetchUsers();

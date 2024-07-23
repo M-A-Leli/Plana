@@ -74,7 +74,7 @@
 
       <div *ngIf="viewMode === 'create'" class="create-section glassmorphism">
         <h2>Create New Event</h2>
-        <form [formGroup]="eventForm" (ngSubmit)="createEvent()">
+        <form [formGroup]="eventForm" (ngSubmit)="createEvent()" enctype="multipart/form-data">
           <div class="form-group">
             <label for="title">Title</label>
             <input id="title" formControlName="title" type="text" autocomplete="off">
@@ -129,7 +129,7 @@
 
       <div *ngIf="viewMode === 'edit'" class="edit-section glassmorphism">
         <h2>Edit Event</h2>
-        <form (ngSubmit)="updateEvent()">
+        <form (ngSubmit)="updateEvent()" enctype="multipart/form-data">
           <div class="form-group">
             <label for="title">Title</label>
             <!-- <input id="title" [(ngModel)]="selectedEvent?.title"  name="title" type="text" autocomplete="off"/> -->

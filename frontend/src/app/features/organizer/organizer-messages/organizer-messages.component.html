@@ -1,1 +1,31 @@
-<p>organizer-messages works!</p>
+<div class="notifications-container">
+  <div class="top-bar">
+    <button class="btn compose-btn" (click)="showCompose()">Compose</button>
+    <div class="filter-buttons">
+      <button class="btn filter-btn" (click)="filterNotifications('all')">All</button>
+      <button class="btn filter-btn" (click)="filterNotifications('unread')">Unread</button>
+      <button class="btn filter-btn" (click)="filterNotifications('read')">Read</button>
+    </div>
+  </div>
+  <div class="main-content">
+    <div class="left-display">
+      <div *ngFor="let notification of notifications" class="notification-card">
+        <div class="notification-header">
+          <span class="notification-type">{{ notification.type }}</span>
+          <button class="btn delete-btn" (click)="deleteNotification(notification.id || '')">Delete</button>
+        </div>
+        <div class="notification-body">
+          <p>{{ notification.message }}</p>
+        </div>
+        <div class="notification-footer">
+          <span class="notification-user">{{ notification.user?.username }}</span>
+          <!-- <span class="notification-date">{{ notification.created_at | date:'shorttime' }}</span> -->
+          <span class="notification-date">{{ notification.created_at }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="right-display">
+      <!-- Add components for composing and viewing notifications here -->
+    </div>
+  </div>
+</div>

@@ -19,6 +19,7 @@
   justify-content: center;
   flex-grow: 1;
   width: 100%;
+  height: 100%;
   padding: 1rem 0;
   flex-wrap: wrap;
   overflow: auto;
@@ -26,6 +27,19 @@
 
 .content-section::-webkit-scrollbar {
   display: none;
+}
+
+app-attendee-dashboard,
+app-attendee-events,
+app-attendee-calendar,
+app-attendee-messages,
+app-attendee-profile,
+app-attendee-logout {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @media (max-width: 768px) {

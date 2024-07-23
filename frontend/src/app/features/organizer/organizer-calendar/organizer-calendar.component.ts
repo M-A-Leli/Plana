@@ -34,7 +34,6 @@ export class OrganizerCalendarComponent {
     this.selectedYear = today.getFullYear();
     this.today = today.toDateString();
     this.updateCurrentMonthYear();
-    // this.generateCalendar();
   }
 
   ngOnInit(): void {

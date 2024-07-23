@@ -29,9 +29,6 @@ class AttendeeController {
 
   createAttendee = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log('executed');
-      console.log(req.body);
-      
       const attendee = await this.attendeeService.createAttendee(req.body);
       res.status(201).json(attendee);
     } catch (error: any) {
@@ -50,7 +47,8 @@ class AttendeeController {
 
   deleteAttendee = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.attendeeService.deleteAttendee(req.params.id);
+      const user_id = req.user?.id as string;
+      await this.attendeeService.deleteAttendee(user_id);
       res.status(204).send();
     } catch (error: any) {
       next(error);
