@@ -2,8 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HeaderComponent } from '../../../shared/components/header/header.component';
-import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { EventService } from '../../../core/services/event.service';
 import IEvent from '../../../shared/models/Event';
 import { CategoryService } from '../../../core/services/category.service';
@@ -14,7 +12,7 @@ import { TicketService } from '../../../core/services/ticket.service';
 @Component({
   selector: 'app-event-list',
   standalone: true,
-  imports: [FormsModule, CommonModule, HeaderComponent, FooterComponent],
+  imports: [FormsModule, CommonModule],
   templateUrl: './event-list.component.html',
   styleUrl: './event-list.component.css'
 })
@@ -88,7 +86,6 @@ export class EventListComponent {
   loadEvents() {
     this.eventService.getUpcomingEvents().subscribe((data: IEvent[]) => {
       this.events = data;
-      console.log(this.events)
       this.filteredEvents = data;
       this.paginateEvents();
     });
@@ -102,17 +99,11 @@ export class EventListComponent {
 
   filterByCategory() {
     if (this.selectedCategoryId) {
-      this.eventService.getEventsByCategoryId(this.selectedCategoryId).subscribe(
-        (data) => {
-          this.filteredEvents = data;
-          this.currentPage = 1;
-          this.paginateEvents();
-        },
-        (error) => {
-          this.errorMessage = 'Error fetching events by category';
-          this.clearErrors();
-        }
-      );
+      this.eventService.getEventsByCategoryId(this.selectedCategoryId).subscribe((data: IEvent[]) => {
+        this.filteredEvents = data;
+        this.currentPage = 1;
+        this.paginateEvents();
+      });
     } else {
       this.filteredEvents = this.events;
       this.currentPage = 1;

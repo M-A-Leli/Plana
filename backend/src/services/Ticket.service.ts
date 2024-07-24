@@ -1,6 +1,7 @@
 import { Prisma, Ticket } from '@prisma/client';
 import createError from 'http-errors';
 import prisma from '../config/Prisma.config';
+import { name } from 'ejs';
 
 class TicketService {
     static generateUniqueCode(length: number): string {
@@ -348,7 +349,21 @@ class TicketService {
                 subtotal: true,
                 unique_code: true,
                 is_deleted: true,
-                updated_at: true
+                updated_at: true,
+                ticket_type: {
+                    select: {
+                        id: true,
+                        name: true,
+                        group_size: true,
+                        price: true,
+                        event: {
+                            select: {
+                                title: true,
+                                id: true,
+                            }
+                        }
+                    }
+                }
             }
         });
 

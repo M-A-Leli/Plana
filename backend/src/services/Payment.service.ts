@@ -69,7 +69,7 @@ class PaymentService {
         return payment;
     }
 
-    async getPaymentById(id: string): Promise<Partial<Payment>> {
+    static async getPaymentById(id: string): Promise<Partial<Payment>> {
         const payment = await prisma.payment.findUnique({
             where: { id },
             select: {
@@ -89,7 +89,7 @@ class PaymentService {
         return payment;
     }
 
-    async refundAttendees(eventId: string): Promise<void> {
+    static async refundAttendees(eventId: string): Promise<void> {
         const orders = await prisma.order.findMany({
             where: {
                 event_id: eventId,

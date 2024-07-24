@@ -15,7 +15,7 @@ import { Router } from '@angular/router';
   styleUrl: './attendee-profile.component.css'
 })
 export class AttendeeProfileComponent {
-  attendee!: Attendee;
+  attendee: Attendee | undefined;
   viewMode: 'default' | 'change-profile-picture' | 'edit-profile' | 'become-organizer' | 'change-password' | 'delete-account' = 'default';
   errorMessage: string = '';
   successMessage: string = '';

@@ -34,6 +34,7 @@ import { AttendeeCalendarComponent } from './features/attendee/attendee-calendar
 import { OrganizerMessagesComponent } from './features/organizer/organizer-messages/organizer-messages.component';
 import { AttendeeMessagesComponent } from './features/attendee/attendee-messages/attendee-messages.component';
 import { AdminCategoriesComponent } from './features/admin/admin-categories/admin-categories.component';
+import { TicketsComponent } from './features/tickets/tickets.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -42,6 +43,7 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-code/verify', component: ResetCodeVerificationComponent },
   { path: 'password-reset', component: PasswordResetComponent },
+  { path: 'tickets', component: TicketsComponent },
   {
     path: 'events', component: EventsComponent, children: [
       { path: ':id', component: SingleEventComponent },

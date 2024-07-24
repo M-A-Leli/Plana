@@ -3,13 +3,13 @@
     <div class="left-display">
       <div class="profile glassmorphism">
         <div class="profile-img">
-          <img [src]="attendee.user?.profile_img" alt="Profile Picture" class="profile-picture">
+          <img [src]="attendee?.user?.profile_img" alt="Profile Picture" class="profile-picture">
           <button (click)="showChangeProfilePicture()">Change Profile Picture</button>
         </div>
         <div class="profile-details">
-          <p><strong>Username:</strong> {{ attendee.user?.username }}</p>
-          <p><strong>Email:</strong> {{ attendee.user?.email }}</p>
-          <p><strong>Bio:</strong> {{ attendee.bio }}</p>
+          <p><strong>Username:</strong> {{ attendee?.user?.username }}</p>
+          <p><strong>Email:</strong> {{ attendee?.user?.email }}</p>
+          <p><strong>Bio:</strong> {{ attendee?.bio }}</p>
           <button (click)="showEditProfile()">Edit Profile</button>
         </div>
       </div>

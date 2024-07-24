@@ -2,17 +2,17 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HeaderComponent } from '../../../shared/components/header/header.component';
-import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { EventService } from '../../../core/services/event.service';
 import IEvent from '../../../shared/models/Event';
 import TicketType from '../../../shared/models/TicketTypes';
 import { TicketTypesService } from '../../../core/services/ticket-types.service';
+import Ticket from '../../../shared/models/Ticket';
+import { TicketService } from '../../../core/services/ticket.service';
 
 @Component({
   selector: 'app-single-event',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, FooterComponent],
+  imports: [CommonModule],
   templateUrl: './single-event.component.html',
   styleUrl: './single-event.component.css'
 })
@@ -22,15 +22,15 @@ export class SingleEventComponent {
   relatedEvents: IEvent[] = [];
   currentImageIndex = 0;
   ticketTypes: TicketType[] = [];
-  newTicket = {
-
-  }
+  errorMessage: string | null = null;
+  successMessage: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private eventService: EventService,
-    private ticketTypeService: TicketTypesService
+    private ticketTypeService: TicketTypesService,
+    private ticketService: TicketService
   ) {}
 
   ngOnInit(): void {
@@ -97,7 +97,37 @@ export class SingleEventComponent {
     ];
   }
 
-  purchase() {
+  clearErrors() {
+    setTimeout(() => {
+      this.errorMessage = '';
+    }, 3000);
+  }
 
+  purchase(event: Event, ticket_type_id: string) {
+    event.stopPropagation();
+
+    const newTicket: Partial<Ticket> = {
+      ticket_type_id: ticket_type_id
+    }
+
+    this.ticketService.createTicket(newTicket).subscribe({
+      next: data => {
+        this.successMessage = 'Ticket added to order successfull!';
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 3000);
+      },
+      error: err => {
+        if (err.status === 401) {
+          this.router.navigate(['/login']);
+        } else if (err.status === 404 || err.status === 400) {
+          this.errorMessage = err.error.error.message;
+          this.clearErrors();
+        } else {
+          this.errorMessage = 'An unexpected error occurred. Please try again.';
+          this.clearErrors();
+        }
+      }
+    });
   }
 }

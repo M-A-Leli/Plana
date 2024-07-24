@@ -6,6 +6,7 @@ GO
 
 SELECT * FROM Users;
 
+-- 2bb52a6a-441d-4312-968d-80ab9024d955
 -- UPDATE Users SET is_deleted = 0, is_suspended = 0;
 -- UPDATE Users SET password = '$2b$10$G8AWm9bFHk25/F0cSNgn8OIJpdfBmrys4VqlI6oatC.lmuwrHf5Ly';
 Delete from Users WHERE id = 'ca1e5ecb-25d6-4e98-b5d4-721698649e8e';
@@ -25,7 +26,7 @@ SELECT * FROM Attendees;
 
 SELECT * FROM Organizers;
 
-UPDATE Organizers SET is_deleted = 0;
+-- UPDATE Organizers SET is_deleted = 0;
 -- UPDATE Organizers SET is_deleted = 0, approved = 1 WHERE id = '31696010-835d-4e06-94a5-1c9cda0b4817';
 
 -- INSERT INTO Attendees (id, user_id, bio, is_deleted)
@@ -43,6 +44,12 @@ SELECT * FROM EventImages;
 SELECT * FROM TicketTypes;
 
 SELECT * FROM Tickets;
+
+SELECT * FROM Orders;
+
+SELECT * FROM Attendees WHERE user_id = '2bb52a6a-441d-4312-968d-80ab9024d955';
+SELECT * FROM Orders WHERE attendee_id = '42bf947c-122f-46a3-9dda-d5e28babe214';
+SELECT * FROM Orders WHERE attendee_id = '42bf947c-122f-46a3-9dda-d5e28babe214';
 
 SELECT * FROM Reviews;
 

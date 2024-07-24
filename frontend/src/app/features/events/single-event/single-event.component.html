@@ -1,7 +1,7 @@
-<app-header></app-header>
-
 <section class="single-event">
   <button class="back-button" (click)="goBack()">Back to Events</button>
+  <div class="error-container" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <div class="success-container" *ngIf="successMessage">{{ successMessage }}</div>
 
   <div class="upper-display">
     <div class="event">
@@ -47,8 +47,8 @@
           <td>{{ ticket_type.availability }}</td>
           <td>{{ ticket_type.group_size }}</td>
           <td class="actions">
-            <button *ngIf="!ticket_type.is_deleted && ticket_type.availability !== 0" class="btn purchace" (click)="(event)">
-              <img src="/icons/purchace.png" alt="Purchace">
+            <button *ngIf="!ticket_type.is_deleted && ticket_type.availability !== 0" class="btn purchace" (click)="purchase($event, ticket_type.id || '')">
+              <img src="/icons/purchase.png" alt="Purchace">
             </button>
           </td>
         </tr>
@@ -92,5 +92,3 @@
     <p>No related events available.</p>
   </div>
 </section>
-
-<app-footer></app-footer>

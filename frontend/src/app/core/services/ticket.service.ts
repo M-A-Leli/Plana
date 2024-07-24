@@ -20,11 +20,11 @@ export class TicketService {
     return this.http.get<Ticket>(`${this.baseUrl}/${id}`);
   }
 
-  createTicket(ticket: Ticket): Observable<Ticket> {
+  createTicket(ticket: Partial<Ticket>): Observable<Ticket> {
     return this.http.post<Ticket>(this.baseUrl, ticket);
   }
 
-  updateTicket(id: string, ticket: Ticket): Observable<Ticket> {
+  updateTicket(id: string, ticket: Partial<Ticket>): Observable<Ticket> {
     return this.http.put<Ticket>(`${this.baseUrl}/${id}`, ticket);
   }
 
