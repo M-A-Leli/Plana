@@ -10,7 +10,7 @@ export default interface Order {
   total: number,
   payment_id?: string,
   is_deleted?: boolean,
-  updated_at: boolean,
+  updated_at: Date,
   tickets?: Ticket,
   payment?: Payment,
   attendee?: Attendee,
