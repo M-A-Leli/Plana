@@ -39,19 +39,22 @@
           <tr *ngFor="let event of paginatedEvents">
             <td>{{ event.title }}</td>
             <td>{{ event.date | date: 'longDate'}}</td>
-            <td>{{ event.start_time | date: 'shortTime' }}</td>
-            <td>{{ event.end_time | date: 'shortTime' }}</td>
+            <td>{{ event.start_time }}</td>
+            <td>{{ event.end_time }}</td>
             <td>{{ event.venue }}</td>
             <td class="actions">
               <button class="btn view" (click)="showView(event)">
                 <img src="/icons/view.png" alt="View">
               </button>
-              <!-- ! <button *ngIf="!event.is_deleted && !hasEventStarted(event.date, event.time)" class="btn edit" (click)="showEdit(event)"> -->
-              <button *ngIf="!event.is_deleted" class="btn edit" (click)="showEdit(event)">
+              <button *ngIf="!event.is_deleted && !hasEventStarted(event.date, event.start_time)" class="btn edit" (click)="showEdit(event)">
+              <!-- <button *ngIf="!event.is_deleted" class="btn edit" (click)="showEdit(event)"> -->
                 <img src="/icons/edit.png" alt="Edit">
               </button>
               <button *ngIf="!event.is_deleted" class="btn delete" (click)="showDelete(event)">
                 <img src="/icons/delete.png" alt="Delete">
+              </button>
+              <button *ngIf="!event.is_deleted" class="btn tickets" (click)="showTicketTypes(event)">
+                <img src="/icons/tickets.png" alt="Tickets">
               </button>
             </td>
           </tr>
@@ -102,6 +105,15 @@
             <input id="venue" formControlName="venue" type="text" autocomplete="off">
           </div>
           <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" formControlName="category_id">
+              <option value="">All Categories</option>
+              <option *ngFor="let category of categories" [value]="category.id">
+                {{ category.name }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
             <label for="images">Upload Images (up to 4)</label>
             <input id="images" type="file" (change)="onFileChange($event)" multiple>
           </div>
@@ -121,8 +133,8 @@
           <div class="details">
             <p><strong>Title:</strong> {{ selectedEvent?.title }}</p>
             <p><strong>Date:</strong> {{ selectedEvent?.date | date: 'longDate' }}</p>
-            <p><strong>Starts:</strong> {{ selectedEvent?.start_time | date: 'shortTime' }}</p>
-            <p><strong>Ends:</strong> {{ selectedEvent?.end_time | date: 'shortTime' }}</p>
+            <p><strong>Starts:</strong> {{ selectedEvent?.start_time }}</p>
+            <p><strong>Ends:</strong> {{ selectedEvent?.end_time }}</p>
             <p><strong>Venue:</strong> {{ selectedEvent?.venue }}</p>
             <p><strong>Rating:</strong> {{ selectedEvent?.average_rating }}</p>
             <p><strong>Total Reviews:</strong> {{ selectedEvent?.number_of_reviews }}</p>
@@ -136,33 +148,46 @@
 
       <div *ngIf="viewMode === 'edit'" class="edit-section glassmorphism">
         <h2>Edit Event</h2>
-        <form (ngSubmit)="updateEvent()" enctype="multipart/form-data">
+        <form [formGroup]="updateEventForm" (ngSubmit)="updateEvent()" enctype="multipart/form-data">
           <div class="form-group">
             <label for="title">Title</label>
-            <!-- <input id="title" [(ngModel)]="selectedEvent?.title"  name="title" type="text" autocomplete="off"/> -->
+            <input id="title" formControlName="title" type="text" autocomplete="off" />
           </div>
           <div class="form-group">
             <label for="description">Description</label>
-            <!-- <textarea id="description" [(ngModel)]="selectedEvent?.description" name="description"></textarea> -->
+            <textarea id="description" formControlName="description"></textarea>
           </div>
           <div class="form-group">
             <label for="date">Date</label>
-            <!-- <input id="date" [(ngModel)]="selectedEvent?.date" name="date" type="date" /> -->
+            <input id="date" formControlName="date" type="date" />
           </div>
           <div class="form-group">
             <label for="start_time">Starts</label>
-            <!-- <input id="start_time" [(ngModel)]="selectedEvent?.start_time" name="start_time" type="time" /> -->
+            <input id="start_time" formControlName="start_time" type="time" />
           </div>
           <div class="form-group">
             <label for="end_time">Ends</label>
-            <!-- <input id="end_time" [(ngModel)]="selectedEvent?.end_time" name="end_time" type="time" /> -->
+            <input id="end_time" formControlName="end_time" type="time" />
           </div>
           <div class="form-group">
             <label for="venue">Venue</label>
-            <!-- <input id="venue" [(ngModel)]="selectedEvent?.venue" name="venue" type="text" autocomplete="off"/> -->
+            <input id="venue" formControlName="venue" type="text" autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" formControlName="category_id">
+              <option value="">All Categories</option>
+              <option *ngFor="let category of categories" [value]="category.id">
+                {{ category.name }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="images">Upload Images (up to 4)</label>
+            <input id="images" type="file" (change)="onFileChange($event)" multiple />
           </div>
           <div class="form-group actions">
-            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <button type="submit" class="btn btn-primary" [disabled]="updateEventForm.invalid">Save Changes</button>
             <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
           </div>
         </form>

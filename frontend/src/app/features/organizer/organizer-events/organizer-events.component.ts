@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EventService } from '../../../core/services/event.service';
 import IEvent from '../../../shared/models/Event';
+import { CategoryService } from '../../../core/services/category.service';
+import Category from '../../../shared/models/Category';
 
 @Component({
   selector: 'app-organizer-events',
@@ -23,7 +25,14 @@ export class OrganizerEventsComponent {
   successMessage: string = '';
 
   eventForm: FormGroup;
+  updateEventForm: FormGroup;
   images: File[] = [];
+
+  categories: Category[] = [];
+  selectedCategoryId: string = '';
+
+  @Output() navigate = new EventEmitter<string>();
+  @Output() eventSelected = new EventEmitter<string>();
 
   analytics: any = {
     all_events: 0,
@@ -32,7 +41,7 @@ export class OrganizerEventsComponent {
     average_rating: 0
   };
 
-  constructor(private fb: FormBuilder, private eventService: EventService) {
+  constructor(private fb: FormBuilder, private eventService: EventService, private categoryService: CategoryService) {
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
       description: ['', Validators.required],
@@ -40,6 +49,18 @@ export class OrganizerEventsComponent {
       start_time: ['', Validators.required],
       end_time: ['', Validators.required],
       venue: ['', Validators.required],
+      category_id: ['', Validators.required],
+      images: [null, Validators.required]
+    });
+
+    this.updateEventForm = this.fb.group({
+      title: [null, Validators.required],
+      description: [null, Validators.required],
+      date: [null, Validators.required],
+      start_time: [null, Validators.required],
+      end_time: [null, Validators.required],
+      venue: [null, Validators.required],
+      category_id: [null, Validators.required],
       images: [null, Validators.required]
     });
   }
@@ -47,6 +68,7 @@ export class OrganizerEventsComponent {
   ngOnInit(): void {
     this.fetchEvents();
     this.fetchOrganizerEventsAnalytics();
+    this.fetchCategories();
   }
 
   fetchEvents(): void {
@@ -60,6 +82,12 @@ export class OrganizerEventsComponent {
   fetchOrganizerEventsAnalytics(): void {
     this.eventService.getOrganizersEventsAnalytics().subscribe(analytics => {
       this.analytics = analytics;
+    });
+  }
+
+  fetchCategories(): void {
+    this.categoryService.getActiveCategories().subscribe(categories => {
+      this.categories = categories;
     });
   }
 
@@ -118,11 +146,15 @@ export class OrganizerEventsComponent {
     return status;
   }
 
-  // !
-  hasEventStarted(eventDate: Date, eventTime: Date): boolean {
+  hasEventStarted(eventDate: Date, start_time: string): boolean {
     const currentDateTime = new Date();
     const eventDateTime = new Date(eventDate);
-    eventDateTime.setHours(eventTime.getHours(), eventTime.getMinutes(), eventTime.getSeconds());
+
+    // Parse start_time in the format HH:mm
+    const [startHours, startMinutes] = start_time.split(':').map(Number);
+
+    eventDateTime.setHours(startHours, startMinutes, 0);
+
     return currentDateTime >= eventDateTime;
   }
 
@@ -139,11 +171,17 @@ export class OrganizerEventsComponent {
   showEdit(event: IEvent): void {
     this.selectedEvent = event;
     this.viewMode = 'edit';
+    this.loadEventDetails();
   }
 
   showDelete(event: IEvent): void {
     this.selectedEvent = event;
     this.viewMode = 'delete';
+  }
+
+  showTicketTypes(event: IEvent): void {
+    this.eventSelected.emit(event.id);
+    this.navigate.emit('ticket-types');
   }
 
   resetView(): void {
@@ -180,8 +218,10 @@ export class OrganizerEventsComponent {
       formData.append('start_time', event.start_time.toString());
       formData.append('end_time', event.end_time.toString());
       formData.append('venue', event.venue);
+      formData.append('category_id', event.category_id as string);
       Array.from(this.images).forEach((image, index) => {
-        formData.append(`images[${index}]`, image, image.name);
+        // formData.append(`images[${index}]`, image, image.name);
+        formData.append(`images`, image, image.name);
       });
 
       this.eventService.createEvent(formData).subscribe({
@@ -207,29 +247,52 @@ export class OrganizerEventsComponent {
     }
   }
 
+  loadEventDetails(): void {
+    if (this.selectedEvent) {
+      this.updateEventForm.patchValue(this.selectedEvent);
+    }
+  }
+
   updateEvent(): void {
-    // if (this.selectedEvent && this.selectedEvent.eventname && this.selectedEvent.email) {
-    //   this.eventsService.updateEvent(this.selectedEvent.id as string, this.selectedEvent).subscribe({
-    //     next: data => {
-    //       this.successMessage = 'Event updated successfull!';
-    //       setTimeout(() => {
-    //         this.successMessage = '';
-    //         this.fetchEvents();
-    //         this.fetchAnalytics();
-    //         this.resetView();
-    //       }, 3000);
-    //     },
-    //     error: err => {
-    //       if (err.status === 401 || err.status === 404 || err.status === 409) {
-    //         this.errorMessage = err.error.error.message;
-    //         this.clearErrors();
-    //       } else {
-    //         this.errorMessage = 'An unexpected error occurred. Please try again.';
-    //         this.clearErrors();
-    //       }
-    //     }
-    //   });
-    // }
+    if (this.updateEventForm.valid) {
+      const event: IEvent = {
+        ...this.updateEventForm.value,
+      };
+
+      const formData = new FormData();
+      formData.append('title', event.title);
+      formData.append('description', event.description);
+      formData.append('date', event.date.toString());
+      formData.append('start_time', event.start_time.toString());
+      formData.append('end_time', event.end_time.toString());
+      formData.append('venue', event.venue);
+      formData.append('category_id', event.category_id as string);
+      Array.from(this.images).forEach((image, index) => {
+        // formData.append(`images[${index}]`, image, image.name);
+        formData.append(`images`, image, image.name);
+      });
+
+      this.eventService.updateEvent(this.selectedEvent?.id as string, formData).subscribe({
+        next: data => {
+          this.successMessage = 'Event updated successfull!';
+          setTimeout(() => {
+            this.successMessage = '';
+            this.fetchEvents();
+            this.fetchOrganizerEventsAnalytics();
+            this.resetView();
+          }, 3000);
+        },
+        error: err => {
+          if (err.status === 401 || err.status === 404 || err.status === 409) {
+            this.errorMessage = err.error.error.message;
+            this.clearErrors();
+          } else {
+            this.errorMessage = 'An unexpected error occurred. Please try again.';
+            this.clearErrors();
+          }
+        }
+      });
+    }
   }
 
   deleteEvent(): void {

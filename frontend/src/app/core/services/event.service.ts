@@ -23,7 +23,7 @@ export class EventService {
     return this.http.post<IEvent>(this.baseUrl, eventData);
   }
 
-  updateEvent(id: string, event: IEvent): Observable<IEvent> {
+  updateEvent(id: string, event: FormData): Observable<IEvent> {
     return this.http.put<IEvent>(`${this.baseUrl}/${id}`, event);
   }
 

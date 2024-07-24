@@ -17,6 +17,7 @@ export default interface IEvent {
   number_of_reviews?: number,
   is_deleted?: boolean,
   is_featured?: boolean,
+  category_id?: string,
   images?: EventImage[],
   ticket_types?: TicketType[],
   orders?: Order[],

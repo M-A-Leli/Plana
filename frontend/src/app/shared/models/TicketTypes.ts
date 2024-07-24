@@ -7,7 +7,7 @@ export default interface TicketType {
   name: string,
   price: number,
   availability: number,
-  group_size?: number,
+  group_size: number,
   is_deleted?: boolean,
   tickets?: Ticket[],
   event?: IEvent

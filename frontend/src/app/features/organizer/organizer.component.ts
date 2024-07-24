@@ -9,17 +9,19 @@ import { OrganizerEventsComponent } from './organizer-events/organizer-events.co
 import { OrganizerLogoutComponent } from './organizer-logout/organizer-logout.component';
 import { OrganizerMessagesComponent } from './organizer-messages/organizer-messages.component';
 import { OrganizerProfileComponent } from './organizer-profile/organizer-profile.component';
+import { OrganizerTicketTypesComponent } from './organizer-ticket-types/organizer-ticket-types.component';
 
 @Component({
   selector: 'app-organizer',
   standalone: true,
-  imports: [CommonModule, OrganizerSidebarComponent, OrganizerTopbarComponent, OrganizerCalendarComponent, OrganizerDashboardComponent, OrganizerEventsComponent, OrganizerLogoutComponent, OrganizerMessagesComponent, OrganizerProfileComponent],
+  imports: [CommonModule, OrganizerSidebarComponent, OrganizerTopbarComponent, OrganizerCalendarComponent, OrganizerDashboardComponent, OrganizerEventsComponent, OrganizerLogoutComponent, OrganizerMessagesComponent, OrganizerProfileComponent, OrganizerTicketTypesComponent],
   templateUrl: './organizer.component.html',
   styleUrl: './organizer.component.css'
 })
 export class OrganizerComponent {
   isSidebarCollapsed = false;
   currentRoute: string | undefined;
+  selectedEventId: string = '';
 
   constructor(private router: Router) {
     this.router.events.subscribe(event => {
@@ -35,5 +37,13 @@ export class OrganizerComponent {
 
   toggleSidebar(): void {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
+  }
+
+  navigateTo(route: string): void {
+    this.currentRoute = route;
+  }
+
+  setSelectedEventId(eventId: string): void {
+    this.selectedEventId = eventId;
   }
 }

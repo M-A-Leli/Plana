@@ -35,6 +35,7 @@ import { OrganizerMessagesComponent } from './features/organizer/organizer-messa
 import { AttendeeMessagesComponent } from './features/attendee/attendee-messages/attendee-messages.component';
 import { AdminCategoriesComponent } from './features/admin/admin-categories/admin-categories.component';
 import { TicketsComponent } from './features/tickets/tickets.component';
+import { OrganizerTicketTypesComponent } from './features/organizer/organizer-ticket-types/organizer-ticket-types.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -65,6 +66,7 @@ export const routes: Routes = [
     path: 'organizer', component: OrganizerComponent, children: [
       { path: 'dashboard', component: OrganizerDashboardComponent },
       { path: 'events', component: OrganizerEventsComponent },
+      { path: 'ticket-types', component: OrganizerTicketTypesComponent },
       { path: 'calendar', component: OrganizerCalendarComponent },
       { path: 'messages', component: OrganizerMessagesComponent },
       { path: 'profile', component: OrganizerProfileComponent },

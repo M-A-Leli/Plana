@@ -83,7 +83,7 @@ class EventService {
         return event;
     }
 
-    async createEvent(id: string, data: Omit<Prisma.EventCreateInput, 'id' | 'organizer_id'> & { category_id: string }, imagePaths: string[]): Promise<Partial<Event> | null> {
+    async createEvent(id: string, data: {title: string; description: string; date: string; start_time: string; end_time: string; venue: string; category_id: string }, imagePaths: string[]): Promise<Partial<Event> | null> {
         const organizer = await prisma.organizer.findFirst({
             where: {
                 user_id: id,
@@ -110,46 +110,52 @@ class EventService {
             throw createError(400, 'An event can have at most 4 images');
         }
 
-        const eventData: Prisma.EventUncheckedCreateInput = {
+        const eventData =  {
             ...data,
             organizer_id: organizer.id,
+            date: new Date(data.date).toISOString(),
             images: {
                 create: imagePaths.map(path => ({
                     url: `${BASE_URL}/images/${path.split('/').pop()}`,
                 })),
             },
         };
-
-        const event = await prisma.event.create({
-            data: eventData,
-            select: {
-                id: true,
-                title: true,
-                description: true,
-                date: true,
-                start_time: true,
-                end_time: true,
-                venue: true,
-                average_rating: true,
-                number_of_reviews: true,
-                category_id: true,
-                organizer: {
-                    select: {
-                        id: true,
-                        company: true,
-                    }
-                },
-                images: {
-                    where: { is_deleted: false },
-                    select: {
-                        id: true,
-                        url: true,
+    
+        try {
+            const event = await prisma.event.create({
+                data: eventData,
+                select: {
+                    id: true,
+                    title: true,
+                    description: true,
+                    date: true,
+                    start_time: true,
+                    end_time: true,
+                    venue: true,
+                    average_rating: true,
+                    number_of_reviews: true,
+                    category_id: true,
+                    organizer: {
+                        select: {
+                            id: true,
+                            company: true,
+                        }
+                    },
+                    images: {
+                        where: { is_deleted: false },
+                        select: {
+                            id: true,
+                            url: true,
+                        }
                     }
                 }
-            }
-        });
-
-        return event;
+            });
+    
+            return event;
+        } catch (error) {
+            console.error('Error creating event:', error);
+            throw createError(500, 'Internal Server Error');
+        }
     }
 
     async updateEvent(id: string, data: Partial<Omit<Prisma.EventUpdateInput, 'id'>>, imagePaths: string[]): Promise<Partial<Event> | null> {

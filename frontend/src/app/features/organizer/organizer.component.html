@@ -4,7 +4,8 @@
     <app-organizer-topbar></app-organizer-topbar>
     <div class="content-section">
       <app-organizer-dashboard *ngIf="currentRoute === 'dashboard'"></app-organizer-dashboard>
-      <app-organizer-events *ngIf="currentRoute === 'events'"></app-organizer-events>
+      <app-organizer-events *ngIf="currentRoute === 'events'" (navigate)="navigateTo($event)" (eventSelected)="setSelectedEventId($event)"></app-organizer-events>
+      <app-organizer-ticket-types *ngIf="currentRoute === 'ticket-types'" [eventId]="selectedEventId"></app-organizer-ticket-types>
       <app-organizer-calendar *ngIf="currentRoute === 'calendar'"></app-organizer-calendar>
       <app-organizer-messages *ngIf="currentRoute === 'messages'"></app-organizer-messages>
       <app-organizer-profile *ngIf="currentRoute === 'profile'"></app-organizer-profile>

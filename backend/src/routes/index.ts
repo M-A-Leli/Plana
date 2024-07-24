@@ -1,5 +1,6 @@
 import express from 'express';
 import AdminRoutes from './Admin.routes';
+import AnalyticsRoutes from './Analytics.routes';
 import AttendeeRoutes from './Attendee.routes';
 import AuthRoutes from './Auth.routes';
 import CategoryRoutes from './Category.routes';
@@ -17,6 +18,7 @@ const router = express.Router();
 
 // Mount routes
 router.use('/admins', AdminRoutes);
+router.use('/analytics', AnalyticsRoutes);
 router.use('/attendees', AttendeeRoutes);
 router.use('/auth', AuthRoutes);
 router.use('/categories', CategoryRoutes);

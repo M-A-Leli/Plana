@@ -1,4 +1,4 @@
-.organizer-events-layout {
+.organizer-entity-layout {
   width: 100%;
   height: 100%;
   display: flex;
@@ -13,43 +13,6 @@
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 1rem;
-}
-
-/* Analytics Section */
-.analytics-section {
-  width: 100%;
-  padding: 1rem 0;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: auto;
-  gap: 1rem;
-}
-
-.card {
-  width: 100%;
-  height: 120px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
-}
-
-.card .number {
-  font-size: 2rem;
-  color: #cb3cff;
-}
-
-.card .heading {
-  font-size: 1.2rem;
-  color: #aeb9e1;
-  text-transform: uppercase;
-  margin-top: 0.5rem;
 }
 
 /* Display Section */
@@ -90,30 +53,30 @@
   background-color: #0e43fb;
 }
 
-.event-table {
+.ticket-type-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.event-table th, .event-table td {
+.ticket-type-table th, .ticket-type-table td {
   padding: 0.75rem;
   text-align: left;
 }
 
-.event-table th {
+.ticket-type-table th {
   background-color: #0b1739;
   color: #ffffff;
 }
 
-.event-table td {
+.ticket-type-table td {
   color: #aeb9e1;
 }
 
-.event-table tbody tr:nth-child(even) {
+.ticket-type-table tbody tr:nth-child(even) {
   background-color: rgba(255, 255, 255, 0.05);
 }
 
-.event-table tbody tr:hover {
+.ticket-type-table tbody tr:hover {
   background-color: #1d1051;
 }
 
@@ -138,10 +101,6 @@
   height: 24px;
 }
 
-.actions .btn.view {
-  background-color: #0e43fb;
-}
-
 .actions .btn.edit {
   background-color: #00c2ff;
 }
@@ -153,10 +112,6 @@
 .actions .btn:hover {
   transform: scale(1.1);
   background-color: rgba(255, 255, 255, 0.2);
-}
-
-.actions .btn.view:hover {
-  background-color: rgba(14, 67, 251, 0.2);
 }
 
 .actions .btn.edit:hover {
@@ -362,77 +317,6 @@ form .actions .btn-secondary:hover {
   background-color: #a800e1;
 }
 
-/* View section */
-.view-section {
-  width: 100%;
-  height: auto;
-  padding: 1rem;
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 1rem;
-}
-
-.view-section h2 {
-  color: #cb3cff;
-}
-
-.event-details {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 1rem;
-}
-
-.event-images {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
-
-.event-images img {
-  /* width: 150px; */
-  /* height: 150px; */
-  object-fit: cover;
-  /* border-radius: 50%; */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.details {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-evenly;
-  gap: 1rem;
-  padding: 1rem;
-  color: #ffffff;
-}
-
-.details p strong {
-  color: #cb3cff;
-}
-
-.view-section .btn {
-  background-color: #cb3cff;
-  color: #ffffff;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.view-section .btn:hover {
-  background-color: #0e43fb;
-}
-
 /* Delete Sections */
 .delete-section {
   width: 100%;
@@ -490,16 +374,6 @@ form .actions .btn-secondary:hover {
 }
 
 @media (max-width: 1024px) {
-  .analytics-section {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .card {
-    width: 80%;
-    margin-bottom: 1rem;
-  }
-
   .display-section {
     flex-direction: column;
   }
@@ -517,7 +391,7 @@ form .actions .btn-secondary:hover {
     align-items: center;
   }
 
-  .event-table th, .event-table td {
+  .ticket-type-table th, .ticket-type-table td {
     font-size: 0.9rem;
     padding: 0.5rem;
   }
@@ -527,7 +401,7 @@ form .actions .btn-secondary:hover {
     gap: 5px;
   }
 
-  .create-section, .edit-section, .view-section, .delete-section {
+  .create-section, .edit-section, .delete-section {
     padding: 0.5rem;
   }
 
@@ -551,16 +425,6 @@ form .actions .btn-secondary:hover {
 }
 
 @media (max-width: 768px) {
-  .analytics-section {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .card {
-    width: 90%;
-    margin-bottom: 1rem;
-  }
-
   .display-section {
     flex-direction: column;
   }
@@ -578,7 +442,7 @@ form .actions .btn-secondary:hover {
     align-items: center;
   }
 
-  .event-table th, .event-table td {
+  .ticket-type-table th, .ticket-type-table td {
     font-size: 0.8rem;
     padding: 0.4rem;
   }
@@ -588,7 +452,7 @@ form .actions .btn-secondary:hover {
     gap: 5px;
   }
 
-  .create-section, .edit-section, .view-section, .delete-section {
+  .create-section, .edit-section, .delete-section {
     padding: 0.5rem;
   }
 
@@ -612,16 +476,6 @@ form .actions .btn-secondary:hover {
 }
 
 @media (max-width: 480px) {
-  .analytics-section {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .card {
-    width: 100%;
-    margin-bottom: 1rem;
-  }
-
   .display-section {
     flex-direction: column;
   }
@@ -639,7 +493,7 @@ form .actions .btn-secondary:hover {
     align-items: center;
   }
 
-  .event-table th, .event-table td {
+  .ticket-type-table th, .ticket-type-table td {
     font-size: 0.7rem;
     padding: 0.3rem;
   }
@@ -649,7 +503,7 @@ form .actions .btn-secondary:hover {
     gap: 5px;
   }
 
-  .create-section, .edit-section, .view-section, .delete-section {
+  .create-section, .edit-section, .delete-section {
     padding: 0.5rem;
   }
 
