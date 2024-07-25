@@ -29,7 +29,8 @@ class TicketController {
 
   createTicket = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const ticket = await this.ticketService.createTicket(req.body);
+      const user_id = req.user?.id as string;
+      const ticket = await this.ticketService.createTicket(user_id, req.body);
       res.status(201).json(ticket);
     } catch (error: any) {
       next(error);
@@ -56,7 +57,7 @@ class TicketController {
 
   validateTicket = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const ticket = await this.ticketService.validateTicket(req.params.id);
+      const ticket = await this.ticketService.validateTicket(req.params.code);
       res.status(200).json(ticket);
     } catch (error: any) {
       next(error);
@@ -87,6 +88,24 @@ class TicketController {
     try {
       const ticket = await this.ticketService.getTicketsByEventId(req.params.id);
       res.status(200).json(ticket);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getTicketsByOrderId = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const ticket = await this.ticketService.getTicketsByOrderId(req.params.id);
+      res.status(200).json(ticket);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getTicketAnalytics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const analytics = await this.ticketService.getTicketAnalytics();
+      res.status(200).json(analytics);
     } catch (error: any) {
       next(error);
     }

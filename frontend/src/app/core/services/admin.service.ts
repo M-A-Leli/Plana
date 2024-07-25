@@ -20,7 +20,7 @@ export class AdminService {
     return this.http.get<Admin>(`${this.baseUrl}/${id}`);
   }
 
-  createAdmin(admin: Admin): Observable<Admin> {
+  createAdmin(admin: Object): Observable<Admin> {
     return this.http.post<Admin>(this.baseUrl, admin);
   }
 
@@ -38,6 +38,18 @@ export class AdminService {
 
   updateAdminProfile(admin: Admin): Observable<Admin> {
     return this.http.put<Admin>(`${this.baseUrl}/profile`, admin);
+  }
+
+  getActiveAdmins(): Observable<Admin[]> {
+    return this.http.get<Admin[]>(`${this.baseUrl}/active`);
+  }
+
+  getSuspendedAdmins(): Observable<Admin[]> {
+    return this.http.get<Admin[]>(`${this.baseUrl}/suspended`);
+  }
+
+  getDeletedAdmins(): Observable<Admin[]> {
+    return this.http.get<Admin[]>(`${this.baseUrl}/deleted`);
   }
 
   getAdminAnalytics(): Observable<Object> {

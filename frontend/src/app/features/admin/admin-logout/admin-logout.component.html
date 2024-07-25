@@ -1,1 +1,11 @@
-<p>admin-logout works!</p>
+<div class="logout-container">
+  <div class="logout-box">
+    <img src="/logo.svg" alt="Company Logo" class="company-logo">
+    <h2>We're sorry to see you go!</h2>
+    <p>Are you sure you want to logout? Remember, you can always come back later to explore more of our amazing features.</p>
+    <div class="buttons">
+      <button class="cancel-button" (click)="cancel()">Cancel</button>
+      <button class="logout-button" (click)="confirmLogout()">Logout</button>
+    </div>
+  </div>
+</div>

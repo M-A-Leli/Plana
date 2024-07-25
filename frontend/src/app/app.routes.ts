@@ -25,9 +25,18 @@ import { AdminOrganizersComponent } from './features/admin/admin-organizers/admi
 import { AdminAttendeesComponent } from './features/admin/admin-attendees/admin-attendees.component';
 import { AdminEventsComponent } from './features/admin/admin-events/admin-events.component';
 import { AdminNotificationsComponent } from './features/admin/admin-notifications/admin-notifications.component';
-import { AdminSettingsComponent } from './features/admin/admin-settings/admin-settings.component';
 import { AdminAdminsComponent } from './features/admin/admin-admins/admin-admins.component';
 import { AdminUsersComponent } from './features/admin/admin-users/admin-users.component';
+import { OrganizerCalendarComponent } from './features/organizer/organizer-calendar/organizer-calendar.component';
+import { AttendeeDashboardComponent } from './features/attendee/attendee-dashboard/attendee-dashboard.component';
+import { AttendeeEventsComponent } from './features/attendee/attendee-events/attendee-events.component';
+import { AttendeeCalendarComponent } from './features/attendee/attendee-calendar/attendee-calendar.component';
+import { OrganizerMessagesComponent } from './features/organizer/organizer-messages/organizer-messages.component';
+import { AttendeeMessagesComponent } from './features/attendee/attendee-messages/attendee-messages.component';
+import { AdminCategoriesComponent } from './features/admin/admin-categories/admin-categories.component';
+import { TicketsComponent } from './features/tickets/tickets.component';
+import { OrganizerTicketTypesComponent } from './features/organizer/organizer-ticket-types/organizer-ticket-types.component';
+import { AttendeeTicketsComponent } from './features/attendee/attendee-tickets/attendee-tickets.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -36,6 +45,7 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-code/verify', component: ResetCodeVerificationComponent },
   { path: 'password-reset', component: PasswordResetComponent },
+  { path: 'tickets', component: TicketsComponent },
   {
     path: 'events', component: EventsComponent, children: [
       { path: ':id', component: SingleEventComponent },
@@ -44,6 +54,11 @@ export const routes: Routes = [
   },
   {
     path: 'attendee', component: AttendeeComponent, children: [
+      { path: 'dashboard', component: AttendeeDashboardComponent },
+      { path: 'events', component: AttendeeEventsComponent },
+      { path: 'tickets', component: AttendeeTicketsComponent },
+      { path: 'calendar', component: AttendeeCalendarComponent },
+      { path: 'messages', component: AttendeeMessagesComponent },
       { path: 'profile', component: AttendeeProfileComponent },
       { path: 'logout', component: AttendeeLogoutComponent },
       { path: '', redirectTo: 'profile', pathMatch: 'full' },
@@ -52,10 +67,13 @@ export const routes: Routes = [
   {
     path: 'organizer', component: OrganizerComponent, children: [
       { path: 'dashboard', component: OrganizerDashboardComponent },
-      { path: 'profile', component: OrganizerProfileComponent },
       { path: 'events', component: OrganizerEventsComponent },
+      { path: 'ticket-types', component: OrganizerTicketTypesComponent },
+      { path: 'calendar', component: OrganizerCalendarComponent },
+      { path: 'messages', component: OrganizerMessagesComponent },
+      { path: 'profile', component: OrganizerProfileComponent },
       { path: 'logout', component: OrganizerLogoutComponent },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: '', redirectTo: 'profile', pathMatch: 'full' },
     ]
   },
   {
@@ -66,8 +84,8 @@ export const routes: Routes = [
       { path: 'attendees', component: AdminAttendeesComponent },
       { path: 'users', component: AdminUsersComponent },
       { path: 'events', component: AdminEventsComponent },
+      { path: 'categories', component: AdminCategoriesComponent },
       { path: 'notifications', component: AdminNotificationsComponent },
-      { path: 'settings', component: AdminSettingsComponent },
       { path: 'profile', component: AdminProfileComponent },
       { path: 'logout', component: AdminLogoutComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },

@@ -77,6 +77,33 @@ class AdminController {
     }
   }
 
+  getActiveAdmins = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const admins = await this.adminService.getActiveAdmins();
+      res.status(200).json(admins);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getSuspendedAdmins = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const admins = await this.adminService.getSuspendedAdmins();
+      res.status(200).json(admins);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getDeletedAdmins = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const admins = await this.adminService.getDeletedAdmins();
+      res.status(200).json(admins);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
   getAdminAnalytics = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const analytics = await this.adminService.getAdminAnalytics();

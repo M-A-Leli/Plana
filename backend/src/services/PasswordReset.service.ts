@@ -40,14 +40,16 @@ class PasswordResetService {
     });
   }
 
-  async verifyPasswordResetCode(user_id: string, code: string): Promise<Partial<PasswordResetCode>> {
+  async verifyPasswordResetCode(code: string): Promise<Partial<PasswordResetCode>> {
     const passwordReset = await prisma.passwordResetCode.findFirst({
       where: {
-        user_id,
         code,
-        is_valid: false,
+        is_valid: true,
         expires_at: { gt: new Date() },
       },
+      select: {
+        user_id: true
+      }
     });
 
     if (!passwordReset) {

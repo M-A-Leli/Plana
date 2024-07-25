@@ -1,9 +1,12 @@
 import express from 'express';
 import AdminRoutes from './Admin.routes';
+import AnalyticsRoutes from './Analytics.routes';
 import AttendeeRoutes from './Attendee.routes';
 import AuthRoutes from './Auth.routes';
+import CategoryRoutes from './Category.routes';
 import EventRoutes from './Event.routes';
 import NotificationRoutes from './Notification.routes';
+import OrderRoutes from './Order.routes';
 import OrganizerRoutes from './Organizer.routes';
 import PasswordResetRoutes from './PasswordReset.routes';
 import ReviewRoutes from './Review.routes';
@@ -15,10 +18,13 @@ const router = express.Router();
 
 // Mount routes
 router.use('/admins', AdminRoutes);
+router.use('/analytics', AnalyticsRoutes);
 router.use('/attendees', AttendeeRoutes);
 router.use('/auth', AuthRoutes);
+router.use('/categories', CategoryRoutes);
 router.use('/events', EventRoutes);
 router.use('/notifications', NotificationRoutes);
+router.use('/orders', OrderRoutes);
 router.use('/organizers', OrganizerRoutes);
 router.use('/password-reset', PasswordResetRoutes);
 router.use('/reviews', ReviewRoutes);

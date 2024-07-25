@@ -20,7 +20,7 @@ export class OrganizerService {
     return this.http.get<Organizer>(`${this.baseUrl}/${id}`);
   }
 
-  createOrganizer(organizer: Organizer): Observable<Organizer> {
+  createOrganizer(organizer: Partial<Organizer>): Observable<Organizer> {
     return this.http.post<Organizer>(this.baseUrl, organizer);
   }
 
@@ -28,12 +28,16 @@ export class OrganizerService {
     return this.http.put<Organizer>(`${this.baseUrl}/approve/${id}`, null);
   }
 
+  revokeOrganizer(id: string): Observable<Organizer> {
+    return this.http.put<Organizer>(`${this.baseUrl}/revoke/${id}`, null);
+  }
+
   updateOrganizer(id: string, organizer: Organizer): Observable<Organizer> {
     return this.http.put<Organizer>(`${this.baseUrl}/${id}`, organizer);
   }
 
-  deleteOrganizer(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  deleteOrganizer(): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/`);
   }
 
   getOrganizerProfile(): Observable<Organizer> {
@@ -42,6 +46,18 @@ export class OrganizerService {
 
   updateOrganizerProfile(organizer: Organizer): Observable<Organizer> {
     return this.http.put<Organizer>(`${this.baseUrl}/profile`, organizer);
+  }
+
+  getActiveOrganizers(): Observable<Organizer[]> {
+    return this.http.get<Organizer[]>(`${this.baseUrl}/active`);
+  }
+
+  getApprovedOrganizers(): Observable<Organizer[]> {
+    return this.http.get<Organizer[]>(`${this.baseUrl}/approved`);
+  }
+
+  getDeletedOrganizers(): Observable<Organizer[]> {
+    return this.http.get<Organizer[]>(`${this.baseUrl}/deleted`);
   }
 
   getOrganizerAnalytics(): Observable<Object> {

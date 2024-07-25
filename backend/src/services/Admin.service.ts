@@ -37,12 +37,6 @@ class AdminService {
 
   async getAllAdmins(): Promise<Partial<Admin>[]> {
     const admins = await prisma.admin.findMany({
-      where: {
-        is_deleted: false,
-        user: {
-          is_suspended: false
-        }
-      },
       select: {
         id: true,
         level: true,
@@ -70,12 +64,14 @@ class AdminService {
       select: {
         id: true,
         level: true,
+        is_deleted: true,
         user: {
           select: {
             id: true,
             username: true,
             email: true,
-            profile_img: true
+            profile_img: true,
+            is_suspended: true,
           },
         },
       }
@@ -125,7 +121,7 @@ class AdminService {
         username,
         password: hash,
         salt,
-        profile_img: `${BASE_URL}/images/default_profile_image.png`,
+        profile_img: `${BASE_URL}/images/default_profile_image.svg`,
       },
       select: {
         id: true
@@ -199,7 +195,7 @@ class AdminService {
       throw createError(404, 'Target admin not found');
     }
 
-    if (currentAdmin.level <= targetAdmin.level) {
+    if (currentAdmin.level >= targetAdmin.level) {
       throw createError(403, 'Permission Denied: Insufficient privileges');
     }
 
@@ -270,7 +266,7 @@ class AdminService {
       throw createError(404, 'Target admin not found');
     }
 
-    if (currentAdmin.level <= targetAdmin.level) {
+    if (currentAdmin.level >= targetAdmin.level) {
       throw createError(403, 'Permission Denied: Insufficient privileges');
     }
 
@@ -295,9 +291,9 @@ class AdminService {
     });
   }
 
-  async getAdminProfile(adminId: string): Promise<Partial<Admin> | null> {
+  async getAdminProfile(userId: string): Promise<Partial<Admin> | null> {
     const admin = await prisma.admin.findFirst({
-      where: { id: adminId, is_deleted: false, user: { is_suspended: false } },
+      where: { user_id: userId, is_deleted: false, user: { is_suspended: false } },
       select: {
         id: true,
         level: true,
@@ -319,12 +315,12 @@ class AdminService {
     return admin;
   }
 
-  async updateAdminProfile(adminId: string, data: { email: string; username: string }): Promise<Partial<Admin> | null> {
+  async updateAdminProfile(userId: string, data: { email: string; username: string }): Promise<Partial<Admin> | null> {
     const { email, username } = data;
 
     const admin = await prisma.admin.findFirst({
       where: {
-        user_id: adminId,
+        user_id: userId,
         is_deleted: false,
         user: {
           is_suspended: false
@@ -380,12 +376,108 @@ class AdminService {
     return updatedAdmin;
   }
 
+  async getActiveAdmins(): Promise<Partial<Admin>[]> {
+    const admins = await prisma.admin.findMany({
+      where: {
+        is_deleted: false,
+        user: {
+          is_suspended: false
+        }
+      },
+      select: {
+        id: true,
+        is_deleted:true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+            profile_img: true,
+            is_suspended: true
+          },
+        },
+      }
+    });
+
+    if (admins.length === 0) {
+      throw createError(404, 'No admins found');
+    }
+
+    return admins;
+  }
+
+  async getSuspendedAdmins(): Promise<Partial<Admin>[]> {
+    const admins = await prisma.admin.findMany({
+      where: {
+        is_deleted: false,
+        user: {
+          is_suspended: true
+        }
+      },
+      select: {
+        id: true,
+        is_deleted:true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+            profile_img: true,
+            is_suspended: true
+          },
+        },
+      }
+    });
+
+    if (admins.length === 0) {
+      throw createError(404, 'No admins found');
+    }
+
+    return admins;
+  }
+
+  async getDeletedAdmins(): Promise<Partial<Admin>[]> {
+    const admins = await prisma.admin.findMany({
+      where: {
+        is_deleted: true
+      },
+      select: {
+        id: true,
+        is_deleted:true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+            profile_img: true,
+            is_suspended: true
+          },
+        },
+      }
+    });
+
+    if (admins.length === 0) {
+      throw createError(404, 'No admins found');
+    }
+
+    return admins;
+  }
+
   async getAdminAnalytics(): Promise<Object> {
     const all_admins = await prisma.admin.count();
 
     const active_admins = await prisma.admin.count({
       where: {
         is_deleted: false
+      },
+    });
+
+    const suspended_admins = await prisma.admin.count({
+      where: {
+        is_deleted: false,
+        user: {
+          is_suspended: true
+        }
       },
     });
 
@@ -398,6 +490,7 @@ class AdminService {
     return {
       all_admins,
       active_admins,
+      suspended_admins,
       deleted_admins
     };
   }

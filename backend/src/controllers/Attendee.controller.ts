@@ -29,9 +29,6 @@ class AttendeeController {
 
   createAttendee = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log('executed');
-      console.log(req.body);
-      
       const attendee = await this.attendeeService.createAttendee(req.body);
       res.status(201).json(attendee);
     } catch (error: any) {
@@ -50,7 +47,8 @@ class AttendeeController {
 
   deleteAttendee = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.attendeeService.deleteAttendee(req.params.id);
+      const user_id = req.user?.id as string;
+      await this.attendeeService.deleteAttendee(user_id);
       res.status(204).send();
     } catch (error: any) {
       next(error);
@@ -72,6 +70,33 @@ class AttendeeController {
       const user_id = req.user?.id as string;
       const updatedProfile = await this.attendeeService.updateAttendeeProfile(user_id, req.body);
       res.status(201).json(updatedProfile);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getActiveAttendees = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const attendees = await this.attendeeService.getActiveAttendees();
+      res.status(200).json(attendees);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getSuspendedAttendees = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const attendees = await this.attendeeService.getSuspendedAttendees();
+      res.status(200).json(attendees);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getDeletedAttendees = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const attendees = await this.attendeeService.getDeletedAttendees();
+      res.status(200).json(attendees);
     } catch (error: any) {
       next(error);
     }

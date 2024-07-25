@@ -1,0 +1,114 @@
+<div class="organizer-entity-layout">
+  <div class="display-section">
+    <div class="left-display">
+      <div class="top-bar glassmorphism">
+        <button (click)="showCreate()" class="create-button">Create Ticket Type</button>
+      </div>
+
+      <table class="ticket-type-table glassmorphism">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Availability</th>
+            <th>Group Size</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tickeType of paginatedTicketTypes">
+            <td>{{ tickeType.name }}</td>
+            <td>{{ tickeType.price }}</td>
+            <td>{{ tickeType.availability }}</td>
+            <td>{{ tickeType.group_size }}</td>
+            <td class="actions">
+              <button *ngIf="!tickeType.is_deleted" class="btn edit" (click)="showEdit(tickeType)">
+                <img src="/icons/edit.png" alt="Edit">
+              </button>
+              <button *ngIf="!tickeType.is_deleted" class="btn delete" (click)="showDelete(tickeType)">
+                <img src="/icons/delete.png" alt="Delete">
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination glassmorphism">
+        <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+      </div>
+    </div>
+
+    <div class="right-display">
+      <div *ngIf="errorMessage" class="message error glassmorphism">{{ errorMessage }}</div>
+      <div *ngIf="successMessage" class="message success glassmorphism">{{ successMessage }}</div>
+
+      <div *ngIf="viewMode === 'default'" class="default-section glassmorphism">
+        <img src="/logo.svg" alt="Company Logo">
+        <h2>Plana</h2>
+      </div>
+
+      <div *ngIf="viewMode === 'create'" class="create-section glassmorphism">
+        <h2>Create New Ticket Type</h2>
+        <form [formGroup]="ticketTypeForm" (ngSubmit)="createTicketType()">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input id="name" formControlName="name" type="text" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="price">Price</label>
+            <input id="price" formControlName="price" type="number" min="0">
+          </div>
+          <div class="form-group">
+            <label for="availability">Availability</label>
+            <input id="availability" formControlName="availability" type="number" min="0">
+          </div>
+          <div class="form-group">
+            <label for="group_size">Group Size</label>
+            <input id="group_size" formControlName="group_size" type="number" min="0">
+          </div>
+          <div class="form-group actions">
+            <button type="submit" class="btn btn-primary">Create Ticket Type</button>
+            <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <div *ngIf="viewMode === 'edit'" class="edit-section glassmorphism">
+        <h2>Edit Ticket Type</h2>
+        <form [formGroup]="updateTicketTypeForm" (ngSubmit)="updateTicketType()">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input id="name" formControlName="name" type="text" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="price">Price</label>
+            <input id="price" formControlName="price" type="number" min="0">
+          </div>
+          <div class="form-group">
+            <label for="availability">Availability</label>
+            <input id="availability" formControlName="availability" type="number" min="0">
+          </div>
+          <div class="form-group">
+            <label for="group_size">Group Size</label>
+            <input id="group_size" formControlName="group_size" type="number" min="0">
+          </div>
+          <div class="form-group actions">
+            <button type="submit" class="btn btn-primary" [disabled]="updateTicketTypeForm.invalid">Save Changes</button>
+            <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <div *ngIf="viewMode === 'delete'" class="delete-section glassmorphism">
+        <h2>Confirm Delete</h2>
+        <p>Are you sure you want to delete the ticket type {{ selectedTicketType?.name }}?</p>
+        <div class="form-group actions">
+          <button type="button" class="btn btn-danger" (click)="deleteTicketType()">Proceed</button>
+          <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

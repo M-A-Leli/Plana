@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { PrismaClient } from "@prisma/client";
-import { hash } from "bcryptjs";
+import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from "uuid";
 
 const prisma = new PrismaClient({
@@ -13,23 +13,42 @@ const prisma = new PrismaClient({
     }
 });
 
+async function hashPassword(password: string): Promise<{ hash: string, salt: string }> {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+    return { hash, salt };
+}
+
 async function main() {
     await prisma.$transaction(async (prisma) => {
         // Seed users
-        const hashedPassword = await hash("password123", 10);
+        const { hash, salt } = await hashPassword("Password@123");
         const users = await Promise.all(
             Array.from({ length: 10 }).map((_, i) =>
                 prisma.user.create({
                     data: {
                         id: uuidv4(),
                         email: `user${i + 1}@example.com`,
-                        password: hashedPassword,
-                        salt: "random_salt", //!
+                        password: hash,
+                        salt: salt,
                         username: `user${i + 1}`,
                         profile_img: `http://localhost:3000/images/profile${i}.png`,
                         attendees: i >= 4 ? { create: { id: uuidv4(), bio: `Bio for Attendee${i + 1}` } } : undefined,
                         organizers: i >= 1 && i <= 3 ? { create: { id: uuidv4(), company: `Organizer Company${i}`, bio: `Bio for Organizer${i}` } } : undefined,
-                        //! admin: i === 0 ? { create: { id: uuidv4() } } : undefined,
+                        admin: i === 0 ? { create: { id: uuidv4(), level: 1 } } : undefined,
+                    },
+                })
+            )
+        );
+
+        // Seed categories
+        const categories = await Promise.all(
+            ["Category 1", "Category 2", "Category 3"].map((name) =>
+                prisma.category.create({
+                    data: {
+                        id: uuidv4(),
+                        name: name,
+                        is_deleted: false,
                     },
                 })
             )
@@ -37,8 +56,13 @@ async function main() {
 
         // Seed events and related data
         const organizers = await prisma.organizer.findMany();
+        let categoryIndex = 0;
+        
         for (const organizer of organizers) {
             for (let j = 0; j < 5; j++) {
+                const category = categories[categoryIndex % categories.length];
+                categoryIndex++;
+
                 const event = await prisma.event.create({
                     data: {
                         id: uuidv4(),
@@ -46,13 +70,15 @@ async function main() {
                         title: `Event ${j + 1} by ${organizer.company}`,
                         description: `Description for event ${j + 1} by ${organizer.company}`,
                         date: new Date(),
-                        time: new Date(),
+                        start_time: new Date().toTimeString(),
+                        end_time: new Date().toTimeString(),
                         venue: `Venue ${j + 1}`,
+                        category_id: category.id,
                         is_deleted: false,
                         images: {
                             create: {
                                 id: uuidv4(),
-                                url: `https://localhost:3000/images/event${j + 1}.jpeg`,
+                                url: `http://localhost:3000/images/event${j + 1}.jpeg`,
                                 created_at: new Date(),
                                 is_deleted: false,
                             },
@@ -61,19 +87,50 @@ async function main() {
                             create: [
                                 {
                                     id: uuidv4(),
-                                    name: "Regular Ticket",
-                                    type: "SINGLE",
-                                    price: 20.0,
-                                    availability: 100,
+                                    name: "VVIP",
+                                    price: 1000.0,
+                                    availability: 50,
+                                    group_size: 1,
                                     is_deleted: false,
                                 },
                                 {
                                     id: uuidv4(),
-                                    name: "Group Ticket",
-                                    type: "GROUP",
-                                    price: 100.0,
-                                    availability: 20,
-                                    group_size: 5,
+                                    name: "VIP",
+                                    price: 700.0,
+                                    availability: 100,
+                                    group_size: 1,
+                                    is_deleted: false,
+                                },
+                                {
+                                    id: uuidv4(),
+                                    name: "REGULAR",
+                                    price: 400.0,
+                                    availability: 150,
+                                    group_size: 1,
+                                    is_deleted: false,
+                                },
+                                {
+                                    id: uuidv4(),
+                                    name: "VVIP",
+                                    price: 1800.0,
+                                    availability: 50,
+                                    group_size: 2,
+                                    is_deleted: false,
+                                },
+                                {
+                                    id: uuidv4(),
+                                    name: "VIP",
+                                    price: 1200.0,
+                                    availability: 100,
+                                    group_size: 2,
+                                    is_deleted: false,
+                                },
+                                {
+                                    id: uuidv4(),
+                                    name: "REGULAR",
+                                    price: 1000.0,
+                                    availability: 150,
+                                    group_size: 3,
                                     is_deleted: false,
                                 },
                             ],
@@ -84,41 +141,52 @@ async function main() {
                     },
                 });
 
-                // Create tickets for the event
+                // Create orders and tickets for the event
                 const attendees = await prisma.attendee.findMany();
                 for (const attendee of attendees) {
-                    const ticketType = event.ticket_types[0]; // SINGLE ticket type
-                    const ticket = await prisma.ticket.create({
+                    const ticketTypes = event.ticket_types;
+                    const ticketsData = ticketTypes.map((ticketType) => ({
+                        id: uuidv4(),
+                        ticket_type_id: ticketType.id,
+                        quantity: Math.floor(Math.random() * 5) + 1, // Random quantity between 1 and 5
+                        subtotal: (Math.floor(Math.random() * 5) + 1) * (ticketType.price.toNumber()),
+                        unique_code: `TICKET-${uuidv4()}`,
+                        is_deleted: false,
+                    }));
+
+                    const total = ticketsData.reduce((acc, ticket) => acc + ticket.subtotal, 0);
+
+                    const order = await prisma.order.create({
                         data: {
                             id: uuidv4(),
-                            ticket_type_id: ticketType.id,
                             attendee_id: attendee.id,
                             event_id: event.id,
-                            unique_code: `TICKET-${uuidv4()}`,
-                            is_deleted: false,
+                            total: total,
+                            tickets: {
+                                create: ticketsData,
+                            },
                         },
                     });
 
                     await prisma.payment.create({
                         data: {
                             id: uuidv4(),
-                            ticket_id: ticket.id,
-                            amount: ticketType.price,
+                            order_id: order.id,
+                            amount: order.total,
                             payment_date: new Date(),
                             status: "COMPLETED",
                             is_deleted: false,
                         },
                     });
 
-                    // Create reviews for past events
+                    // Create reviews for the event
                     await prisma.review.create({
                         data: {
                             id: uuidv4(),
                             attendee_id: attendee.id,
                             event_id: event.id,
                             rating: Math.floor(Math.random() * 5) + 1,
-                            //! comment: `Review for event ${j + 1} by ${attendee.first_name}`,
-                            comment: `Review for event ${j + 1} by ${attendee.id}`, //!
+                            comment: `Review for event ${j + 1} by ${attendee.user_id}`,
                             is_deleted: false,
                             created_at: new Date(),
                         },

@@ -131,6 +131,26 @@ class EventController {
     }
   }
 
+  getOrganizersUpcomingEvents = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user_id = req.user?.id as string;
+      const events = await this.eventService.getOrganizersUpcomingEvents(user_id);
+      res.status(200).json(events);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getOrganizersPastEvents = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user_id = req.user?.id as string;
+      const events = await this.eventService.getOrganizersPastEvents(user_id);
+      res.status(200).json(events);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
   getFeaturedEvents = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const events = await this.eventService.getFeaturedEvents();
@@ -167,6 +187,16 @@ class EventController {
     }
   }
 
+  getOrganizersEventsAnalytics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user_id = req.user?.id as string;
+      const analytics = await this.eventService.getOrganizersEventsAnalytics(user_id);
+      res.status(200).json(analytics);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
   getUpcomingEvents = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const events = await this.eventService.getUpcomingEvents();
@@ -188,6 +218,15 @@ class EventController {
   getDeletedEvents = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const events = await this.eventService.getDeletedEvents();
+      res.status(200).json(events);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  getEventsByCategoryId = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const events = await this.eventService.getEventsByCategoryId(req.params.id);
       res.status(200).json(events);
     } catch (error: any) {
       next(error);

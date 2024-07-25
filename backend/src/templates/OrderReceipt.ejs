@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Receipt</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #081028;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #061027;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background-color: #0b1739;
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 {
+            color: #cb3cff;
+            margin: 0;
+        }
+        .content {
+            padding: 20px;
+        }
+        .content h2 {
+            color: #00c2ff;
+        }
+        .content p {
+            color: #aeb9e1;
+        }
+        .highlight {
+            color: #cb3cff;
+            font-weight: bold;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 20px 0;
+            color: #ffffff;
+            background-color: #0e43fb;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .footer {
+            background-color: #0e43fb;
+            padding: 10px;
+            text-align: center;
+        }
+        .footer p {
+            margin: 0;
+            color: #ffffff;
+        }
+        .ticket-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .ticket-table th, .ticket-table td {
+            border: 1px solid #aeb9e1;
+            padding: 8px;
+            text-align: left;
+        }
+        .ticket-table th {
+            background-color: #0b1739;
+            color: #ffffff;
+        }
+        .ticket-table td {
+            color: #aeb9e1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Order Receipt</h1>
+        </div>
+        <div class="content">
+            <h2>Hello, <%= username %>!</h2>
+            <p>Thank you for your order. Here are the details:</p>
+            <p><strong>Order ID:</strong> <%= order_id %></p>
+            <!-- <p><strong>Event:</strong> <%= event %></p> -->
+            <p><strong>Date:</strong> <%= date %></p>
+            <table class="ticket-table">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Ticket Type</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                        <th>Ticket Number</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% tickets.forEach(ticket => { %>
+                    <tr>
+                        <td><%= ticket.ticket_type ? ticket.ticket_type.event.title : 'Unknown' %></td>
+                        <td><%= ticket.ticket_type ? ticket.ticket_type.name : 'Unknown' %></td>
+                        <td><%= ticket.ticket_type ? ticket.ticket_type.price.toFixed(2) : '0.00' %></td>
+                        <td><%= ticket.quantity %></td>
+                        <td><%= ticket.subtotal.toFixed(2) %></td>
+                        <td><%= ticket.unique_code %></td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+            <p class="highlight">Total: $<%= total.toFixed(2) %></p>
+            <a href="#" class="button">View Order Details</a>
+        </div>
+        <div class="footer">
+            <p>Thank you for your purchase!</p>
+        </div>
+    </div>
+</body>
+</html>

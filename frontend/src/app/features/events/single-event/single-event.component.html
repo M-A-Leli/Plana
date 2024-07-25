@@ -1,40 +1,94 @@
-<app-header></app-header>
-<!-- <button class="back-button" (click)="goBack()">Back to Events</button> -->
-<!-- single-event.component.html -->
 <section class="single-event">
-  <div class="event-details">
-    <h1 class="event-title">{{ event.title }}</h1>
-    <p class="event-description">{{ event.description }}</p>
-    <p class="event-date">Date: {{ event.date | date: 'mediumDate' }}</p>
-    <p class="event-time">Time: {{ event.time | date: 'shortTime' }}</p>
-    <p class="event-venue">Venue: {{ event.venue }}</p>
-    <p class="event-organizer">Organizer: {{ event.organizer?.company }}</p>
-    <p class="event-rating">Rating: {{ event.average_rating }} ({{ event.number_of_reviews }} reviews)</p>
-  </div>
-  <div class="event-images">
-    <img [src]="event.images?.[currentImageIndex]?.url" alt="Event Image" class="current-image">
-    <div class="image-controls">
-      <button (click)="prevImage()">Previous</button>
-      <button (click)="nextImage()">Next</button>
-    </div>
-  </div>
-</section>
+  <button class="back-button" (click)="goBack()">Back to Events</button>
+  <div class="error-container" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <div class="success-container" *ngIf="successMessage">{{ successMessage }}</div>
 
-<section class="related-events">
-  <h2>Related Events</h2>
-  <div class="related-event-cards">
-    <div *ngFor="let event of relatedEvents" class="related-event-card">
-      <img [src]="event.images?.[0]?.url" alt="{{ event.title }}" class="related-event-image">
-      <div class="related-event-details">
-        <h3 class="related-event-title">{{ event.title }}</h3>
-        <p class="related-event-date">{{ event.date | date: 'mediumDate' }}</p>
-        <p class="related-event-venue">{{ event.venue }}</p>
+  <div class="upper-display">
+    <div class="event">
+      <div class="event-images">
+        <img [src]="event.images?.[currentImageIndex]?.url || '/assets/default-event.jpg'" alt="Event Image"
+          class="current-image">
+        <div class="image-controls">
+          <button (click)="prevImage()" [disabled]="currentImageIndex === 0">Previous</button>
+          <button (click)="nextImage()" [disabled]="currentImageIndex === (event.images?.length ?? 0) - 1">Next</button>
+        </div>
+      </div>
+      <div class="event-details">
+        <h1 class="event-title">{{ event.title }}</h1>
+        <p class="event-organizer" (click)="viewOrganizerEvents(event.organizer?.id || '', $event)">
+        <strong>Organizer:</strong> {{ event.organizer?.company }}
+        </p>
+        <p class="event-description">{{ event.description || 'No description available.' }}</p>
+        <p class="event-date"><strong>Date:</strong> {{ event.date | date: 'longDate' }}</p>
+        <p class="event-time"><strong>Starts:</strong> {{ event.start_time }}</p>
+        <p class="event-time"><strong>Ends:</strong> {{ event.end_time }}</p>
+        <p class="event-venue"><strong>Venue:</strong> {{ event.venue }}</p>
+        <p class="event-rating" *ngIf="event.average_rating">Rating: {{ event.average_rating }} ({{ event.number_of_reviews
+          }} reviews)</p>
+        <p class="event-rating" *ngIf="!event.average_rating">No reviews yet.</p>
       </div>
     </div>
+
+    <div class="ticket-types">
+    <table class="event-table glassmorphism">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Availability</th>
+          <th>Group Size</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ticket_type of ticketTypes">
+          <td>{{ ticket_type.name }}</td>
+          <td>{{ ticket_type.price }}</td>
+          <td>{{ ticket_type.availability }}</td>
+          <td>{{ ticket_type.group_size }}</td>
+          <td class="actions">
+            <button *ngIf="!ticket_type.is_deleted && ticket_type.availability !== 0" class="btn purchace" (click)="purchase($event, ticket_type.id || '')">
+              <img src="/icons/purchase.png" alt="Purchace">
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="related-events" *ngIf="relatedEvents?.length">
+    <h2>Related Events</h2>
+
+    <div class="related-event-cards">
+      <div *ngFor="let event of relatedEvents" class="related-event-card">
+        <div class="related-event-img">
+          <img [src]="event.images?.[0]?.url" alt="{{ event.title }}" class="event-image" />
+        </div>
+        <div class="related-event-details">
+          <h3 class="event-title">{{ event.title }}</h3>
+          <div class="rating">
+            <ng-container *ngFor="let star of getRatingArray(event.average_rating || 0); let i = index">
+              <i class="fa" [ngClass]="star"></i>
+            </ng-container>
+            <p>({{ event.number_of_reviews }})</p>
+          </div>
+          <p class="event-organizer" (click)="viewOrganizerEvents(event.organizer?.id || '', $event)">
+            Organizer: {{ event.organizer?.company }}
+          </p>
+          <p class="event-date"><strong>Date:</strong> {{ event.date | date: 'longDate' }}</p>
+          <p class="event-time"><strong>Starts:</strong> {{ event.start_time }}</p>
+          <p class="event-time"><strong>Ends:</strong> {{ event.end_time }}</p>
+          <p class="event-venue"><strong>Venue:</strong> {{ event.venue }}</p>
+        </div>
+        <div class="action">
+          <button (click)="viewEvent(event.id || '')">View More</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="related-events" *ngIf="!relatedEvents?.length">
+    <p>No related events available.</p>
   </div>
 </section>
-<app-footer></app-footer>
-<!-- <div class="ticket-booking">
-  <h2>Book Tickets</h2>
-  <button (click)="bookTickets()">Book Now</button>
-</div> -->

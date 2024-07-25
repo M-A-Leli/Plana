@@ -13,10 +13,14 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                is_deleted: true,
+                is_featured: true,
+                category_id: true,
                 organizer: {
                     select: {
                         id: true,
@@ -48,10 +52,14 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
+                is_deleted: true,
+                is_featured: true,
                 organizer: {
                     select: {
                         id: true,
@@ -75,7 +83,7 @@ class EventService {
         return event;
     }
 
-    async createEvent(id: string, data: Omit<Prisma.EventCreateInput, 'id' | 'organizer_id'>, imagePaths: string[]): Promise<Partial<Event> | null> {
+    async createEvent(id: string, data: {title: string; description: string; date: string; start_time: string; end_time: string; venue: string; category_id: string }, imagePaths: string[]): Promise<Partial<Event> | null> {
         const organizer = await prisma.organizer.findFirst({
             where: {
                 user_id: id,
@@ -102,44 +110,52 @@ class EventService {
             throw createError(400, 'An event can have at most 4 images');
         }
 
-        const eventData: Prisma.EventUncheckedCreateInput = {
+        const eventData =  {
             ...data,
             organizer_id: organizer.id,
+            date: new Date(data.date).toISOString(),
             images: {
                 create: imagePaths.map(path => ({
                     url: `${BASE_URL}/images/${path.split('/').pop()}`,
                 })),
             },
         };
-
-        const event = await prisma.event.create({
-            data: eventData,
-            select: {
-                id: true,
-                title: true,
-                description: true,
-                date: true,
-                time: true,
-                venue: true,
-                average_rating: true,
-                number_of_reviews: true,
-                organizer: {
-                    select: {
-                        id: true,
-                        company: true,
-                    }
-                },
-                images: {
-                    where: { is_deleted: false },
-                    select: {
-                        id: true,
-                        url: true,
+    
+        try {
+            const event = await prisma.event.create({
+                data: eventData,
+                select: {
+                    id: true,
+                    title: true,
+                    description: true,
+                    date: true,
+                    start_time: true,
+                    end_time: true,
+                    venue: true,
+                    average_rating: true,
+                    number_of_reviews: true,
+                    category_id: true,
+                    organizer: {
+                        select: {
+                            id: true,
+                            company: true,
+                        }
+                    },
+                    images: {
+                        where: { is_deleted: false },
+                        select: {
+                            id: true,
+                            url: true,
+                        }
                     }
                 }
-            }
-        });
-
-        return event;
+            });
+    
+            return event;
+        } catch (error) {
+            console.error('Error creating event:', error);
+            throw createError(500, 'Internal Server Error');
+        }
     }
 
     async updateEvent(id: string, data: Partial<Omit<Prisma.EventUpdateInput, 'id'>>, imagePaths: string[]): Promise<Partial<Event> | null> {
@@ -149,6 +165,10 @@ class EventService {
 
         if (!event || event.is_deleted) {
             throw createError(404, 'Event not found');
+        }
+
+        if (event.date < new Date()) {
+            throw createError(400, 'Past events cannot be edited');
         }
 
         const updateData: Prisma.EventUpdateInput = {
@@ -171,10 +191,12 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
                 organizer: {
                     select: {
                         id: true,
@@ -198,28 +220,33 @@ class EventService {
         const event = await prisma.event.findUnique({
             where: { id },
             include: {
-                tickets: {
+                orders: {
                     where: {
                         is_deleted: false
                     }
                 }
             }
         });
-
+    
         if (!event || event.is_deleted) {
             throw createError(404, 'Event not found');
         }
-
-        const purchasedTickets = event.tickets.length > 0;
-
-        if (purchasedTickets) {
+    
+        const currentDateTime = new Date();
+        const eventEndDateTime = new Date(event.date);
+        const [hours, minutes] = event.end_time.split(':').map(Number);
+        eventEndDateTime.setHours(hours, minutes);
+    
+        const eventEnded = currentDateTime > eventEndDateTime;
+        const hasOrders = event.orders.length > 0;
+    
+        if (!eventEnded && hasOrders) {
             //! Placeholder for refund logic
             // await paymentService.refundAttendees(event.id);
-
-            // !
-            throw createError(400, 'Event cannot be deleted as it has purchased tickets');
+    
+            throw createError(400, 'Event cannot be deleted as it has purchased tickets and the event has not ended');
         }
-
+    
         await prisma.event.update({
             where: { id },
             data: { is_deleted: true }
@@ -247,10 +274,14 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
+                is_deleted: true,
+                is_featured: true,
                 organizer: {
                     select: {
                         id: true,
@@ -297,10 +328,14 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                is_deleted: true,
+                is_featured: true,
+                category_id: true,
                 organizer: {
                     select: {
                         id: true,
@@ -347,10 +382,14 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
+                is_deleted: true,
+                is_featured: true,
                 organizer: {
                     select: {
                         id: true,
@@ -393,7 +432,7 @@ class EventService {
 
         const events = await prisma.event.findMany({
             where: {
-                organizer_id: id,
+                organizer_id: organizer.id,
                 is_deleted: false
             },
             select: {
@@ -401,10 +440,138 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
+                is_deleted: true,
+                is_featured: true,
+                organizer: {
+                    select: {
+                        id: true,
+                        company: true,
+                    }
+                },
+                images: {
+                    where: { is_deleted: false },
+                    select: {
+                        id: true,
+                        url: true,
+                    }
+                }
+            }
+        });
+
+        if (events.length === 0) {
+            throw createError(404, 'No events found');
+        }
+
+        return events;
+    }
+
+    async getOrganizersUpcomingEvents(id: string): Promise<Partial<Event>[]> {
+        const user = await prisma.user.findUnique({
+            where: { id },
+        });
+
+        if (!user || user.is_deleted || user.is_suspended) {
+            throw createError(404, 'User not found');
+        }
+
+        const organizer = await prisma.organizer.findUnique({
+            where: { user_id: user.id },
+        });
+
+        if (!organizer || organizer.is_deleted) {
+            throw createError(404, 'Organizer not found');
+        }
+
+        const currentDate = new Date();
+        const events = await prisma.event.findMany({
+            where: {
+                date: {
+                    gte: currentDate,
+                },
+                organizer_id: organizer.id,
+                is_deleted: false
+            },
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                date: true,
+                start_time: true,
+                end_time: true,
+                venue: true,
+                average_rating: true,
+                number_of_reviews: true,
+                category_id: true,
+                is_deleted: true,
+                is_featured: true,
+                organizer: {
+                    select: {
+                        id: true,
+                        company: true,
+                    }
+                },
+                images: {
+                    where: { is_deleted: false },
+                    select: {
+                        id: true,
+                        url: true,
+                    }
+                }
+            }
+        });
+
+        if (events.length === 0) {
+            throw createError(404, 'No events found');
+        }
+
+        return events;
+    }
+
+    async getOrganizersPastEvents(id: string): Promise<Partial<Event>[]> {
+        const user = await prisma.user.findUnique({
+            where: { id },
+        });
+
+        if (!user || user.is_deleted || user.is_suspended) {
+            throw createError(404, 'User not found');
+        }
+
+        const organizer = await prisma.organizer.findUnique({
+            where: { user_id: user.id },
+        });
+
+        if (!organizer || organizer.is_deleted) {
+            throw createError(404, 'Organizer not found');
+        }
+
+        const currentDate = new Date();
+        const events = await prisma.event.findMany({
+            where: {
+                date: {
+                    lt: currentDate,
+                },
+                organizer_id: organizer.id,
+                is_deleted: false
+            },
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                date: true,
+                start_time: true,
+                end_time: true,
+                venue: true,
+                average_rating: true,
+                number_of_reviews: true,
+                category_id: true,
+                is_deleted: true,
+                is_featured: true,
                 organizer: {
                     select: {
                         id: true,
@@ -452,10 +619,14 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
+                is_deleted: true,
+                is_featured: true,
                 organizer: {
                     select: {
                         id: true,
@@ -470,7 +641,7 @@ class EventService {
                     }
                 }
             },
-            take: 4
+            take: 3
         });
 
         if (relatedEvents.length === 0) {
@@ -495,10 +666,14 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
+                is_deleted: true,
+                is_featured: true,
                 organizer: {
                     select: {
                         id: true,
@@ -566,10 +741,13 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
+                is_deleted: true,
                 is_featured: true,
             },
         });
@@ -586,6 +764,10 @@ class EventService {
             throw createError(404, 'Event not found');
         }
 
+        if (!event.is_featured) {
+            throw createError(400, 'Event is not featured!');
+        }
+
         const updatedEvent = await prisma.event.update({
             where: { id: eventId },
             data: {
@@ -596,10 +778,13 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
+                is_deleted: true,
                 is_featured: true,
             },
         });
@@ -621,10 +806,60 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
+                is_deleted: true,
+                is_featured: true,
+                organizer: {
+                    select: {
+                        id: true,
+                        company: true,
+                    }
+                },
+                images: {
+                    where: { is_deleted: false },
+                    select: {
+                        id: true,
+                        url: true,
+                    }
+                }
+            }
+        });
+
+        if (events.length === 0) {
+            throw createError(404, 'No upcoming events found');
+        }
+
+        return events;
+    }
+
+    async getEventsByCategoryId(category_id: string): Promise<Partial<Event>[]> {
+        const currentDate = new Date();
+        const events = await prisma.event.findMany({
+            where: {
+                category_id,
+                date: {
+                    gte: currentDate,
+                },
+                is_deleted: false,
+            },
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                date: true,
+                start_time: true,
+                end_time: true,
+                venue: true,
+                average_rating: true,
+                number_of_reviews: true,
+                category_id: true,
+                is_deleted: true,
+                is_featured: true,
                 organizer: {
                     select: {
                         id: true,
@@ -662,10 +897,14 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
+                is_deleted: true,
+                is_featured: true,
                 organizer: {
                     select: {
                         id: true,
@@ -699,10 +938,14 @@ class EventService {
                 title: true,
                 description: true,
                 date: true,
-                time: true,
+                start_time: true,
+                end_time: true,
                 venue: true,
                 average_rating: true,
                 number_of_reviews: true,
+                category_id: true,
+                is_deleted: true,
+                is_featured: true,
                 organizer: {
                     select: {
                         id: true,
@@ -730,9 +973,9 @@ class EventService {
 
         const all_events = await prisma.event.count();
 
-        const active_events = await prisma.event.count({
+        const featured_events = await prisma.event.count({
             where: {
-                is_deleted: false,
+                is_featured: true,
             },
         });
 
@@ -780,12 +1023,78 @@ class EventService {
 
         return {
             all_events,
-            active_events,
+            featured_events,
             deleted_events,
             upcoming_events,
             past_events,
             average_rating: average_rating._avg.average_rating || 0,
             total_reviews: total_reviews._sum.number_of_reviews || 0,
+        };
+    }
+
+    async getOrganizersEventsAnalytics(id: string): Promise<Object> {
+        const user = await prisma.user.findUnique({
+            where: { id },
+        });
+
+        if (!user || user.is_deleted || user.is_suspended) {
+            throw createError(404, 'User not found');
+        }
+
+        const organizer = await prisma.organizer.findUnique({
+            where: { user_id: user.id },
+        });
+
+        if (!organizer || organizer.is_deleted) {
+            throw createError(404, 'Organizer not found');
+        }
+
+        const currentDate = new Date();
+
+        const all_events = await prisma.event.count({
+            where: {
+                organizer_id: organizer.id,
+                is_deleted: false
+            }
+        });
+
+        const upcoming_events = await prisma.event.count({
+            where: {
+                date: {
+                    gte: currentDate,
+                },
+                organizer_id: organizer.id,
+                is_deleted: false,
+            },
+        });
+
+        const past_events = await prisma.event.count({
+            where: {
+                date: {
+                    lt: currentDate,
+                },
+                organizer_id: organizer.id,
+                is_deleted: false,
+            },
+        });
+
+        const average_rating = await prisma.event.aggregate({
+            where: {
+                organizer_id: organizer.id,
+                is_deleted: false,
+            },
+            _avg: {
+                average_rating: true,
+            },
+        });
+
+        // ! More analytics
+
+        return {
+            all_events,
+            upcoming_events,
+            past_events,
+            average_rating: average_rating._avg.average_rating || 0,
         };
     }
 }

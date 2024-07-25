@@ -1,43 +1,134 @@
 <div class="admin-entity-layout">
-  <div class="left-display">
-    <button class="create-btn" (click)="onCreate()">Create Organizer</button>
-    <table>
-      <thead>
-        <tr>
-          <th>Image</th>
-          <th>Company</th>
-          <th>Username</th>
-          <th>Email</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let organizer of organizers">
-          <td><img [src]="organizer.user?.profile_img" alt="Organizer Image"></td>
-          <td>{{ organizer.company }}</td>
-          <td>{{ organizer.user?.username }}</td>
-          <td>{{ organizer.user?.email }}</td>
-          <td>
-            <button (click)="onView(organizer.id || '')">View</button>
-            <button (click)="onEdit(organizer.id || '')">Edit</button>
-            <button (click)="onDelete(organizer.id || '')">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="pagination">
-      <button class="pagination-buttons" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <button class="pagination-buttons" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+  <div class="analytics-section">
+    <div class="card glassmorphism" (click)="filterOrganizers('all')">
+      <div class="number">{{ analytics.all_organizers }}</div>
+      <div class="heading">Total Organizers</div>
+    </div>
+    <div class="card glassmorphism" (click)="filterOrganizers('active')">
+      <div class="number">{{ analytics.active_organizers }}</div>
+      <div class="heading">Active Organizers</div>
+    </div>
+    <div class="card glassmorphism" (click)="filterOrganizers('approved')">
+      <div class="number">{{ analytics.approved_organizers }}</div>
+      <div class="heading">Approved Organizers</div>
+    </div>
+    <div class="card glassmorphism" (click)="filterOrganizers('deleted')">
+      <div class="number">{{ analytics.deleted_organizers }}</div>
+      <div class="heading">Deleted Organizers</div>
     </div>
   </div>
-  <div class="right-display">
-    <ng-container [ngSwitch]="currentView">
-      <div *ngSwitchCase="'default'">Default View Content</div>
-      <app-create-organizer *ngSwitchCase="'create'"></app-create-organizer>
-      <app-edit-organizer *ngSwitchCase="'edit'" [organizerId]="selectedOrganizerId"></app-edit-organizer>
-      <app-single-organizer *ngSwitchCase="'view'" [organizerId]="selectedOrganizerId"></app-single-organizer>
-      <app-delete-organizer *ngSwitchCase="'delete'" [organizerId]="selectedOrganizerId"></app-delete-organizer>
-    </ng-container>
+
+  <div class="display-section">
+    <div class="left-display">
+      <table class="organizer-table glassmorphism">
+        <thead>
+          <tr>
+            <th>Profile</th>
+            <th>Username</th>
+            <th>Company</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let organizer of paginatedOrganizers">
+            <td><img [src]="organizer.user?.profile_img" alt="Organizer Image"></td>
+            <td>{{ organizer.user?.username }}</td>
+            <td>{{ organizer.company }}</td>
+            <td>{{ organizer.user?.email }}</td>
+            <td>{{ getOrganizerStatus(organizer) }}</td>
+            <td class="actions">
+              <button class="btn view" (click)="showView(organizer)">
+                <img src="/icons/view.png" alt="View">
+              </button>
+              <button *ngIf="!organizer.is_deleted && !organizer.approved && !organizer.user?.is_suspended" class="btn approve" (click)="showApprove(organizer)">
+                <img src="/icons/approve.png" alt="Approve">
+              </button>
+              <button *ngIf="!organizer.is_deleted && organizer.approved && !organizer.user?.is_suspended" class="btn revoke" (click)="showRevoke(organizer)">
+                <img src="/icons/revoke.png" alt="Revoke">
+              </button>
+              <button *ngIf="!organizer.is_deleted && !organizer.user?.is_suspended" class="btn suspend" (click)="showSuspend(organizer)">
+                <img src="/icons/suspend.png" alt="Suspend">
+              </button>
+              <button *ngIf="!organizer.is_deleted && organizer.user?.is_suspended" class="btn reinstate" (click)="showReinstate(organizer)">
+                <img src="/icons/reinstate.png" alt="Unsuspend">
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination glassmorphism">
+        <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+      </div>
+    </div>
+
+    <div class="right-display">
+      <div *ngIf="errorMessage" class="message error glassmorphism">{{ errorMessage }}</div>
+      <div *ngIf="successMessage" class="message success glassmorphism">{{ successMessage }}</div>
+
+      <div *ngIf="viewMode === 'default'" class="default-section glassmorphism">
+        <img src="/logo.svg" alt="Company Logo">
+        <h2>Plana</h2>
+      </div>
+
+      <div *ngIf="viewMode === 'view'" class="view-section glassmorphism">
+        <h2>Organizer Details</h2>
+        <div class="organizer-details">
+          <div class="profile-image">
+            <img [src]="selectedOrganizer?.user?.profile_img" alt="Profile Image">
+          </div>
+          <div class="details">
+            <p><strong>Username:</strong> {{ selectedOrganizer?.user?.username }}</p>
+            <p><strong>Email:</strong> {{ selectedOrganizer?.user?.email }}</p>
+            <p><strong>Company:</strong> {{ selectedOrganizer?.company }}</p>
+            <p><strong>Bio:</strong> {{ selectedOrganizer?.bio }}</p>
+            <!-- <p><strong>Status:</strong> {{ getOrganizerStatus(selectedOrganizer) }}</p> -->
+          </div>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" (click)="resetView()">Back</button>
+        </div>
+      </div>
+
+      <div *ngIf="viewMode === 'approve'" class="approve-section glassmorphism">
+        <h2>Confirm Approve</h2>
+        <p>Are you sure you want to approve the organizer {{ selectedOrganizer?.company }}?</p>
+        <div class="form-group actions">
+          <button type="button" class="btn btn-danger" (click)="approveOrganizer()">Proceed</button>
+          <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+        </div>
+      </div>
+
+      <div *ngIf="viewMode === 'revoke'" class="revoke-section glassmorphism">
+        <h2>Confirm revoke</h2>
+        <p>Are you sure you want to revoke the organizer {{ selectedOrganizer?.company }}?</p>
+        <div class="form-group actions">
+          <button type="button" class="btn btn-danger" (click)="revokeOrganizer()">Proceed</button>
+          <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+        </div>
+      </div>
+
+      <div *ngIf="viewMode === 'suspend'" class="suspend-section glassmorphism">
+        <h2>Confirm Suspend</h2>
+        <p>Are you sure you want to suspend the organizer {{ selectedOrganizer?.company }}?</p>
+        <div class="form-group actions">
+          <button type="button" class="btn btn-danger" (click)="suspendOrganizer()">Proceed</button>
+          <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+        </div>
+      </div>
+
+      <div *ngIf="viewMode === 'reinstate'" class="reinstate-section glassmorphism">
+        <h2>Confirm Reinstate</h2>
+        <p>Are you sure you want to reinstate the organizer {{ selectedOrganizer?.company }}?</p>
+        <div class="form-group actions">
+          <button type="button" class="btn btn-danger" (click)="reinstateOrganizer()">Proceed</button>
+          <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

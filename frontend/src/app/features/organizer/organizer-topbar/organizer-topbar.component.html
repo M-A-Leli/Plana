@@ -1,21 +1,11 @@
 <!-- top-bar.component.html -->
 <div class="top-bar">
+  <div class="error-container" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <div class="success-container" *ngIf="successMessage">{{ successMessage }}</div>
   <div class="search-section">
-    <form (submit)="onSearch(searchTerm.value)">
-      <input type="text" #searchTerm placeholder="Search...">
-      <button type="submit">Search</button>
+    <form (submit)="onVerify(ticketNumber.value)">
+      <input type="text" #ticketNumber placeholder="Ticket Number...">
+      <button type="submit">Verify</button>
     </form>
-  </div>
-  <div class="nav-icons">
-    <img src="/icons/message.png" alt="messages" (click)="navigate('/organizer/messages')">
-    <img src="/icons/notification.png" alt="notifications" (click)="navigate('/organizer/notifications')">
-    <img src="/icons/settings.png" alt="settings" (click)="navigate('/organizer/settings')">
-  </div>
-  <div class="profile-section" (click)="toggleDropdown()">
-    <img src="/profile-picture.png" alt="profile" class="profile-pic">
-    <div class="dropdown-menu" [class.show]="dropdownVisible">
-      <a (click)="navigate('/organizer/profile')">Profile</a>
-      <a (click)="navigate('/organizer/logout')">Logout</a>
-    </div>
   </div>
 </div>

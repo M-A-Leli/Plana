@@ -1,0 +1,50 @@
+<app-header></app-header>
+
+<div class="order-container">
+  <h2>Order Summary</h2>
+
+  <div class="error-container" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <div class="success-container" *ngIf="successMessage">{{ successMessage }}</div>
+
+  <table class="order-table">
+    <thead>
+      <tr>
+        <th>Event</th>
+        <th>Ticket Type</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Subtotal</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ticket of paginatedTickets">
+        <td>{{ ticket.ticket_type?.event?.title }}</td>
+        <td>{{ ticket.ticket_type?.name }}</td>
+        <td>{{ ticket.ticket_type?.price | currency }}</td>
+        <td>
+          <button (click)="decreaseQuantity(ticket)">-</button>
+          {{ ticket.quantity }}
+          <button (click)="increaseQuantity(ticket)">+</button>
+        </td>
+        <td>{{ ticket.subtotal | currency }}</td>
+        <td>
+          <button (click)="removeTicket(ticket.id || '')">
+            <img src="/icons/remove.png" alt="Remove">
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="pagination">
+    <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+  </div>
+  <div class="order-total">
+    <strong>Total: {{ calculateTotal() | currency }}</strong>
+  </div>
+  <button class="checkout-button" (click)="checkout()">Checkout</button>
+</div>
+
+<app-footer></app-footer>

@@ -1,10 +1,10 @@
-import Ticket from "./Ticket";
+import Order from "./Order";
 
 export default interface Payment {
   id?: string,
-  ticket_id: string,
+  order_id: string,
   amount: number,
   payment_date: Date,
   status?: string,
-  ticket?: Ticket
+  order?: Order
 }

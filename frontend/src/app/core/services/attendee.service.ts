@@ -28,16 +28,28 @@ export class AttendeeService {
     return this.http.put<Attendee>(`${this.baseUrl}/${id}`, attendee);
   }
 
-  deleteAttendee(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  deleteAttendee(): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/`);
   }
 
   getAttendeeProfile(): Observable<Attendee> {
     return this.http.get<Attendee>(`${this.baseUrl}/profile`);
   }
 
-  updateAttendeeProfile(attendee: Attendee): Observable<Attendee> {
+  updateAttendeeProfile(attendee: Object): Observable<Attendee> {
     return this.http.put<Attendee>(`${this.baseUrl}/profile`, attendee);
+  }
+
+  getActiveAttendees(): Observable<Attendee[]> {
+    return this.http.get<Attendee[]>(`${this.baseUrl}/active`);
+  }
+
+  getSuspendedAttendees(): Observable<Attendee[]> {
+    return this.http.get<Attendee[]>(`${this.baseUrl}/suspended`);
+  }
+
+  getDeletedAttendees(): Observable<Attendee[]> {
+    return this.http.get<Attendee[]>(`${this.baseUrl}/deleted`);
   }
 
   getAttendeeAnalytics(): Observable<Object> {

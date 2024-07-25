@@ -31,47 +31,22 @@ class UserController {
   }
 
   createUser = async (req: Request, res: Response, next: NextFunction) => {
-    uploadSingle(req, res, async (err) => {
-      if (err instanceof multer.MulterError) {
-        return next(createError(400, err.message));
-      } else if (err) {
-        return next(createError(400, err.message));
-      }
-
-      if (!req.file) {
-        return next(createError(400, 'No file uploaded'));
-      }
-
       try {
-        const imagePath = req.file.path;
-        const user = await this.userService.createUser(req.body, imagePath);
+        const user = await this.userService.createUser(req.body);
         res.status(201).json(user);
       } catch (error: any) {
         next(error);
       }
-    });
   }
 
   updateUser = async (req: Request, res: Response, next: NextFunction) => {
-    uploadSingle(req, res, async (err) => {
-      if (err instanceof multer.MulterError) {
-        return next(createError(400, err.message));
-      } else if (err) {
-        return next(createError(400, err.message));
-      }
-
-      if (!req.file) {
-        return next(createError(400, 'No file uploaded'));
-      }
-
-      try {
-        const imagePath = req.file.path;
-        const user = await this.userService.updateUser(req.params.id, req.body, imagePath);
-        res.status(201).json(user);
-      } catch (error: any) {
-        next(error);
-      }
-    });
+    try {
+      const user_id = req.user?.id as string;
+      const user = await this.userService.updateUser(user_id, req.body);
+      res.status(201).json(user);
+    } catch (error: any) {
+      next(error);
+    }
   }
 
   deleteUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -145,6 +120,15 @@ class UserController {
     }
   }
 
+  reinstateUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await this.userService.reinstateUser(req.params.id);
+      res.status(204).send();
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
   getActiveUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const users = await this.userService.getActiveUsers();
@@ -176,6 +160,16 @@ class UserController {
     try {
       const analytics = await this.userService.getUserAnalytics();
       res.status(200).json(analytics);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  changePassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user_id = req.user?.id as string;
+      await this.userService.changePassword(user_id, req.body);
+      res.status(200).json({ message: 'Password changed successful' });
     } catch (error: any) {
       next(error);
     }

@@ -4,29 +4,33 @@ import prisma from '../config/Prisma.config';
 
 class AuthService {
     static async findUserByEmail(email: string) {
-        return prisma.user.findUnique({
-            where: { email, is_deleted: false, is_suspended: false },
-            select: {
-                id: true,
-                password: true,
+        const user = await prisma.user.findUnique({
+            where: {
+                email: email,
+                is_deleted: false,
+                is_suspended: false
+            },
+            include: {
                 admin: {
-                    select: {
-                        id: true
+                    where: {
+                        is_deleted: false
                     }
                 },
                 attendees: {
-                    select: {
-                        id: true
+                    where: {
+                        is_deleted: false
                     }
                 },
                 organizers: {
-                    where: { approved: true },
-                    select: {
-                        id: true
+                    where: {
+                        is_deleted: false,
+                        approved: true
                     }
                 }
-            },
+            }
         });
+    
+        return user;
     }
 
     static async findUserByID(id: string) {

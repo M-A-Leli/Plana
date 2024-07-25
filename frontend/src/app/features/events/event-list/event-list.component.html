@@ -1,27 +1,55 @@
-<app-header></app-header>
 <section class="event-list">
   <h1 class="section-title">Upcoming Events</h1>
+
   <div class="events-filters">
-    <input type="text" placeholder="Search events..." [(ngModel)]="searchQuery" (input)="filterEvents()" />
-    <select [(ngModel)]="selectedCategory" (change)="filterEvents()">
-      <option value="">All Categories</option>
-      <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
-    </select>
+    <input type="text" placeholder="Search events..." [(ngModel)]="searchQuery" (input)="search()" />
+    <label for="category">Select Category:
+      <select id="category" [(ngModel)]="selectedCategoryId" (change)="filterByCategory()">
+        <option value="">All Categories</option>
+        <option *ngFor="let category of categories" [value]="category.id">
+          {{ category.name }}
+        </option>
+      </select>
+    </label>
   </div>
+
+  <div class="error-container" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <div class="success-container" *ngIf="successMessage">{{ successMessage }}</div>
+
   <div class="events-container">
-    <!-- <div class="event-card" *ngFor="let event of filteredEvents | paginate: { itemsPerPage: 6, currentPage: page }"> -->
-    <div class="event-card" *ngFor="let event of filteredEvents">
-      <!-- <img [src]="event.images?.[0]?.url ?? '/event.jpeg'" alt="{{ event.title }}" class="event-image" /> -->
-      <img src="/event.jpeg" alt="{{ event.title }}" class="event-image" />
+    <div class="event-card" *ngFor="let event of paginatedEvents">
+      <div class="event-img">
+        <img [src]="event.images?.[0]?.url" alt="{{ event.title }}" class="event-image" />
+      </div>
       <div class="event-details">
         <h3 class="event-title">{{ event.title }}</h3>
-        <p class="event-date">{{ event.date | date: 'longDate' }} at {{ event.time | date: 'shortTime' }}</p>
-        <p class="event-venue">{{ event.venue }}</p>
-        <p class="event-description">{{ event.description }}</p>
-        <p class="event-organizer">Organized by: {{ event.organizer?.company }}</p>
+        <div class="rating">
+          <ng-container *ngFor="let star of getRatingArray(event.average_rating || 0); let i = index">
+            <i class="fa" [ngClass]="star"></i>
+          </ng-container>
+          <p>({{ event.number_of_reviews }})</p>
+        </div>
+        <!-- <p class="event-organizer">
+          Organizer:
+          <button class="organizer-link" (click)="viewOrganizerEvents(event.organizer?.id || '', $event)">
+            {{ event.organizer?.company }}
+          </button>
+        </p> -->
+        <p class="event-organizer"><strong>Organizer: </strong> {{ event.organizer?.company }}</p>
+        <p class="event-date"><strong>Date: </strong> {{ event.date | date: 'longDate' }}</p>
+        <p class="event-time"><strong>Starts: </strong> {{ event.start_time }}</p>
+        <p class="event-time"><strong>Ends: </strong> {{ event.end_time }}</p>
+        <p class="event-venue"><strong>Venue: </strong> {{ event.venue }}</p>
+      </div>
+      <div class="action">
+        <button (click)="viewEventDetails(event.id || '')">View More</button>
       </div>
     </div>
   </div>
-  <!-- <pagination-controls (pageChange)="page = $event"></pagination-controls> -->
+
+  <div class="pagination">
+    <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+    <button *ngFor="let page of totalPagesArray" (click)="goToPage(page)">{{ page }}</button>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+  </div>
 </section>
-<app-footer></app-footer>

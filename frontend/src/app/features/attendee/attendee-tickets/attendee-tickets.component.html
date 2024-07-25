@@ -1,0 +1,36 @@
+<div class="attendee-entity-layout">
+  <div class="display-section">
+    <div class="left-display">
+      <div class="top-bar glassmorphism">
+        <button (click)="goBack()" class="back-button">Back</button>
+      </div>
+
+      <table class="ticket-table glassmorphism">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Ticket Type</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ticket of paginatedTickets">
+            <td>{{ ticket.ticket_type?.event?.title }}</td>
+            <td>{{ ticket.ticket_type?.name }}</td>
+            <td>{{ ticket.ticket_type?.price | currency }}</td>
+            <td>{{ ticket.quantity }}</td>
+            <td>{{ ticket.subtotal | currency }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination glassmorphism">
+        <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+      </div>
+    </div>
+  </div>
+</div>

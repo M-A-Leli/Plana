@@ -1,1 +1,19 @@
-<p>attendee-sidebar works!</p>
+<div class="sidebar" [class.collapsed]="isCollapsed">
+  <div class="logo-container">
+    <img *ngIf="!isCollapsed" src="/logo.svg" alt="logo">
+    <h1 *ngIf="!isCollapsed">Plana</h1>
+    <button class="toggle-button" (click)="toggleSidebar()">
+      <img src="/icons/menu.png" alt="menu">
+    </button>
+  </div>
+  <div class="navigation">
+    <nav>
+      <ul>
+        <li *ngFor="let item of mainNavItems" [class.selected]="selectedItem === item" (click)="navigate(item.route)">
+          <img [src]="item.icon" [alt]="item.label">
+          <h2 *ngIf="!isCollapsed">{{ item.label }}</h2>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

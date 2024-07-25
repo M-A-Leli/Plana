@@ -2,45 +2,92 @@ import { Component } from '@angular/core';
 import Attendee from '../../../shared/models/Attendee';
 import { AttendeeService } from '../../../core/services/attendee.service';
 import { CommonModule } from '@angular/common';
-import { CreateAttendeeComponent } from './create-attendee/create-attendee.component';
-import { EditAttendeeComponent } from './edit-attendee/edit-attendee.component';
-import { SingleAttendeeComponent } from './single-attendee/single-attendee.component';
-import { DeleteAttendeeComponent } from './delete-attendee/delete-attendee.component';
+import { UsersService } from '../../../core/services/users.service';
 
 @Component({
   selector: 'app-admin-attendees',
   standalone: true,
-  imports: [CommonModule, CreateAttendeeComponent, EditAttendeeComponent, SingleAttendeeComponent, DeleteAttendeeComponent],
+  imports: [CommonModule],
   templateUrl: './admin-attendees.component.html',
   styleUrl: './admin-attendees.component.css'
 })
 export class AdminAttendeesComponent {
+
   attendees: Attendee[] = [];
   paginatedAttendees: Attendee[] = [];
+  selectedAttendee: Attendee | null = null;
+  viewMode: 'default' | 'view' | 'suspend' | 'reinstate' = 'default';
   currentPage: number = 1;
-  itemsPerPage: number = 10;
+  attendeesPerPage: number = 10;
   totalPages: number = 1;
-  selectedAttendeeId: string | null = null;
-  currentView: string = 'default';
+  errorMessage: string = '';
+  successMessage: string = '';
 
-  constructor(private attendeeService: AttendeeService) {}
+  analytics: any = {
+    all_attendees: 0,
+    active_attendees: 0,
+    deleted_attendees: 0,
+    approved_attendees: 0
+  };
+
+  constructor(private attendeeService: AttendeeService, private usersService: UsersService) { }
 
   ngOnInit(): void {
-    this.loadAttendees();
+    this.fetchAttendees();
+    this.fetchAnalytics();
   }
 
-  loadAttendees(): void {
-    this.attendeeService.getAllAttendees().subscribe((attendees) => {
+  fetchAttendees(): void {
+    this.attendeeService.getAllAttendees().subscribe(attendees => {
       this.attendees = attendees;
-      this.totalPages = Math.ceil(this.attendees.length / this.itemsPerPage);
+      this.totalPages = Math.ceil(this.attendees.length / this.attendeesPerPage);
       this.updatePaginatedAttendees();
     });
   }
 
+  fetchAnalytics(): void {
+    this.attendeeService.getAttendeeAnalytics().subscribe(analytics => {
+      this.analytics = analytics;
+    });
+  }
+
+  filterAttendees(type: 'all' | 'active' | 'suspended' | 'deleted'): void {
+    switch (type) {
+      case 'all':
+        this.attendeeService.getAllAttendees().subscribe(attendees => {
+          this.attendees = attendees;
+          this.totalPages = Math.ceil(this.attendees.length / this.attendeesPerPage);
+          this.updatePaginatedAttendees();
+        });
+        break;
+      case 'active':
+        this.attendeeService.getActiveAttendees().subscribe(attendees => {
+          this.attendees = attendees;
+          this.totalPages = Math.ceil(this.attendees.length / this.attendeesPerPage);
+          this.updatePaginatedAttendees();
+        });
+        break;
+      case 'suspended':
+        this.attendeeService.getSuspendedAttendees().subscribe(attendees => {
+          this.attendees = attendees;
+          this.totalPages = Math.ceil(this.attendees.length / this.attendeesPerPage);
+          this.updatePaginatedAttendees();
+        });
+        break;
+      case 'deleted':
+        this.attendeeService.getDeletedAttendees().subscribe(attendees => {
+          this.attendees = attendees;
+          this.totalPages = Math.ceil(this.attendees.length / this.attendeesPerPage);
+          this.updatePaginatedAttendees();
+        });
+        break;
+    }
+  }
+
   updatePaginatedAttendees(): void {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    this.paginatedAttendees = this.attendees.slice(startIndex, endIndex);
+    const start = (this.currentPage - 1) * this.attendeesPerPage;
+    const end = start + this.attendeesPerPage;
+    this.paginatedAttendees = this.attendees.slice(start, end);
   }
 
   previousPage(): void {
@@ -57,22 +104,85 @@ export class AdminAttendeesComponent {
     }
   }
 
-  onCreate(): void {
-    this.currentView = 'create';
+  getAttendeeStatus(attendee: Attendee): string {
+    if (attendee.is_deleted) return 'Deleted';
+    if (attendee.user?.is_suspended) return 'Suspended';
+    return 'Active';
   }
 
-  onView(id: string): void {
-    this.selectedAttendeeId = id;
-    this.currentView = 'view';
+  showView(attendee: Attendee): void {
+    this.selectedAttendee = attendee;
+    this.viewMode = 'view';
   }
 
-  onEdit(id: string): void {
-    this.selectedAttendeeId = id;
-    this.currentView = 'edit';
+  showSuspend(attendee: Attendee): void {
+    this.selectedAttendee = attendee;
+    this.viewMode = 'suspend';
   }
 
-  onDelete(id: string): void {
-    this.selectedAttendeeId = id;
-    this.currentView = 'delete';
+  showReinstate(attendee: Attendee): void {
+    this.selectedAttendee = attendee;
+    this.viewMode = 'reinstate';
+  }
+
+  resetView(): void {
+    this.selectedAttendee = null;
+    this.viewMode = 'default';
+  }
+
+  clearErrors() {
+    setTimeout(() => {
+      this.errorMessage = '';
+    }, 3000);
+  }
+
+  suspendAttendee(): void {
+    if (this.selectedAttendee) {
+      this.usersService.suspendUser(this.selectedAttendee.user?.id as string).subscribe({
+        next: data => {
+          this.successMessage = 'Attendee suspended successfull!';
+          setTimeout(() => {
+            this.successMessage = '';
+            this.fetchAttendees();
+            this.fetchAnalytics();
+            this.resetView();
+          }, 3000);
+        },
+        error: err => {
+          if (err.status === 401 || err.status === 404 || err.status === 400) {
+            this.errorMessage = err.error.error.message;
+            this.clearErrors();
+          } else {
+            this.errorMessage = 'An unexpected error occurred. Please try again.';
+            this.clearErrors();
+          }
+        }
+      });
+    }
+  }
+
+  reinstateAttendee(): void {
+    if (this.selectedAttendee) {
+      this.usersService.reinstateUser(this.selectedAttendee.user?.id as string).subscribe({
+        next: data => {
+          this.successMessage = 'Attendee reinstated successfull!';
+          setTimeout(() => {
+            this.successMessage = '';
+            this.fetchAttendees();
+            this.fetchAnalytics();
+            this.resetView();
+          }, 3000);
+        },
+        error: err => {
+          if (err.status === 401 || err.status === 404 || err.status === 400) {
+            this.errorMessage = err.error.error.message;
+            this.clearErrors();
+          } else {
+            this.errorMessage = 'An unexpected error occurred. Please try again.';
+            this.clearErrors();
+          }
+        }
+      });
+    }
   }
 }

@@ -44,7 +44,7 @@ export class UsersService {
     return this.http.get<User>(`${this.baseUrl}/profile-image`);
   }
 
-  updateUserProfileImage(user: User): Observable<User> {
+  updateUserProfileImage(user: FormData): Observable<User> {
     return this.http.put<User>(`${this.baseUrl}/profile-image`, user);
   }
 
@@ -66,6 +66,10 @@ export class UsersService {
 
   reinstateUser(id: string): Observable<void> {
     return this.http.put<void>(`${this.baseUrl}/reinstate/${id}`, null);
+  }
+
+  changePassword(passwords: Object): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/change-password`, passwords);
   }
 
   getUserAnalytics(): Observable<Object> {

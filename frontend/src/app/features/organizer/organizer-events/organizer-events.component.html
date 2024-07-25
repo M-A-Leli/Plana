@@ -1,24 +1,206 @@
-<div class="events-layout">
-  <div class="left-display">
-    <button (click)="onCreateEvent()">Create Event</button>
-    <app-organizer-list-events (viewEvent)="onViewEvent($event)" (editEvent)="onEditEvent($event)" (deleteEvent)="onDeleteEvent($event)"></app-organizer-list-events>
+<div class="organizer-events-layout">
+  <div class="analytics-section">
+    <div class="card glassmorphism" (click)="filterEvents('all')">
+      <div class="number">{{ analytics.all_events }}</div>
+      <div class="heading">Total Events</div>
+    </div>
+    <div class="card glassmorphism" (click)="filterEvents('upcoming')">
+      <div class="number">{{ analytics.upcoming_events }}</div>
+      <div class="heading">Upcoming Events</div>
+    </div>
+    <div class="card glassmorphism" (click)="filterEvents('past')">
+      <div class="number">{{ analytics.past_events }}</div>
+      <div class="heading">Past Events</div>
+    </div>
+    <div class="card glassmorphism">
+      <div class="number">{{ analytics.average_rating }}</div>
+      <div class="heading">Average Rating</div>
+    </div>
   </div>
-  <div class="right-display">
-    <div *ngIf="showCreateEvent">
-      <app-organizer-create-event (close)="onClose()"></app-organizer-create-event>
+
+  <div class="display-section">
+    <div class="left-display">
+      <div class="top-bar glassmorphism">
+        <button (click)="showCreate()" class="create-button">Create Event</button>
+      </div>
+
+      <table class="event-table glassmorphism">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Starts</th>
+            <th>Ends</th>
+            <th>Venue</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let event of paginatedEvents">
+            <td>{{ event.title }}</td>
+            <td>{{ event.date | date: 'longDate'}}</td>
+            <td>{{ event.start_time }}</td>
+            <td>{{ event.end_time }}</td>
+            <td>{{ event.venue }}</td>
+            <td class="actions">
+              <button class="btn view" (click)="showView(event)">
+                <img src="/icons/view.png" alt="View">
+              </button>
+              <button *ngIf="!event.is_deleted && !hasEventStarted(event.date, event.start_time)" class="btn edit" (click)="showEdit(event)">
+              <!-- <button *ngIf="!event.is_deleted" class="btn edit" (click)="showEdit(event)"> -->
+                <img src="/icons/edit.png" alt="Edit">
+              </button>
+              <button *ngIf="!event.is_deleted" class="btn delete" (click)="showDelete(event)">
+                <img src="/icons/delete.png" alt="Delete">
+              </button>
+              <button *ngIf="!event.is_deleted" class="btn tickets" (click)="showTicketTypes(event)">
+                <img src="/icons/tickets.png" alt="Tickets">
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination glassmorphism">
+        <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+      </div>
     </div>
-    <div *ngIf="showSingleEvent">
-      <app-organizer-single-event [eventId]="selectedEventId || '' " (close)="onClose()"></app-organizer-single-event>
-    </div>
-    <div *ngIf="showEditEvent">
-      <!-- <app-organizer-edit-event [eventId]="selectedEventId || '' " (close)="onClose()"></app-organizer-edit-event> -->
-    </div>
-    <div *ngIf="showDeleteEvent">
-      <!-- <app-organizer-delete-event [eventId]="selectedEventId || '' " (close)="onClose()"></app-organizer-delete-event> -->
-    </div>
-    <div *ngIf="!showCreateEvent && !showSingleEvent && !showEditEvent && !showDeleteEvent" class="default-display">
-      <img src="/logo.png" alt="Logo">
-      <h1>Company Name</h1>
+
+    <div class="right-display">
+      <div *ngIf="errorMessage" class="message error glassmorphism">{{ errorMessage }}</div>
+      <div *ngIf="successMessage" class="message success glassmorphism">{{ successMessage }}</div>
+
+      <div *ngIf="viewMode === 'default'" class="default-section glassmorphism">
+        <img src="/logo.svg" alt="Company Logo">
+        <h2>Plana</h2>
+      </div>
+
+      <div *ngIf="viewMode === 'create'" class="create-section glassmorphism">
+        <h2>Create New Event</h2>
+        <form [formGroup]="eventForm" (ngSubmit)="createEvent()" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input id="title" formControlName="title" type="text" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" formControlName="description"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="date">Date</label>
+            <input id="date" formControlName="date" type="date">
+          </div>
+          <div class="form-group">
+            <label for="start_time">Starts At</label>
+            <input id="start_time" formControlName="start_time" type="time">
+          </div>
+          <div class="form-group">
+            <label for="end_time">Ends At</label>
+            <input id="end_time" formControlName="end_time" type="time">
+          </div>
+          <div class="form-group">
+            <label for="venue">Venue</label>
+            <input id="venue" formControlName="venue" type="text" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" formControlName="category_id">
+              <option value="">All Categories</option>
+              <option *ngFor="let category of categories" [value]="category.id">
+                {{ category.name }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="images">Upload Images (up to 4)</label>
+            <input id="images" type="file" (change)="onFileChange($event)" multiple>
+          </div>
+          <div class="form-group actions">
+            <button type="submit" class="btn btn-primary">Create Event</button>
+            <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <div *ngIf="viewMode === 'view'" class="view-section glassmorphism">
+        <h2>Event Details</h2>
+        <div class="event-details">
+          <div class="event-images">
+            <img [src]="selectedEvent?.images?.[0]?.url" alt="Event Image">
+          </div>
+          <div class="details">
+            <p><strong>Title:</strong> {{ selectedEvent?.title }}</p>
+            <p><strong>Date:</strong> {{ selectedEvent?.date | date: 'longDate' }}</p>
+            <p><strong>Starts:</strong> {{ selectedEvent?.start_time }}</p>
+            <p><strong>Ends:</strong> {{ selectedEvent?.end_time }}</p>
+            <p><strong>Venue:</strong> {{ selectedEvent?.venue }}</p>
+            <p><strong>Rating:</strong> {{ selectedEvent?.average_rating }}</p>
+            <p><strong>Total Reviews:</strong> {{ selectedEvent?.number_of_reviews }}</p>
+            <!-- <p><strong>Status:</strong> {{ getEventStatus(selectedEvent) }}</p> -->
+          </div>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" (click)="resetView()">Back</button>
+        </div>
+      </div>
+
+      <div *ngIf="viewMode === 'edit'" class="edit-section glassmorphism">
+        <h2>Edit Event</h2>
+        <form [formGroup]="updateEventForm" (ngSubmit)="updateEvent()" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input id="title" formControlName="title" type="text" autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" formControlName="description"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="date">Date</label>
+            <input id="date" formControlName="date" type="date" />
+          </div>
+          <div class="form-group">
+            <label for="start_time">Starts</label>
+            <input id="start_time" formControlName="start_time" type="time" />
+          </div>
+          <div class="form-group">
+            <label for="end_time">Ends</label>
+            <input id="end_time" formControlName="end_time" type="time" />
+          </div>
+          <div class="form-group">
+            <label for="venue">Venue</label>
+            <input id="venue" formControlName="venue" type="text" autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" formControlName="category_id">
+              <option value="">All Categories</option>
+              <option *ngFor="let category of categories" [value]="category.id">
+                {{ category.name }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="images">Upload Images (up to 4)</label>
+            <input id="images" type="file" (change)="onFileChange($event)" multiple />
+          </div>
+          <div class="form-group actions">
+            <button type="submit" class="btn btn-primary" [disabled]="updateEventForm.invalid">Save Changes</button>
+            <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <div *ngIf="viewMode === 'delete'" class="delete-section glassmorphism">
+        <h2>Confirm Delete</h2>
+        <p>Are you sure you want to delete the event {{ selectedEvent?.title }}?</p>
+        <div class="form-group actions">
+          <button type="button" class="btn btn-danger" (click)="deleteEvent()">Proceed</button>
+          <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

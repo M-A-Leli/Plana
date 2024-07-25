@@ -1,74 +1,240 @@
-.single-event {
+section.single-event {
+  padding: 1rem;
+  padding-top: 70px;
+  color: #aeb9e1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 20px;
-  color: #aeb9e1;
+  justify-content: center;
+  gap: 1rem;
 }
 
-.event-details {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.event-images {
-  position: relative;
-  text-align: center;
-}
-
-.current-image {
-  width: 100%;
-  max-width: 600px;
-  height: auto;
-  border-radius: 10px;
-}
-
-.image-controls {
-  margin-top: 10px;
-}
-
-.image-controls button {
+.back-button {
+  padding: 0.5rem 1rem;
   background-color: #0e43fb;
+  color: #ffffff;
   border: none;
-  padding: 10px 20px;
-  color: #fff;
-  margin: 0 5px;
   cursor: pointer;
   border-radius: 5px;
 }
 
+.upper-display {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.error-container,
+.success-container {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.error-container {
+  background-color: rgba(255, 0, 0, 0.1);
+  color: #ff0000;
+}
+
+.success-container {
+  background-color: rgba(0, 255, 0, 0.1);
+  color: #00ff00;
+}
+
+.event {
+  display: flex;
+  gap: 1rem;
+  background: #0b1739;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.event-images {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.current-image {
+  max-width: 100%;
+  border-radius: 10px;
+  height: 300px;
+  object-fit: cover;
+}
+
+.image-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.image-controls button {
+  background: #cb3cff;
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.event-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.event-title {
+  font-size: 1.5rem;
+  color: #00c2ff;
+}
+
+.ticket-types {
+  background: #0b1739;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.ticket-types table {
+  width: 100%;
+  border-collapse: collapse;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.ticket-types th, .ticket-types td {
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.ticket-types th {
+  background: #061027;
+  color: #ffffff;
+}
+
+.ticket-types tr:nth-child(even) {
+  background: #061027;
+}
+
+.ticket-types .actions button {
+  /* background: #0e43fb; */
+  background: transparent;
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: border 0.3s ease;
+}
+
+.ticket-types .actions button:hover {
+  border: 1px solid #cb3cff;
+}
+
+.ticket-types .actions button img {
+  width: 24px;
+  height: 24px;
+}
+
 .related-events {
-  margin-top: 50px;
-  text-align: center;
+  margin-top: 2rem;
 }
 
 .related-event-cards {
   display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .related-event-card {
-  background-color: #061027;
-  padding: 15px;
+  background: #0b1739;
   border-radius: 10px;
-  width: 300px;
-  color: #aeb9e1;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
+  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.related-event-card:hover {
-  transform: scale(1.05);
-}
-
-.related-event-image {
+.related-event-card .event-image {
   width: 100%;
-  height: auto;
   border-radius: 10px;
+  height: 200px;
+  object-fit: cover;
 }
 
 .related-event-details {
-  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.related-event-details .event-title {
+  color: #ffffff;
+}
+
+.action button {
+  background: #00c2ff;
+  color: #081028;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+strong {
+  color: #cb3cff;
+}
+
+@media (min-width: 768px) {
+  .upper-display {
+    flex-direction: row;
+  }
+
+  .event-details, .ticket-types {
+    flex: 1;
+  }
+
+  .related-event-cards {
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 479px) {
+  .back-button, .action button {
+    font-size: 0.8rem;
+  }
+
+  .current-image {
+    width: 100%;
+  }
+
+  .event-details {
+    font-size: 0.9rem;
+  }
+
+  .ticket-types th, .ticket-types td {
+    padding: 0.3rem;
+  }
+
+  .related-event-card {
+    padding: 0.5rem;
+  }
+
+  .related-event-card .event-image {
+    width: 100%;
+  }
+
+  .related-event-details {
+    font-size: 0.9rem;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

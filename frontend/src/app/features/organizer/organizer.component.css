@@ -1,6 +1,7 @@
 .organizer-layout {
   display: flex;
   height: 100vh;
+  width: 100vw;
   background-color: #081028;
   padding: 15px;
   gap: 15px;
@@ -14,14 +15,32 @@
 
 .content-section {
   display: flex;
+  align-items: center;
+  justify-content: center;
   flex-grow: 1;
+  width: 100%;
+  height: 100%;
   padding: 1rem 0;
-  overflow-y: auto;
   flex-wrap: wrap;
+  overflow: auto;
 }
 
 .content-section::-webkit-scrollbar {
   display: none;
+}
+
+app-organizer-dashboard,
+app-organizer-events,
+app-organizer-ticket-types,
+app-organizer-calendar,
+app-organizer-messages,
+app-organizer-profile,
+app-organizer-logout {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @media (max-width: 768px) {

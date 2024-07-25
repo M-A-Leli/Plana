@@ -20,11 +20,11 @@ export class TicketService {
     return this.http.get<Ticket>(`${this.baseUrl}/${id}`);
   }
 
-  createTicket(ticket: Ticket): Observable<Ticket> {
+  createTicket(ticket: Partial<Ticket>): Observable<Ticket> {
     return this.http.post<Ticket>(this.baseUrl, ticket);
   }
 
-  updateTicket(id: string, ticket: Ticket): Observable<Ticket> {
+  updateTicket(id: string, ticket: Partial<Ticket>): Observable<Ticket> {
     return this.http.put<Ticket>(`${this.baseUrl}/${id}`, ticket);
   }
 
@@ -32,8 +32,8 @@ export class TicketService {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
-  validateTicket(id: string): Observable<Ticket[]> {
-    return this.http.get<Ticket[]>(`${this.baseUrl}/validate/${id}`);
+  validateTicket(code: string): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(`${this.baseUrl}/validate/${code}`);
   }
 
   getTicketsByUserId(): Observable<Ticket[]> {
@@ -46,5 +46,13 @@ export class TicketService {
 
   getTicketsByEventId(id: string): Observable<Ticket[]> {
     return this.http.get<Ticket[]>(`${this.baseUrl}/event/${id}`);
+  }
+
+  getTicketsByOrderId(id: string): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(`${this.baseUrl}/order/${id}`);
+  }
+
+  getTicketAnalytics(): Observable<Object> {
+    return this.http.get<Object>(`${this.baseUrl}/analytics`);
   }
 }

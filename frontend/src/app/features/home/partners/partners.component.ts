@@ -16,12 +16,12 @@ interface Partner {
 })
 export class PartnersComponent {
   partners: Partner[] = [
-    { name: 'Partner 1', logoUrl: 'assets/images/partner1.png' },
-    { name: 'Partner 2', logoUrl: 'assets/images/partner2.png' },
-    { name: 'Partner 3', logoUrl: 'assets/images/partner3.png' },
-    { name: 'Partner 4', logoUrl: 'assets/images/partner4.png' },
-    { name: 'Partner 5', logoUrl: 'assets/images/partner5.png' },
-    { name: 'Partner 6', logoUrl: 'assets/images/partner6.png' },
+    { name: 'Partner 1', logoUrl: '/partner1.svg' },
+    { name: 'Partner 2', logoUrl: '/partner2.svg' },
+    { name: 'Partner 3', logoUrl: '/partner3.svg' },
+    { name: 'Partner 4', logoUrl: '/partner4.svg' },
+    { name: 'Partner 5', logoUrl: '/partner5.svg' },
+    { name: 'Partner 6', logoUrl: '/partner6.svg' },
   ];
 
   @ViewChild('carousel') carousel!: ElementRef;

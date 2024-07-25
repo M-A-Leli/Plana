@@ -1,41 +1,107 @@
 <div class="admin-entity-layout">
-  <div class="left-display">
-    <button class="create-btn" (click)="onCreate()">Create Attendee</button>
-    <table>
-      <thead>
-        <tr>
-          <th>Image</th>
-          <th>Username</th>
-          <th>Email</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let attendee of attendees">
-          <td><img [src]="attendee.user?.profile_img" alt="Attendee Image"></td>
-          <td>{{ attendee.user?.username }}</td>
-          <td>{{ attendee.user?.email }}</td>
-          <td>
-            <button (click)="onView(attendee.id || '')">View</button>
-            <button (click)="onEdit(attendee.id || '')">Edit</button>
-            <button (click)="onDelete(attendee.id || '')">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="pagination">
-      <button class="pagination-buttons" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <button class="pagination-buttons" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+  <div class="analytics-section">
+    <div class="card glassmorphism" (click)="filterAttendees('all')">
+      <div class="number">{{ analytics.all_attendees }}</div>
+      <div class="heading">Total Attendees</div>
+    </div>
+    <div class="card glassmorphism" (click)="filterAttendees('active')">
+      <div class="number">{{ analytics.active_attendees }}</div>
+      <div class="heading">Active Attendees</div>
+    </div>
+    <div class="card glassmorphism" (click)="filterAttendees('suspended')">
+      <div class="number">{{ analytics.suspended_attendees }}</div>
+      <div class="heading">Suspended Attendees</div>
+    </div>
+    <div class="card glassmorphism" (click)="filterAttendees('deleted')">
+      <div class="number">{{ analytics.deleted_attendees }}</div>
+      <div class="heading">Deleted Attendees</div>
     </div>
   </div>
-  <div class="right-display">
-    <ng-container [ngSwitch]="currentView">
-      <div *ngSwitchCase="'default'">Default View Content</div>
-      <app-create-attendee *ngSwitchCase="'create'"></app-create-attendee>
-      <app-edit-attendee *ngSwitchCase="'edit'" [attendeeId]="selectedAttendeeId"></app-edit-attendee>
-      <app-single-attendee *ngSwitchCase="'view'" [attendeeId]="selectedAttendeeId"></app-single-attendee>
-      <app-delete-attendee *ngSwitchCase="'delete'" [attendeeId]="selectedAttendeeId"></app-delete-attendee>
-    </ng-container>
+
+  <div class="display-section">
+    <div class="left-display">
+      <table class="attendee-table glassmorphism">
+        <thead>
+          <tr>
+            <th>Profile</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let attendee of paginatedAttendees">
+            <td><img [src]="attendee.user?.profile_img" alt="Attendee Image"></td>
+            <td>{{ attendee.user?.username }}</td>
+            <td>{{ attendee.user?.email }}</td>
+            <td>{{ getAttendeeStatus(attendee) }}</td>
+            <td class="actions">
+              <button class="btn view" (click)="showView(attendee)">
+                <img src="/icons/view.png" alt="View">
+              </button>
+              <button *ngIf="!attendee.is_deleted && !attendee.user?.is_suspended" class="btn suspend" (click)="showSuspend(attendee)">
+                <img src="/icons/suspend.png" alt="Suspend">
+              </button>
+              <button *ngIf="!attendee.is_deleted && attendee.user?.is_suspended" class="btn reinstate" (click)="showReinstate(attendee)">
+                <img src="/icons/reinstate.png" alt="Unsuspend">
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination glassmorphism">
+        <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+      </div>
+    </div>
+
+    <div class="right-display">
+      <div *ngIf="errorMessage" class="message error glassmorphism">{{ errorMessage }}</div>
+      <div *ngIf="successMessage" class="message success glassmorphism">{{ successMessage }}</div>
+
+      <div *ngIf="viewMode === 'default'" class="default-section glassmorphism">
+        <img src="/logo.svg" alt="Company Logo">
+        <h2>Plana</h2>
+      </div>
+
+      <div *ngIf="viewMode === 'view'" class="view-section glassmorphism">
+        <h2>Attendee Details</h2>
+        <div class="attendee-details">
+          <div class="profile-image">
+            <img [src]="selectedAttendee?.user?.profile_img" alt="Profile Image">
+          </div>
+          <div class="details">
+            <p><strong>Username:</strong> {{ selectedAttendee?.user?.username }}</p>
+            <p><strong>Email:</strong> {{ selectedAttendee?.user?.email }}</p>
+            <p><strong>Bio:</strong> {{ selectedAttendee?.bio }}</p>
+            <!-- <p><strong>Status:</strong> {{ getAttendeeStatus(selectedAttendee) }}</p> -->
+          </div>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn btn-primary" (click)="resetView()">Back</button>
+        </div>
+      </div>
+
+      <div *ngIf="viewMode === 'suspend'" class="suspend-section glassmorphism">
+        <h2>Confirm Suspend</h2>
+        <p>Are you sure you want to suspend the attendee {{ selectedAttendee?.user?.username }}?</p>
+        <div class="form-group actions">
+          <button type="button" class="btn btn-danger" (click)="suspendAttendee()">Proceed</button>
+          <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+        </div>
+      </div>
+
+      <div *ngIf="viewMode === 'reinstate'" class="reinstate-section glassmorphism">
+        <h2>Confirm Reinstate</h2>
+        <p>Are you sure you want to reinstate the attendee {{ selectedAttendee?.user?.username }}?</p>
+        <div class="form-group actions">
+          <button type="button" class="btn btn-danger" (click)="reinstateAttendee()">Proceed</button>
+          <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

@@ -2,45 +2,93 @@ import { Component } from '@angular/core';
 import Organizer from '../../../shared/models/Organizer';
 import { OrganizerService } from '../../../core/services/organizer.service';
 import { CommonModule } from '@angular/common';
-import { CreateOrganizerComponent } from './create-organizer/create-organizer.component';
-import { EditOrganizerComponent } from './edit-organizer/edit-organizer.component';
-import { SingleOrganizerComponent } from './single-organizer/single-organizer.component';
-import { DeleteOrganizerComponent } from './delete-organizer/delete-organizer.component';
+import { FormsModule } from '@angular/forms';
+import { UsersService } from '../../../core/services/users.service';
 
 @Component({
   selector: 'app-admin-organizers',
   standalone: true,
-  imports: [CommonModule, CreateOrganizerComponent, EditOrganizerComponent, SingleOrganizerComponent, DeleteOrganizerComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './admin-organizers.component.html',
   styleUrl: './admin-organizers.component.css'
 })
 export class AdminOrganizersComponent {
+
   organizers: Organizer[] = [];
   paginatedOrganizers: Organizer[] = [];
+  selectedOrganizer: Organizer | null = null;
+  viewMode: 'default' | 'view' | 'approve' | 'revoke'| 'suspend' | 'reinstate' = 'default';
   currentPage: number = 1;
-  itemsPerPage: number = 10;
+  organizersPerPage: number = 10;
   totalPages: number = 1;
-  selectedOrganizerId: string | null = null;
-  currentView: string = 'default';
+  errorMessage: string = '';
+  successMessage: string = '';
 
-  constructor(private organizerService: OrganizerService) {}
+  analytics: any = {
+    all_organizers: 0,
+    active_organizers: 0,
+    deleted_organizers: 0,
+    approved_organizers: 0
+  };
+
+  constructor(private organizerService: OrganizerService, private usersService: UsersService) { }
 
   ngOnInit(): void {
-    this.loadOrganizers();
+    this.fetchOrganizers();
+    this.fetchAnalytics();
   }
 
-  loadOrganizers(): void {
-    this.organizerService.getAllOrganizers().subscribe((organizers) => {
+  fetchOrganizers(): void {
+    this.organizerService.getAllOrganizers().subscribe(organizers => {
       this.organizers = organizers;
-      this.totalPages = Math.ceil(this.organizers.length / this.itemsPerPage);
+      this.totalPages = Math.ceil(this.organizers.length / this.organizersPerPage);
       this.updatePaginatedOrganizers();
     });
   }
 
+  fetchAnalytics(): void {
+    this.organizerService.getOrganizerAnalytics().subscribe(analytics => {
+      this.analytics = analytics;
+    });
+  }
+
+  filterOrganizers(type: 'all' | 'active' | 'approved' | 'deleted'): void {
+    switch (type) {
+      case 'all':
+        this.organizerService.getAllOrganizers().subscribe(organizers => {
+          this.organizers = organizers;
+          this.totalPages = Math.ceil(this.organizers.length / this.organizersPerPage);
+          this.updatePaginatedOrganizers();
+        });
+        break;
+      case 'active':
+        this.organizerService.getActiveOrganizers().subscribe(organizers => {
+          this.organizers = organizers;
+          this.totalPages = Math.ceil(this.organizers.length / this.organizersPerPage);
+          this.updatePaginatedOrganizers();
+        });
+        break;
+      case 'approved':
+        this.organizerService.getApprovedOrganizers().subscribe(organizers => {
+          this.organizers = organizers;
+          this.totalPages = Math.ceil(this.organizers.length / this.organizersPerPage);
+          this.updatePaginatedOrganizers();
+        });
+        break;
+      case 'deleted':
+        this.organizerService.getDeletedOrganizers().subscribe(organizers => {
+          this.organizers = organizers;
+          this.totalPages = Math.ceil(this.organizers.length / this.organizersPerPage);
+          this.updatePaginatedOrganizers();
+        });
+        break;
+    }
+  }
+
   updatePaginatedOrganizers(): void {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    this.paginatedOrganizers = this.organizers.slice(startIndex, endIndex);
+    const start = (this.currentPage - 1) * this.organizersPerPage;
+    const end = start + this.organizersPerPage;
+    this.paginatedOrganizers = this.organizers.slice(start, end);
   }
 
   previousPage(): void {
@@ -57,22 +105,146 @@ export class AdminOrganizersComponent {
     }
   }
 
-  onCreate(): void {
-    this.currentView = 'create';
+  getOrganizerStatus(organizer: Organizer): string {
+    if (organizer.is_deleted) return 'Deleted';
+    if (organizer.user?.is_suspended) return 'Suspended';
+    if (organizer.approved) return 'Approved';
+    return 'Pending';
   }
 
-  onView(id: string): void {
-    this.selectedOrganizerId = id;
-    this.currentView = 'view';
+  showView(organizer: Organizer): void {
+    this.selectedOrganizer = organizer;
+    this.viewMode = 'view';
   }
 
-  onEdit(id: string): void {
-    this.selectedOrganizerId = id;
-    this.currentView = 'edit';
+  showApprove(organizer: Organizer): void {
+    this.selectedOrganizer = organizer;
+    this.viewMode = 'approve';
   }
 
-  onDelete(id: string): void {
-    this.selectedOrganizerId = id;
-    this.currentView = 'delete';
+  showRevoke(organizer: Organizer): void {
+    this.selectedOrganizer = organizer;
+    this.viewMode = 'revoke';
+  }
+
+  showSuspend(organizer: Organizer): void {
+    this.selectedOrganizer = organizer;
+    this.viewMode = 'suspend';
+  }
+
+  showReinstate(organizer: Organizer): void {
+    this.selectedOrganizer = organizer;
+    this.viewMode = 'reinstate';
+  }
+
+  resetView(): void {
+    this.selectedOrganizer = null;
+    this.viewMode = 'default';
+  }
+
+  clearErrors() {
+    setTimeout(() => {
+      this.errorMessage = '';
+    }, 3000);
+  }
+
+  approveOrganizer(): void {
+    if (this.selectedOrganizer) {
+      this.organizerService.approveOrganizer(this.selectedOrganizer.id as string).subscribe({
+        next: data => {
+          this.successMessage = 'Organizer approved successfull!';
+          setTimeout(() => {
+            this.successMessage = '';
+            this.fetchOrganizers();
+            this.fetchAnalytics();
+            this.resetView();
+          }, 3000);
+        },
+        error: err => {
+          if (err.status === 401 || err.status === 404 || err.status === 400) {
+            this.errorMessage = err.error.error.message;
+            this.clearErrors();
+          } else {
+            this.errorMessage = 'An unexpected error occurred. Please try again.';
+            this.clearErrors();
+          }
+        }
+      });
+    }
+  }
+
+  revokeOrganizer(): void {
+    if (this.selectedOrganizer) {
+      this.organizerService.revokeOrganizer(this.selectedOrganizer.id as string).subscribe({
+        next: data => {
+          this.successMessage = 'Organizer revoked successfull!';
+          setTimeout(() => {
+            this.successMessage = '';
+            this.fetchOrganizers();
+            this.fetchAnalytics();
+            this.resetView();
+          }, 3000);
+        },
+        error: err => {
+          if (err.status === 401 || err.status === 404 || err.status === 400) {
+            this.errorMessage = err.error.error.message;
+            this.clearErrors();
+          } else {
+            this.errorMessage = 'An unexpected error occurred. Please try again.';
+            this.clearErrors();
+          }
+        }
+      });
+    }
+  }
+
+  suspendOrganizer(): void {
+    if (this.selectedOrganizer) {
+      this.usersService.suspendUser(this.selectedOrganizer.user?.id as string).subscribe({
+        next: data => {
+          this.successMessage = 'Organizer suspended successfull!';
+          setTimeout(() => {
+            this.successMessage = '';
+            this.fetchOrganizers();
+            this.fetchAnalytics();
+            this.resetView();
+          }, 3000);
+        },
+        error: err => {
+          if (err.status === 401 || err.status === 404 || err.status === 400) {
+            this.errorMessage = err.error.error.message;
+            this.clearErrors();
+          } else {
+            this.errorMessage = 'An unexpected error occurred. Please try again.';
+            this.clearErrors();
+          }
+        }
+      });
+    }
+  }
+
+  reinstateOrganizer(): void {
+    if (this.selectedOrganizer) {
+      this.usersService.reinstateUser(this.selectedOrganizer.user?.id as string).subscribe({
+        next: data => {
+          this.successMessage = 'Organizer reinstated successfull!';
+          setTimeout(() => {
+            this.successMessage = '';
+            this.fetchOrganizers();
+            this.fetchAnalytics();
+            this.resetView();
+          }, 3000);
+        },
+        error: err => {
+          if (err.status === 401 || err.status === 404 || err.status === 400) {
+            this.errorMessage = err.error.error.message;
+            this.clearErrors();
+          } else {
+            this.errorMessage = 'An unexpected error occurred. Please try again.';
+            this.clearErrors();
+          }
+        }
+      });
+    }
   }
 }
