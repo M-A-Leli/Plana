@@ -1,13 +1,29 @@
-Create DATABASE Plana;
+CREATE DATABASE Plana;
 GO
 
 USE Plana;
 GO
 
+-- DECLARE @sql NVARCHAR(MAX)
+
+-- SET @sql = ''
+
+-- SELECT @sql = @sql + 'DELETE FROM ' + QUOTENAME(TABLE_SCHEMA) + '.' + QUOTENAME(TABLE_NAME) + ';' 
+-- FROM Plana.INFORMATION_SCHEMA.TABLES
+-- WHERE TABLE_TYPE = 'BASE TABLE'  -- Only consider user tables (not views)
+--   AND TABLE_SCHEMA = 'dbo'       -- Change schema name if needed
+
+-- -- PRINT @sql   -- Uncomment to debug and see the generated SQL
+
+-- EXEC sp_executesql @sql
+
+
 SELECT * FROM Users;
 
 -- 2bb52a6a-441d-4312-968d-80ab9024d955
 -- UPDATE Users SET is_deleted = 0, is_suspended = 0;
+-- UPDATE Users SET is_deleted = 1 WHERE id = 'da0f30e5-d763-4300-9756-8952b3ccaddd';
+-- UPDATE Users SET is_suspended = 1 WHERE id = '6d8768bd-db90-413c-8af7-2d41b5ad3ab9';
 -- UPDATE Users SET password = '$2b$10$G8AWm9bFHk25/F0cSNgn8OIJpdfBmrys4VqlI6oatC.lmuwrHf5Ly';
 Delete from Users WHERE id = 'ca1e5ecb-25d6-4e98-b5d4-721698649e8e';
 
@@ -20,15 +36,16 @@ SELECT * FROM Admins;
 SELECT * FROM Attendees;
 
 -- UPDATE Attendees SET is_deleted = 0;
+-- UPDATE Attendees SET is_deleted = 1 WHERE user_id = 'da0f30e5-d763-4300-9756-8952b3ccaddd';
 
 -- Delete from Attendees WHERE id = '7D40B311-B13D-4383-B296-CA421BF4B41D';
--- Delete from Attendees WHERE user_id = 'd612e9ca-001a-462c-95dc-4bf8a8d45994';
+-- Delete from Attendees WHERE user_id = '67684951-a4b5-4649-a03e-208838aff2ed';
 
 SELECT * FROM Organizers;
 
 -- UPDATE Organizers SET is_deleted = 0;
 -- UPDATE Organizers SET is_deleted = 0, approved = 1 WHERE id = '31696010-835d-4e06-94a5-1c9cda0b4817';
-
+-- DELETE Organizers WHERE user_id = '67684951-a4b5-4649-a03e-208838aff2ed';
 -- INSERT INTO Attendees (id, user_id, bio, is_deleted)
 -- SELECT NEWID(), user_id, bio, is_deleted
 -- FROM Organizers;
