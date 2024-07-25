@@ -1,1 +1,71 @@
-<p>attendee-events works!</p>
+<div class="organizer-entity-layout">
+  <div class="analytics-section">
+    <div class="card glassmorphism" (click)="filterOrders('all')">
+      <div class="number">{{ all_orders }}</div>
+      <div class="heading">Total Orders</div>
+    </div>
+    <div class="card glassmorphism" (click)="filterOrders('paid')">
+      <div class="number">{{ paid_orders }}</div>
+      <div class="heading">Completed Orders</div>
+    </div>
+    <div class="card glassmorphism" (click)="filterOrders('unpaid')">
+      <div class="number">{{ unpaid_orders }}</div>
+      <div class="heading">Pending Orders</div>
+    </div>
+  </div>
+
+  <div class="display-section">
+    <div class="left-display">
+      <table class="order-table glassmorphism">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of paginatedOrders">
+            <td>{{ order.updated_at | date: 'longDate'}}</td>
+            <td>{{ order.total }}</td>
+            <td>{{ order.payment_id ? 'Paid' : 'Unpaid' }}</td>
+            <td class="actions">
+              <button *ngIf="!order.is_deleted" class="btn tickets" (click)="showTickets(order)">
+                <img src="/icons/tickets.png" alt="Tickets">
+              </button>
+              <button *ngIf="!order.is_deleted" class="btn delete" (click)="showDelete(order)">
+                <img src="/icons/delete.png" alt="Delete">
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination glassmorphism">
+        <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+      </div>
+    </div>
+
+    <div class="right-display">
+      <div *ngIf="errorMessage" class="message error glassmorphism">{{ errorMessage }}</div>
+      <div *ngIf="successMessage" class="message success glassmorphism">{{ successMessage }}</div>
+
+      <div *ngIf="viewMode === 'default'" class="default-section glassmorphism">
+        <img src="/logo.svg" alt="Company Logo">
+        <h2>Plana</h2>
+      </div>
+
+      <div *ngIf="viewMode === 'delete'" class="delete-section glassmorphism">
+        <h2>Confirm Delete</h2>
+        <p>Are you sure you want to delete the order?</p>
+        <div class="form-group actions">
+          <button type="button" class="btn btn-danger" (click)="deleteOrder()">Proceed</button>
+          <button type="button" class="btn btn-secondary" (click)="resetView()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

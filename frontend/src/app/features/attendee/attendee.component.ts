@@ -9,17 +9,19 @@ import { AttendeeEventsComponent } from './attendee-events/attendee-events.compo
 import { AttendeeLogoutComponent } from './attendee-logout/attendee-logout.component';
 import { AttendeeMessagesComponent } from './attendee-messages/attendee-messages.component';
 import { AttendeeProfileComponent } from './attendee-profile/attendee-profile.component';
+import { AttendeeTicketsComponent } from './attendee-tickets/attendee-tickets.component';
 
 @Component({
   selector: 'app-attendee',
   standalone: true,
-  imports: [CommonModule, AttendeeSidebarComponent, AttendeeTopbarComponent, AttendeeCalendarComponent, AttendeeDashboardComponent, AttendeeEventsComponent, AttendeeLogoutComponent, AttendeeMessagesComponent, AttendeeProfileComponent],
+  imports: [CommonModule, AttendeeSidebarComponent, AttendeeTopbarComponent, AttendeeCalendarComponent, AttendeeDashboardComponent, AttendeeEventsComponent, AttendeeLogoutComponent, AttendeeMessagesComponent, AttendeeProfileComponent, AttendeeTicketsComponent],
   templateUrl: './attendee.component.html',
   styleUrl: './attendee.component.css'
 })
 export class AttendeeComponent {
   isSidebarCollapsed = false;
   currentRoute: string | undefined;
+  selectedOrderId: string = '';
 
   constructor(private router: Router) {
     this.router.events.subscribe(event => {
@@ -35,5 +37,13 @@ export class AttendeeComponent {
 
   toggleSidebar(): void {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
+  }
+
+  navigateTo(route: string): void {
+    this.currentRoute = route;
+  }
+
+  setSelectedOrderId(orderId: string): void {
+    this.selectedOrderId = orderId;
   }
 }

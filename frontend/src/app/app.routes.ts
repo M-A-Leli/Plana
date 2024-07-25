@@ -36,6 +36,7 @@ import { AttendeeMessagesComponent } from './features/attendee/attendee-messages
 import { AdminCategoriesComponent } from './features/admin/admin-categories/admin-categories.component';
 import { TicketsComponent } from './features/tickets/tickets.component';
 import { OrganizerTicketTypesComponent } from './features/organizer/organizer-ticket-types/organizer-ticket-types.component';
+import { AttendeeTicketsComponent } from './features/attendee/attendee-tickets/attendee-tickets.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -55,11 +56,12 @@ export const routes: Routes = [
     path: 'attendee', component: AttendeeComponent, children: [
       { path: 'dashboard', component: AttendeeDashboardComponent },
       { path: 'events', component: AttendeeEventsComponent },
+      { path: 'tickets', component: AttendeeTicketsComponent },
       { path: 'calendar', component: AttendeeCalendarComponent },
       { path: 'messages', component: AttendeeMessagesComponent },
       { path: 'profile', component: AttendeeProfileComponent },
       { path: 'logout', component: AttendeeLogoutComponent },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: '', redirectTo: 'profile', pathMatch: 'full' },
     ]
   },
   {
@@ -71,7 +73,7 @@ export const routes: Routes = [
       { path: 'messages', component: OrganizerMessagesComponent },
       { path: 'profile', component: OrganizerProfileComponent },
       { path: 'logout', component: OrganizerLogoutComponent },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: '', redirectTo: 'profile', pathMatch: 'full' },
     ]
   },
   {

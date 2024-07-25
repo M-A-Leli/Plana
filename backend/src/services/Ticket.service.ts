@@ -554,7 +554,20 @@ class TicketService {
                 subtotal: true,
                 unique_code: true,
                 is_deleted: true,
-                updated_at: true
+                updated_at: true,
+                ticket_type: {
+                    select: {
+                        id: true,
+                        name: true,
+                        price: true,
+                        event: {
+                            select: {
+                                id: true,
+                                title: true,
+                            }
+                        }
+                    }
+                }
             }
         });
     

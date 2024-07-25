@@ -4,7 +4,8 @@
     <app-attendee-topbar></app-attendee-topbar>
     <div class="content-section">
       <app-attendee-dashboard *ngIf="currentRoute === 'dashboard'"></app-attendee-dashboard>
-      <app-attendee-events *ngIf="currentRoute === 'events'"></app-attendee-events>
+      <app-attendee-events *ngIf="currentRoute === 'events'" (navigate)="navigateTo($event)" (orderSelected)="setSelectedOrderId($event)"></app-attendee-events>
+      <app-attendee-tickets *ngIf="currentRoute === 'tickets'" [orderId]="selectedOrderId"></app-attendee-tickets>
       <app-attendee-calendar *ngIf="currentRoute === 'calendar'"></app-attendee-calendar>
       <app-attendee-messages *ngIf="currentRoute === 'messages'"></app-attendee-messages>
       <app-attendee-profile *ngIf="currentRoute === 'profile'"></app-attendee-profile>
