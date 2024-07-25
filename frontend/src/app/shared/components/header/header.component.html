@@ -15,7 +15,7 @@
       <a href="#">About Us</a>
       <a href="#">Contact</a>
     </nav>
-    <div class="auth-buttons" [class.active]="menuOpen">
+    <div class="auth-buttons" *ngIf="showAuthButtons" [class.active]="menuOpen">
       <button (click)="navigateToLogin()">Login</button>
       <button (click)="navigateToRegister()">Register</button>
     </div>

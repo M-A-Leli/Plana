@@ -9,11 +9,11 @@
 }
 
 .left-display {
-  width: 70%;
+  width: 100%;
   padding: 20px;
 }
 
-.right-display {
+/* .right-display {
   width: 30%;
   height: 70%;
   padding: 20px;
@@ -22,7 +22,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
   color: #ffffff;
-}
+} */
 
 .highlights {
   display: flex;

@@ -31,7 +31,6 @@ export class AttendeeEventsComponent {
 
   ngOnInit(): void {
     this.fetchOrders();
-    this.getOrderAnalytics();
   }
 
   getOrderAnalytics() {
@@ -58,6 +57,7 @@ export class AttendeeEventsComponent {
       this.orders = orders;
       this.totalPages = Math.ceil(this.orders.length / this.ordersPerPage);
       this.updatePaginatedOrders();
+      this.getOrderAnalytics();
     });
   }
 
