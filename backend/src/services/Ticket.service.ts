@@ -281,11 +281,9 @@ class TicketService {
     }
 
 
-    async validateTicket(data: Partial<Ticket>): Promise<Partial<Ticket>> {
-        const { unique_code } = data;
-
+    async validateTicket(code: string): Promise<Partial<Ticket>> {
         const ticket = await prisma.ticket.findFirst({
-            where: { unique_code, is_deleted: false },
+            where: { unique_code: code, is_deleted: false },
             select: {
                 id: true,
                 ticket_type_id: true,
@@ -322,23 +320,17 @@ class TicketService {
             throw createError(404, 'Attendee not found');
         }
 
-        const orders = await prisma.order.findMany({
+        const pendingOrder = await prisma.order.findFirst({
             where: {
                 attendee_id: attendee.id,
-                is_deleted: false
+                is_deleted: false,
+                payment_id: null
             }
         });
 
-        if (orders.length === 0) {
-            throw createError(404, 'No orders found for this user');
-            // return [];
-        }
-
-        const orderIds = orders.map(order => order.id);
-
         const tickets = await prisma.ticket.findMany({
             where: {
-                order_id: { in: orderIds },
+                order_id: pendingOrder?.id,
                 is_deleted: false
             },
             select: {
@@ -369,6 +361,71 @@ class TicketService {
 
         return tickets;
     }
+    
+    // async getTicketsByUserId(id: string): Promise<Partial<Ticket>[]> {
+    //     const user = await prisma.user.findUnique({
+    //         where: { id }
+    //     });
+
+    //     if (!user || user.is_deleted) {
+    //         throw createError(404, 'User not found');
+    //     }
+
+    //     const attendee = await prisma.attendee.findUnique({
+    //         where: { user_id: user.id }
+    //     });
+
+    //     if (!attendee || attendee.is_deleted) {
+    //         throw createError(404, 'Attendee not found');
+    //     }
+
+    //     const orders = await prisma.order.findMany({
+    //         where: {
+    //             attendee_id: attendee.id,
+    //             is_deleted: false
+    //         }
+    //     });
+
+    //     if (orders.length === 0) {
+    //         throw createError(404, 'No orders found for this user');
+    //         // return [];
+    //     }
+
+    //     const orderIds = orders.map(order => order.id);
+
+    //     const tickets = await prisma.ticket.findMany({
+    //         where: {
+    //             order_id: { in: orderIds },
+    //             is_deleted: false
+    //         },
+    //         select: {
+    //             id: true,
+    //             ticket_type_id: true,
+    //             order_id: true,
+    //             quantity: true,
+    //             subtotal: true,
+    //             unique_code: true,
+    //             is_deleted: true,
+    //             updated_at: true,
+    //             ticket_type: {
+    //                 select: {
+    //                     id: true,
+    //                     name: true,
+    //                     group_size: true,
+    //                     price: true,
+    //                     event: {
+    //                         select: {
+    //                             title: true,
+    //                             id: true,
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     });
+
+    //     return tickets;
+    // }
 
     async getEventTicketsByUserId(user_id: string, event_id: string): Promise<Partial<Ticket>[]> {
         const event = await prisma.event.findUnique({

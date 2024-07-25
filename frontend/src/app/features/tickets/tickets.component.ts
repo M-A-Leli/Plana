@@ -64,7 +64,7 @@ export class TicketsComponent {
   }
 
   increaseQuantity(ticket: Ticket): void {
-    if (ticket.quantity > 1 && ticket.ticket_type && ticket.ticket_type.price) {
+    // if (ticket.quantity > 1 && ticket.ticket_type && ticket.ticket_type.price) {
       ticket.quantity++;
 
       const updatedTicket: Partial<Ticket> = {
@@ -89,12 +89,12 @@ export class TicketsComponent {
         }
       });
 
-      ticket.subtotal = ticket.ticket_type.price * ticket.quantity;
-    }
+      ticket.subtotal = ticket.ticket_type?.price as number * ticket.quantity;
+    // }
   }
 
   decreaseQuantity(ticket: Ticket): void {
-    if (ticket.quantity > 1 && ticket.ticket_type && ticket.ticket_type.price) {
+    // if (ticket.quantity > 1 && ticket.ticket_type && ticket.ticket_type.price) {
       ticket.quantity--;
 
       const updatedTicket: Partial<Ticket> = {
@@ -119,12 +119,12 @@ export class TicketsComponent {
         }
       });
 
-      ticket.subtotal = ticket.ticket_type.price * ticket.quantity;
-    }
+      ticket.subtotal = ticket.ticket_type?.price as number * ticket.quantity;
+    // }
   }
 
   calculateTotal(): number {
-    return this.tickets.reduce((total, ticket) => total + ticket.subtotal, 0);
+    return this.tickets.reduce((total, ticket) => total + Number(ticket.subtotal), 0);
   }
 
   removeTicket(ticket_id: string): void {

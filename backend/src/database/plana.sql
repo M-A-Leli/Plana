@@ -37,6 +37,18 @@ SELECT * FROM Organizers;
 SELECT * FROM Events;
 -- UPDATE Events SET date = '2024-08-01 18:36:55.9280000', start_time = '13:15:00 GMT+0300 (East Africa Time)', end_time = '15:45:00 GMT+0300 (East Africa Time)';
 
+-- WITH RandomEvents AS (
+--     SELECT TOP 8 *
+--     FROM (
+--         SELECT *,
+--                ROW_NUMBER() OVER (ORDER BY NEWID()) AS RowNum
+--         FROM Events
+--     ) AS Randomized
+--     WHERE RowNum <= 8
+-- )
+-- UPDATE RandomEvents
+-- SET is_featured = 1;
+
 SELECT * FROM Categories;
 
 SELECT * FROM EventImages;

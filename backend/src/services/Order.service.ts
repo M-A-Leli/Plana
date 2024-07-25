@@ -346,19 +346,19 @@ class OrderService {
         const user = await prisma.user.findUnique({
             where: { id: userId, is_deleted: false }
         });
-
+    
         if (!user || user.is_deleted || user.is_suspended) {
             throw createError(404, "User not found");
         }
-
+    
         const attendee = await prisma.attendee.findUnique({
             where: { user_id: user.id, is_deleted: false }
         });
-
+    
         if (!attendee || attendee.is_deleted) {
             throw createError(404, "Attendee not found");
         }
-
+    
         const pendingOrder = await prisma.order.findFirst({
             where: {
                 attendee_id: attendee.id,
@@ -366,24 +366,28 @@ class OrderService {
                 payment_id: null,
             },
             include: {
-                tickets: true
+                tickets: {
+                    include: {
+                        ticket_type: true
+                    }
+                }
             }
         });
-
+    
         if (!pendingOrder) {
             throw createError(404, 'No pending order found for this user');
         }
-
+    
         if (pendingOrder.tickets.length === 0) {
             throw createError(400, 'Cannot checkout an order with no tickets');
         }
-
-        // !
+    
+        // Process payment
         const payment = await PaymentService.processPayment({ order_id: pendingOrder.id, amount: pendingOrder.total.toNumber() });
-
-        // !
+    
+        // Verify payment
         await PaymentService.verifyPayment(payment?.id as string);
-
+    
         const updatedOrder = await prisma.order.update({
             where: { id: pendingOrder.id },
             data: {
@@ -400,15 +404,20 @@ class OrderService {
                 updated_at: true,
                 tickets: {
                     include: {
-                        ticket_type: true
+                        ticket_type: {
+                            include: {
+                                event: true
+                            }
+                        }
                     }
                 }
             }
         });
-
-        const event = await prisma.event.findUnique
-            ({ where: { id: pendingOrder.event_id } });
-
+    
+        const event = await prisma.event.findUnique({
+            where: { id: pendingOrder.event_id }
+        });
+    
         await sendEmail({
             to: user.email,
             subject: 'Your Order Receipt',
@@ -418,11 +427,11 @@ class OrderService {
                 username: user.username,
                 event: event?.title,
                 date: new Date().toLocaleString(),
-                tickets: pendingOrder.tickets,
-                total: pendingOrder.total
+                tickets: updatedOrder.tickets,
+                total: updatedOrder.total
             }
         });
-
+    
         return updatedOrder;
     }
 

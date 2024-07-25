@@ -2,6 +2,7 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  gap: 1rem;
   background-color: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   padding: 0.5rem 1rem;
@@ -46,6 +47,22 @@
 
 .search-section button:hover {
   background-color: #0e43fb;
+}
+
+.error-container,
+.success-container {
+  padding: 0.5rem;
+  border-radius: 5px;
+}
+
+.error-container {
+  background-color: rgba(255, 0, 0, 0.3);
+  color: #ff0000;
+}
+
+.success-container {
+  background-color: rgba(0, 255, 0, 0.3);
+  color: #00ff00;
 }
 
 @media (max-width: 768px) {

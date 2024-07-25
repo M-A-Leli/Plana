@@ -24,6 +24,23 @@ section.single-event {
   gap: 1rem;
 }
 
+.error-container,
+.success-container {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.error-container {
+  background-color: rgba(255, 0, 0, 0.1);
+  color: #ff0000;
+}
+
+.success-container {
+  background-color: rgba(0, 255, 0, 0.1);
+  color: #00ff00;
+}
+
 .event {
   display: flex;
   gap: 1rem;
@@ -33,7 +50,11 @@ section.single-event {
 }
 
 .event-images {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .current-image {
@@ -44,9 +65,10 @@ section.single-event {
 }
 
 .image-controls {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .image-controls button {
@@ -66,7 +88,7 @@ section.single-event {
 
 .event-title {
   font-size: 1.5rem;
-  color: #ffffff;
+  color: #00c2ff;
 }
 
 .ticket-types {

@@ -1,9 +1,11 @@
 <!-- top-bar.component.html -->
 <div class="top-bar">
+  <div class="error-container" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <div class="success-container" *ngIf="successMessage">{{ successMessage }}</div>
   <div class="search-section">
-    <form (submit)="onSearch(searchTerm.value)">
-      <input type="text" #searchTerm placeholder="Search...">
-      <button type="submit">Search</button>
+    <form (submit)="onVerify(ticketNumber.value)">
+      <input type="text" #ticketNumber placeholder="Ticket Number...">
+      <button type="submit">Verify</button>
     </form>
   </div>
 </div>

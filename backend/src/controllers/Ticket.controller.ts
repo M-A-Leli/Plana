@@ -57,7 +57,7 @@ class TicketController {
 
   validateTicket = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const ticket = await this.ticketService.validateTicket(req.body);
+      const ticket = await this.ticketService.validateTicket(req.params.code);
       res.status(200).json(ticket);
     } catch (error: any) {
       next(error);

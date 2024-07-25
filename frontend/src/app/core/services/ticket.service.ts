@@ -32,8 +32,8 @@ export class TicketService {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
-  validateTicket(): Observable<Ticket[]> {
-    return this.http.get<Ticket[]>(`${this.baseUrl}/validate`);
+  validateTicket(code: string): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(`${this.baseUrl}/validate/${code}`);
   }
 
   getTicketsByUserId(): Observable<Ticket[]> {

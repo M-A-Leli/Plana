@@ -7,11 +7,11 @@ const router = Router();
 router.get('/analytics', AuthMiddleware.authorizeAdmin, TicketController.getTicketAnalytics); // Get ticket analytics
 router.get('/user', AuthMiddleware.authorizeAttendee, TicketController.getTicketsByUserId); // Get tickets by user id
 router.get('/', AuthMiddleware.authorizeAdmin, TicketController.getAllTickets); // Get all tickets
-router.get('/validate', AuthMiddleware.authorizeOrganizer, TicketController.validateTicket); // Validate ticket
 router.post('/', AuthMiddleware.authorizeAttendee, TicketController.createTicket); // Create ticket
 router.get('/:id', AuthMiddleware.authorizeUser, TicketController.getTicketById); // Get ticket by id
 router.put('/:id', AuthMiddleware.authorizeAttendee, TicketController.updateTicket); // Update ticket
 router.delete('/:id', AuthMiddleware.authorizeAttendee, TicketController.deleteTicket); // Delete ticket
+router.get('/validate/:code', AuthMiddleware.authorizeOrganizer, TicketController.validateTicket); // Validate ticket
 router.get('/event/user/:id', AuthMiddleware.authorizeAttendee, TicketController.getEventTicketsByUserId); // Get event tickets by user id
 router.get('/order/:id',  AuthMiddleware.authorizeAttendee, TicketController.getTicketsByOrderId); // Get tickets by order id
 router.get('/event/:id',  AuthMiddleware.authorizeUser, TicketController.getTicketsByEventId); // Get tickets by event id
